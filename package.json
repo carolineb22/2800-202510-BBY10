@@ -17,5 +17,8 @@
   "bugs": {
     "url": "https://github.com/carolineb22/2800-202510-BBY10/issues"
   },
-  "homepage": "https://github.com/carolineb22/2800-202510-BBY10#readme"
+  "homepage": "https://github.com/carolineb22/2800-202510-BBY10#readme",
+  "dependencies": {
+    "express": "^5.1.0"
+  }
 }
