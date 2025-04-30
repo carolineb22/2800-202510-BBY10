@@ -7,6 +7,12 @@ Team Members:
 - Glenn Dossot
 - Caroline (Cyrus) Bastiaanssen Set 2A
 
+## File Structure
+Put all front-end files into the `/public` directory.
+(Raw HTML files, CSS, images, fonts, etc.)
+Put these files into their respective folders; E.g. `.html` files in `/public/html`, `.css` files in `/public/styles`.
+If no directory exists, create one with an appropriate name.
+
 ## How to run with node
 Update this section as you work and add dependencies.
 Make sure you update the package requirements in the code block below.
@@ -25,6 +31,3 @@ npm i express
 npm i
 nodemon index.js
 ```
-
-## More details to come
-TBA
