@@ -1,0 +1,21 @@
+{
+  "name": "2800-202510-bby10",
+  "version": "1.0.0",
+  "description": "Team Name: BBY-10 Team Members:  - Darion Delorme Set 2C - Marcy Ordinario Set 2B - Alex Hidalgo Set 2A - Glenn Dossot - Caroline (Cyrus) Bastiaanssen Set 2A",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/carolineb22/2800-202510-BBY10.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/carolineb22/2800-202510-BBY10/issues"
+  },
+  "homepage": "https://github.com/carolineb22/2800-202510-BBY10#readme"
+}
