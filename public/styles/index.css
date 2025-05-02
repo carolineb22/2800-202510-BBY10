@@ -19,23 +19,20 @@
 h1 {
     font-size: 8vw; /* Responsive font size */
     margin: 0;
-    word-wrap: break-word; /* Allow wrapping of long words */
+    word-wrap: break-word;
     text-align: center;
     line-height: 1.2;
 }
 
 /* Subtitle */
 h2 {
-    font-size: 4vw; /* Slightly smaller font size */
+    font-size: 4vw;
     margin-top: 1rem;
-    word-wrap: break-word; /* Allow wrapping of long words */
+    word-wrap: break-word;
     text-align: center;
-    padding: 0 10%; /* Add some spacing to the sides */
+    padding: 0 10%;
     line-height: 1.4;
 }
-
-
-/* ///////////////////////////////////////////// */
 
 /* MIDDLE SECTION */
 
@@ -45,9 +42,9 @@ h2 {
     flex-direction: row;
     min-height: 100vh;
     color: white;
-    flex-wrap: wrap;  /* Allow flex items to wrap */
-    justify-content: center;  /* Ensure items align horizontally */
-    align-items: center;  /* Ensure items align vertically */
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
 }
 
 .mid-section .left-half,
@@ -62,13 +59,10 @@ h2 {
 }
 
 .mid-section p {
-    font-size: 5vw; /* Font size for mid-section text */
-    max-width: 90%;  /* Limit the width */
+    font-size: 5vw;
+    max-width: 90%;
     margin: 0;
 }
-
-
-/* ///////////////////////////////////////////// */
 
 /* BOTTOM SECTION */
 
@@ -113,9 +107,7 @@ h2 {
     margin-top: 2rem;
 }
 
-
 /* Team Members */
-
 .small-rounded-rectangle {
     background-color: white;
     border-radius: 15px;
@@ -124,16 +116,13 @@ h2 {
     align-items: center;
     color: black;
     font-size: 1rem;
-    width: 90%;             /* Responsive width */
-    max-width: 500px;       /* Keeps a good size on larger screens */
+    width: 90%;
+    max-width: 500px;
     height: 100px;
     padding: 0 1rem;
     margin: 0 auto 10px auto;
     box-sizing: border-box;
 }
-
-
-/* ///////////////////////////////////////////// */
 
 /* GENERAL */
 
@@ -163,9 +152,6 @@ hr {
     margin: 20px 0;
     height: 0;
 }
-
-
-/* ///////////////////////////////////////////// */
 
 /* RESPONSIVE LAYOUTS */
 
