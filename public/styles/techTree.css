@@ -1,0 +1,90 @@
+body {
+    margin: 0;
+    background: #f0f0f0;
+    font-family: sans-serif;
+  }
+  
+  #treeContainer {
+    position: relative;
+    width: 1000px;
+    height: 700px;
+    margin: 40px auto;
+    background: #fff;
+    border: 1px solid #ccc;
+  }
+  
+  canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+  }
+  
+  .skill {
+    position: absolute;
+    width: 120px;
+    height: 80px;
+    background: #e0e0e0;
+    border: 2px solid #333;
+    border-radius: 10px;
+    text-align: center;
+    padding-top: 15px;
+    z-index: 2;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  
+  .skill:hover {
+    transform: scale(1.05);
+  }
+  
+  .skill.unlocked {
+    background: #4CAF50;
+    color: white;
+  }
+  
+  /* Info box styles */
+  #infoBox {
+    position: absolute;
+    background-color: #fff;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 10px;
+    width: 200px;
+    display: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+  }
+  
+  #infoBox h3 {
+    margin-top: 0;
+    color: #4CAF50;
+  }
+  
+  #infoBox p {
+    font-size: 14px;
+  }
+  
+  #infoBox button {
+    width: 100%;
+    padding: 8px 0;
+    margin-top: 10px;
+    cursor: pointer;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+  }
+  
+  #infoBox button:hover {
+    background-color: #45a049;
+  }
+  
+  #infoBox #cancelBtn {
+    background-color: #f44336;
+  }
+  
+  #infoBox #cancelBtn:hover {
+    background-color: #e53935;
+  }
+  

@@ -1,33 +1,38 @@
-
 /* TOP SECTION */
 
 .top-section {
-    min-height:100vh;
+    min-height: 100vh;
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
     background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0) 80%, rgba(20, 20, 20, 1)), 
     url('https://media.istockphoto.com/id/1457206081/photo/earth-planet-at-night-into-the-dark-cities-light-earth-in-deep-space-with-stars-planet-sphere.jpg?s=1024x1024&w=is&k=20&c=YoYVYeeLU9v8pULrgNTnxRx6vXxzgVxaXD9y1C-sMDc=');
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: white;
 }
 
 /* Title */
 h1 {
-    font-size: 1000%;
+    font-size: 8vw; /* Responsive font size */
+    margin: 0;
+    word-wrap: break-word;
     text-align: center;
-    margin: 10% 0 0 0;
-    color: white;
+    line-height: 1.2;
 }
 
 /* Subtitle */
 h2 {
-    font-size: 200%;
+    font-size: 4vw;
+    margin-top: 1rem;
+    word-wrap: break-word;
     text-align: center;
-    margin: 0 0 10% 0;
-    color: white;
+    padding: 0 10%;
+    line-height: 1.4;
 }
-
-
-/* ///////////////////////////////////////////// */
 
 /* MIDDLE SECTION */
 
@@ -35,34 +40,29 @@ h2 {
     background-color: rgb(20, 20, 20);
     display: flex;
     flex-direction: row;
-    height: 100%;
+    min-height: 100vh;
     color: white;
-    min-height:100vh;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
 }
 
-.mid-section .left-half {
-    flex: 1;
-}
-
-.mid-section .left-half p {
-    font-size: 200%;
-    text-align: center;
-    margin: 0;
-    padding: 40% 20% 20% 20%;
-}
-
+.mid-section .left-half,
 .mid-section .right-half {
-    flex: 1;
-}
-
-.mid-section .right-half p {
-    font-size: 200%;
+    flex: 1 1 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     text-align: center;
-    margin: 0;
-    padding: 40% 20% 20% 20%;
+    padding: 5%;
 }
 
-/* ///////////////////////////////////////////// */
+.mid-section p {
+    font-size: 5vw;
+    max-width: 90%;
+    margin: 0;
+}
 
 /* BOTTOM SECTION */
 
@@ -70,73 +70,68 @@ h2 {
     background-color: rgb(20, 20, 20);
     display: flex;
     flex-direction: row;
-    height: 100%;
+    flex-wrap: wrap;
+    min-height: 100vh;
     color: white;
 }
 
-.bottom-section .left-half {
-    flex: 1;
+.bottom-section .left-half,
+.bottom-section .right-half {
+    flex: 1 1 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 5%;
 }
 
-.bottom-section .left-half h2 {
-    font-size: 200%;
-    text-align: center;
-    margin: 0;
-    padding: 25% 20% 20% 20%;
+.bottom-section .left-half h2,
+.bottom-section .right-half h2 {
+    font-size: 6vw;
+    margin-bottom: 1rem;
 }
 
 .bottom-section .left-half p {
-    font-size: 100%;
-    padding-left: 20%;
-    padding-right: 20%;
-    margin-top: -10%;
-    text-align: center;
-}
-
-.bottom-section .right-half {
-    flex: 1;
-}
-
-.bottom-section .right-half h2 {
-    font-size: 200%;
-    text-align: center;
-    margin: 0;
-    padding: 10% 20% 20% 20%;
+    font-size: 1.25rem;
+    max-width: 800px;
+    margin: 0 auto;
 }
 
 .bottom-section .right-half div {
-    margin-top: -20%
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+    max-width: 600px;
+    margin-top: 2rem;
 }
 
+/* Team Members */
 .small-rounded-rectangle {
-    width: 500px;
-    height: 100px;
     background-color: white;
     border-radius: 15px;
-    margin: auto;
     display: flex;
-    justify-content:space-around;
+    justify-content: space-around;
     align-items: center;
-    text-align: center;
     color: black;
-    font-size: 100%;
-    margin-left: auto;
-    margin-right: auto;
-    margin-bottom: 10px;
+    font-size: 1rem;
+    width: 90%;
+    max-width: 500px;
+    height: 100px;
+    padding: 0 1rem;
+    margin: 0 auto 10px auto;
+    box-sizing: border-box;
 }
-
-
-/* ///////////////////////////////////////////// */
 
 /* GENERAL */
 
-/* Responsive CSS to create 3 full-screen sections */
 body {
     margin: 0;
     padding: 0;
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    min-height: 100vh;
     overflow-x: hidden;
 }
 
@@ -158,5 +153,30 @@ hr {
     height: 0;
 }
 
+/* RESPONSIVE LAYOUTS */
 
+@media screen and (min-width: 768px) {
+    .mid-section .left-half,
+    .mid-section .right-half,
+    .bottom-section .left-half,
+    .bottom-section .right-half {
+        flex: 1;
+    }
 
+    .mid-section p {
+        font-size: 2vw;
+    }
+
+    .bottom-section .left-half h2,
+    .bottom-section .right-half h2 {
+        font-size: 3vw;
+    }
+
+    .bottom-section .left-half p {
+        font-size: 1.1rem;
+    }
+
+    .small-rounded-rectangle {
+        font-size: 1.1rem;
+    }
+}
