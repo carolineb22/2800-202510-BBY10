@@ -76,8 +76,8 @@ app.get('/', (req, res) => {
  */
 
 // TODO catch invalidCred and deal with it properly in `signUp.html`
-app.post('/signUp', (req, res) => {
-    if (req.body.invalidCred) {
+app.get('/signUp', (req, res) => {
+    if (req.query.invalidCred) {
         console.log('UNIMPLEMENTED');
     }
 
@@ -85,8 +85,8 @@ app.post('/signUp', (req, res) => {
 });
 
 // TODO catch noSession, invalidEmail, noAccount, & invalidPassword, and deal with them properly in `login.html`
-app.post('/login', (req, res) => {
-    if (req.query.noSesion) {
+app.get('/login', (req, res) => {
+    if (req.query.noSession) {
         console.log('UNIMPLEMENTED');
     }
     if (req.query.invalidEmail) {
@@ -175,7 +175,7 @@ app.get('/main', (req, res) => {
     res.sendFile(__dirname + '/public/html/main.html');
 });
 
-app.post('/logout', (req, res) => {
+app.get('/logout', (req, res) => {
     req.session.destroy();
     res.redirect('/?loggedOut=1');
 });
