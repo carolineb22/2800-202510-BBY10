@@ -45,6 +45,14 @@ var { database } = include('databaseConnection');
 // ensure database 'users' collection
 const userCollection = database.db(mongodb_database).collection('users');
 
+// Middleware authentication function
+function validateSession(req, res, next) {
+    if (!req.session.authenticated) {
+        res.redirect(308, '/login?noSession=1');
+    }
+    next();
+};
+
 // ensure database collection for sessions
 var mongoStore = MongoStore.create({
     mongoUrl: `mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_host}/sessions`,
@@ -168,14 +176,15 @@ app.post('/loggingin', async (req, res) => {
     }
 });
 
-app.get('/main', (req, res) => {
-    if (!req.session.authenticated) {
-        res.redirect(308, '/login?noSession=1');
-    }
+app.get('/main', validateSession, (req, res) => {
     res.sendFile(__dirname + '/public/html/main.html');
 });
 
-app.post('/logout', (req, res) => {
+app.get('/mainGame', validateSession, (req, res) => {
+    res.sendFile(__dirname + '/public/html/mainGame.html');
+});
+
+app.get('/logout', (req, res) => {
     req.session.destroy();
     res.redirect('/?loggedOut=1');
 });
