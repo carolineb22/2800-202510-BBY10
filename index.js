@@ -180,6 +180,10 @@ app.get('/logout', (req, res) => {
     res.redirect('/?loggedOut=1');
 });
 
+app.get('/weatherTest', (req,res) => {
+    res.sendFile(__dirname + "/public/html/weatherTest.html");
+  });
+
 // 404 page
 app.use(function (req, res) {
     res.status(404).sendFile(__dirname + '/public/html/404.html');
