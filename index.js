@@ -182,13 +182,10 @@ app.get('/main', validateSession, (req, res) => {
     res.sendFile(__dirname + '/public/html/main.html');
 });
 
-<<<<<<< HEAD
 app.get('/mainGame', validateSession, (req, res) => {
     res.render('mainGame', {database: database});
 });
 
-=======
->>>>>>> 3da07de44f35b4d298dc3e4fc935a268154122ea
 app.get('/logout', (req, res) => {
     req.session.destroy();
     res.redirect('/?loggedOut=1');
