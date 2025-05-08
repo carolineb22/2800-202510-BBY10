@@ -1,35 +1,33 @@
-## About Us
+# About Us
 Team Name: BBY-10
 Team Members: 
 - Darion Delorme Set 2C
 - Marcy Ordinario Set 2B
 - Alex Hidalgo Set 2A
-- Glenn Dossot
+- Glenn Dossot Set 2C
 - Caroline (Cyrus) Bastiaanssen Set 2A
 
-## File Structure
-Put all front-end files into the `/public` directory.
-(Raw HTML files, CSS, images, fonts, etc.)
+# File Structure
+Put all front-end files into the `/public` directory. (.HTML files, .CSS, images, fonts, etc.)
 Put these files into their respective folders; E.g. `.html` files in `/public/html`, `.css` files in `/public/styles`.
 If no directory exists, create one with an appropriate name.
 
-## How to run locally with node
-Update this section as you work and add dependencies.
-Make sure you update the package requirements in the code block below.
-Don't make us have to check the dependencies manually.
+# How to run locally with node
 
 Code blocks are run in console in the root of the project directory.
 
-### Setup project locally (do this once)
-Make sure you have your `.env` file set up properly.
-To do so, make sure you properly configure your MongoDB and import the necessary variables.
+## Setup project locally
+Make sure you have your `.env` file set up properly with the necessary GUIDs and MongoDB connection parameters
+
+To do so, get the needed information from one of the project members for the shared project database.
+
+To run the porject using `node`, run the following commands in the project directory:
 ```bash
 npm i
-npm i express express-session connect-mongo bcrypt joi dotenv
+node index.js
 ```
 
-### Run using Nodemon
+If you prefer to use `nodemon`, use the following command instead:
 ```bash
-npm i
 nodemon index.js
 ```
