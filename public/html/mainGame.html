@@ -26,14 +26,30 @@
     </div>
 
     <!-- Bottom Bar with Upgrades and Build Buttons -->
+    <!-- Both of these are now misaligned. --> 
+    <!-- There's also a better way to make these buttons work, -->
+    <!-- But I don't know enough HTML to fix this. -->
     <div class="bottom-bar">
-        <button class="nav-button left">Upgrades</button>
-        <button class="nav-button right">Build</button>
+        <form action='/main/techTree' method='get'>
+            <button class="nav-button left">Upgrades</button>
+        </form>
+        <form action='/main/build' method='get'>
+            <button class="nav-button right">Build</button>
+        </form>
     </div>
 
     <!-- Settings button in top-left -->
     <div class="settings-button">
         <i class="material-icons">settings</i>
+    </div>
+
+    <!-- Dropdown Menu -->
+    <div class="dropdown-menu" id="settingsMenu">
+        <form action='/logout' method='get'>
+            <button class="dropdown-item">Log Out</button>
+        </form>
+        <button class="dropdown-item">Other Option</button>
+        <button class="dropdown-item">Another Option</button>
     </div>
 
     <!-- Top HUD with time display and buttons -->
@@ -52,6 +68,21 @@
         </div>
     </div>
 
+    <script>
+        const settingsBtn = document.querySelector('.settings-button');
+        const dropdownMenu = document.getElementById('settingsMenu');
+    
+        settingsBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent click from reaching body
+            dropdownMenu.classList.toggle('show');
+        });
+    
+        // Hide dropdown when clicking outside
+        document.body.addEventListener('click', () => {
+            dropdownMenu.classList.remove('show');
+        });
+    </script>
+    
 </body>
 
 </html>
