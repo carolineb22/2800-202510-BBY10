@@ -39,6 +39,8 @@ app.use(express.urlencoded({ extended: false }));
 // ensure public directory for styles/content delivery
 app.use(express.static(__dirname + "/public"));
 
+app.set('view engine', 'ejs');
+
 // ensure database connection
 var { database } = include('databaseConnection');
 
@@ -181,7 +183,7 @@ app.get('/main', validateSession, (req, res) => {
 });
 
 app.get('/mainGame', validateSession, (req, res) => {
-    res.sendFile(__dirname + '/public/html/mainGame.html');
+    res.render('mainGame', {database: database});
 });
 
 app.get('/logout', (req, res) => {
