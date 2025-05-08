@@ -61,6 +61,23 @@ app.use(session({
     resave: true
 }));
 
+// Following two functions taken from 2537
+function isValidSession(req) {
+    if (req.session.authenticated) {
+        return true;
+    }
+    return false;
+}
+
+function sessionValidation(req,res,next) {
+    if (isValidSession(req)) {
+        next();
+    }
+    else {
+        res.redirect('/login');
+    }
+}
+
 // landing page
 app.get('/', (req, res) => {
     if(req.query.loggedOut) {
@@ -168,12 +185,30 @@ app.post('/loggingin', async (req, res) => {
     }
 });
 
+// ensure that you cant access any game pages if there is no session
+app.use('/main', sessionValidation);
 app.get('/main', (req, res) => {
-    if (!req.session.authenticated) {
-        res.redirect(308, '/login?noSession=1');
-    }
-    res.sendFile(__dirname + '/public/html/main.html');
+    res.sendFile(__dirname + '/public/html/mainGame.html');
 });
+
+app.get("/main/techTree", (req,res) => {
+    res.sendFile(__dirname + '/public/html/techTree.html');
+});
+
+// TODO implement proper html page
+app.get('/main/build', (req,res) => {
+    res.send(`Unimplemented Page
+        <br>
+        <form action='/main' method='get'>
+            <button>Return to main</button>
+        </form>
+        <form action='/logout' method='get'>
+            <button>Log out</button>
+        </form>
+        `);
+});
+
+// TODO as more game pages are created, add their index.js paths under `/main` to ensure we have proper authorization
 
 app.get('/logout', (req, res) => {
     req.session.destroy();

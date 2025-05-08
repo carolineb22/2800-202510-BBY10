@@ -26,14 +26,24 @@
     </div>
 
     <!-- Bottom Bar with Upgrades and Build Buttons -->
+    <!-- Both of these are now misaligned. --> 
+    <!-- There's also a better way to make these buttons work, -->
+    <!-- But I don't know enough HTML to fix this. -->
     <div class="bottom-bar">
-        <button class="nav-button left">Upgrades</button>
-        <button class="nav-button right">Build</button>
+        <form action='/main/techTree' method='get'>
+            <button class="nav-button left">Upgrades</button>
+        </form>
+        <form action='/main/build' method='get'>
+            <button class="nav-button right">Build</button>
+        </form>
     </div>
 
     <!-- Settings button in top-left -->
     <div class="settings-button">
         <i class="material-icons">settings</i>
+        <form action='/logout' method='get'>
+            <button>Log Out</button>
+        </form>
     </div>
 
     <!-- Top HUD with time display and buttons -->
