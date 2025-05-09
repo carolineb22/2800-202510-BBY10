@@ -31,7 +31,7 @@ If you prefer to use `nodemon`, use the following command instead:
 ```bash
 nodemon index.js
 ```
-### About the Project
+# About the Project
 Our Tomorrow
 Our Tomorrow is an incremental game where your goal is to run a planet’s economy in a sustainable way. Your goal is to take advantage of your planet’s resources without leading the planet to its demise.
 
