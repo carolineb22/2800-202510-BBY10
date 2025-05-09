@@ -250,6 +250,13 @@ app.get('/logout', (req, res) => {
     res.redirect('/?loggedOut=1');
 });
 
+app.get('/weatherTest', (req,res) => {
+    res.render("weatherTest", {
+        title: "Weather Test",
+        css: ["styles/index.css"],
+        apiKey: process.env.WEATHER_API_KEY
+    });
+
 // TODO REMOVE LATER
 app.get('/main/techTree', (req, res) => {
     res.render("techTree", {
