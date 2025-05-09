@@ -256,6 +256,7 @@ app.get('/weatherTest', (req,res) => {
         css: ["styles/index.css"],
         apiKey: process.env.WEATHER_API_KEY
     });
+});
 
 // TODO REMOVE LATER
 app.get('/main/techTree', (req, res) => {
