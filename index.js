@@ -10,6 +10,7 @@ const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const bcrypt = require('bcrypt');
 const Joi = require('joi');
+const util = require('util');
 
 /* secret information section */
 const mongodb_host = process.env.MONGODB_HOST;
@@ -55,6 +56,46 @@ function validateSession(req, res, next) {
     next();
 };
 
+// Middleware logout function
+// (maybe replace the query system?)
+// (storing it as a cookie or as
+//  session data could be better)
+function checkLogout(req, res, next) {
+    if(req.query.loggedOut)
+    {
+        console.log("User logged out (UNIMPLEMENTED)");
+    }
+    else
+    {
+        next();
+    }
+}
+
+// Middleware login validation function
+// (maybe replace the query system?)
+// (storing it as a cookie or as
+//  session data could be better)
+function validateLogin(req, res, next) {
+    if(req.query.invalidEmail)
+    {
+        console.log("Invalid Email (UNIMPLEMENTED)");
+    }
+    else if(req.query.noAccount)
+    {
+        console.log("Email has no account (UNIMPLEMENTED)");
+    }
+    else if(req.query.invalidPassword)
+    {
+        console.log("Invalid Password (UNIMPLEMENTED)");
+    }
+    else
+    {
+        next();
+    }
+}
+
+// Middleware 
+
 // ensure database collection for sessions
 var mongoStore = MongoStore.create({
     mongoUrl: `mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_host}/sessions`,
@@ -72,11 +113,17 @@ app.use(session({
 }));
 
 // landing page
-app.get('/', (req, res) => {
-    if(req.query.loggedOut) {
-        console.log('UNIMPLEMENTED');
-    }
-    res.sendFile(__dirname + '/public/html/index.html');
+app.get('/', checkLogout, (req, res) => {
+    res.render('index', {
+        title: "Our Tomorrow",
+        css: ['styles/index.css', "https://fonts.googleapis.com/css2?family=Audiowide&display=swap"],
+        // Do note that only the latter of these two
+        // needs to be a crossorigin connection -
+        // I didn't bother differentiating the
+        // preconnects though so they both do
+        // crossorigin - shouldn't be an issue
+        preconnect: ["https://fonts.googleapis.com", "https://fonts.gstatic.com"]
+    });
 });
 
 /* 
@@ -85,30 +132,29 @@ app.get('/', (req, res) => {
  * while game logic and user registration can be moved to other .js files.
  */
 
-// TODO catch invalidCred and deal with it properly in `signUp.html`
+// TODO - remove middleware function,
+// catch invalidCred and deal with it properly in `signUp.html`
 app.get('/signUp', (req, res) => {
     if (req.query.invalidCred) {
         console.log('UNIMPLEMENTED');
     }
-
-    res.sendFile(__dirname + '/public/html/signUp.html');
+    res.render("signUp", {
+        title: "Log In - Our Tomorow",
+        css: ["styles/signUp.css", "https://fonts.googleapis.com/css2?family=Audiowide&display=swap"]
+    });
 });
 
-// TODO catch noSession, invalidEmail, noAccount, & invalidPassword, and deal with them properly in `login.html`
-app.get('/login', (req, res) => {
+// TODO - remove middleware function,
+// catch noSession, invalidEmail, noAccount, & invalidPassword
+// and deal with them properly in `login.html`
+app.get('/login', validateLogin, (req, res) => {
     if (req.query.noSession) {
         console.log('UNIMPLEMENTED');
     }
-    if (req.query.invalidEmail) {
-        console.log('UNIMPLEMENTED');
-    }
-    if (req.query.noAccount) {
-        console.log('UNIMPLEMENTED');
-    }
-    if (req.query.invalidPassword) {
-        console.log('UNIMPLEMENTED');
-    }
-    res.sendFile(__dirname + '/public/html/login.html');
+    res.render("login", {
+        title: "Log In - Our Tomorow",
+        css: ["styles/login.css", "https://fonts.googleapis.com/css2?family=Audiowide&display=swap"]
+    });
 });
 
 app.post('/submitUser', async (req, res) => {
@@ -178,12 +224,23 @@ app.post('/loggingin', async (req, res) => {
     }
 });
 
-app.get('/main', validateSession, (req, res) => {
-    res.sendFile(__dirname + '/public/html/main.html');
-});
-
-app.get('/mainGame', validateSession, (req, res) => {
-    res.render('mainGame', {database: database});
+app.get('/main', validateSession, async (req, res) => {
+    // Get the user profile from the session's username
+    let user = await userCollection.find({ username: req.session.username }).project({ email: 1, username: 1, password: 1, _id: 1 }).toArray();
+    // If the user doesn't have the number to increment,
+    // add it
+    if(!user.number)
+    {
+        user.number = 0
+    }
+    // The "number" is a placeholder incrementer -
+    // to be replaced with other relevant stats as
+    // we get there
+    res.render("mainGame", {
+        number: user.number,
+        title: "Main Game Page",
+        css: ['styles/mainGame.css', "https://fonts.googleapis.com/icon?family=Material+Icons"]
+    });
 });
 
 app.get('/logout', (req, res) => {
@@ -191,9 +248,20 @@ app.get('/logout', (req, res) => {
     res.redirect('/?loggedOut=1');
 });
 
+// TODO REMOVE LATER
+app.get('/techTree', validateSession, (req, res) => {
+    res.render("techTree", {
+        title: "Custom Tech Tree",
+        css: "styles/techTree.css"
+    })
+});
+
 // 404 page
 app.use(function (req, res) {
-    res.status(404).sendFile(__dirname + '/public/html/404.html');
+    res.status(404).render("404", {
+        title: "Page Not Found",
+        css: 'styles/404.css'
+    });
 });
 
 app.listen(port, () => {
