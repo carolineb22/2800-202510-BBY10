@@ -22,13 +22,26 @@
 
 <!-- Bottom Bar with Upgrades and Build Buttons -->
 <div class="bottom-bar">
-    <button class="nav-button left">Upgrades</button>
-    <button class="nav-button right">Build</button>
+    <form action='/main/techTree' method='get'>
+        <button class="nav-button left">Upgrades</button>
+    </form>
+    <form action='/main/build' method='get'>
+        <button class="nav-button right">Build</button>
+    </form>
 </div>
 
 <!-- Settings button in top-left -->
 <div class="settings-button">
     <i class="material-icons">settings</i>
+</div>
+
+<!-- Dropdown Menu -->
+<div class="dropdown-menu" id="settingsMenu">
+    <form action='/logout' method='get'>
+        <button class="dropdown-item">Log Out</button>
+    </form>
+    <button class="dropdown-item">Other Option</button>
+    <button class="dropdown-item">Another Option</button>
 </div>
 
 <!-- Top HUD with time display and buttons -->
@@ -46,9 +59,25 @@
         <button class="hud-button"><i class="material-icons">fast_forward</i></button>
     </div>
 </div>
+<script src="scripts/mainGame.js"></script>
+
+<script>
+    const settingsBtn = document.querySelector('.settings-button');
+    const dropdownMenu = document.getElementById('settingsMenu');
+
+    settingsBtn.addEventListener('click', (e) => {
+        e.stopPropagation(); // Prevent click from reaching body
+        dropdownMenu.classList.toggle('show');
+    });
+
+    // Hide dropdown when clicking outside
+    document.body.addEventListener('click', () => {
+        dropdownMenu.classList.remove('show');
+    });
+</script>
+
     <script>
     var number = <%= number %>;
     console.log(number);
     </script>
-<script src="scripts/mainGame.js"></script>
 <%- include("templates/footer")%>

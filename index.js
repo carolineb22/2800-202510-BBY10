@@ -247,7 +247,7 @@ app.get('/main', validateSession, async (req, res) => {
 
 app.get('/logout', (req, res) => {
     req.session.destroy();
-    res.redirect('/?loggedOut=1');
+    res.redirect('/');
 });
 
 app.get('/weatherTest', (req,res) => {
