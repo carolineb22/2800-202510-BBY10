@@ -39,6 +39,8 @@ app.use(express.urlencoded({ extended: false }));
 // ensure public directory for styles/content delivery
 app.use(express.static(__dirname + "/public"));
 
+app.set('view engine', 'ejs');
+
 // ensure database connection
 var { database } = include('databaseConnection');
 
@@ -181,8 +183,12 @@ app.get('/logout', (req, res) => {
 });
 
 app.get('/weatherTest', (req,res) => {
-    res.sendFile(__dirname + "/public/html/weatherTest.html");
-  });
+    res.render("weatherTest", {
+        title: "Weather Test",
+        css: ["styles/index.css"],
+        apiKey: process.env.WEATHER_API_KEY
+    });
+});
 
 // 404 page
 app.use(function (req, res) {

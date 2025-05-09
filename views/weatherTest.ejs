@@ -1,0 +1,35 @@
+<%- include("templates/header") %>
+<h1>Weather Info</h1>
+<p id="weather">Fetching weather...</p>
+<p id="cords">fetching cords...</p>
+
+<script>
+navigator.geolocation.getCurrentPosition(success, error);
+
+function success(position) {
+    const latitude = position.coords.latitude;
+    const longitude = position.coords.longitude;
+    console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
+    getWeather(latitude, longitude);
+}
+
+function error() {
+    console.error("Unable to retrieve your location");
+}
+
+function getWeather(lat, lon) {
+    const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=<%= apiKey%>`;
+
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            console.log("Weather Data:", data);
+            const temp = data.main.temp;
+            const description = data.weather[0].description;
+            document.getElementById("weather").textContent = `Temperature: ${temp}°C, ${description}`;
+            document.getElementById("cords").textContent = `Latitude: ${lat}, Longitude: ${lon}`;
+        })
+        .catch(err => console.error("Weather API error:", err));
+}
+</script>
+<%- include("templates/footer") %>
