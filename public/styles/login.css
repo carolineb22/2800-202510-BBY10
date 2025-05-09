@@ -1,0 +1,110 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Audiowide', sans-serif;
+    background: radial-gradient(ellipse at center, #1a1a2e 0%, #0f0f1a 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    overflow: hidden;
+  }
+  
+  .login-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+  }
+  
+  .login-box {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(12px);
+    padding: 3rem 2.5rem;
+    border-radius: 20px;
+    box-shadow: 0 0 25px rgba(0, 255, 255, 0.2);
+    width: 100%;
+    max-width: 360px;
+    text-align: center;
+    animation: fadeIn 1.5s ease-out, float 6s ease-in-out infinite;
+  }
+  
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+  
+  .login-box h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.25rem;
+    color: #00e5ff;
+  }
+  
+  .login-box .subtitle {
+    font-size: 0.95rem;
+    color: #a0d9f6;
+    margin-bottom: 2rem;
+  }
+  
+  .login-box input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1rem;
+    border: none;
+    border-radius: 12px;
+    box-sizing: border-box;
+    background: rgba(255, 255, 255, 0.08);
+    color: white;
+    font-size: 1rem;
+    transition: background 0.3s ease;
+  }
+  
+  .login-box input::placeholder {
+    color: #aaa;
+  }
+  
+  .login-box input:focus {
+    background: rgba(255, 255, 255, 0.15);
+    outline: none;
+    box-shadow: 0 0 8px #00e5ff;
+  }
+  
+  .login-box button {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: #00bcd4;
+    border: none;
+    border-radius: 12px;
+    color: white;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+  }
+  
+  .login-box button:hover {
+    background: #0097a7;
+    transform: translateY(-2px);
+  }
+  
+  .signup-link {
+    margin-top: 1.5rem;
+    font-size: 0.85rem;
+    color: #a0d9f6;
+  }
+  
+  .signup-link a {
+    color: #80deea;
+    text-decoration: none;
+  }
+  
+  .signup-link a:hover {
+    text-decoration: underline;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
