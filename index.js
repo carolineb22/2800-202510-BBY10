@@ -10,6 +10,7 @@ const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const bcrypt = require('bcrypt');
 const Joi = require('joi');
+const util = require('util');
 
 /* secret information section */
 const mongodb_host = process.env.MONGODB_HOST;
@@ -47,6 +48,50 @@ var { database } = include('databaseConnection');
 // ensure database 'users' collection
 const userCollection = database.db(mongodb_database).collection('users');
 
+// Middleware authentication function
+function validateSession(req, res, next) {
+    if (!req.session.authenticated) {
+        res.redirect(308, '/login?noSession=1');
+    }
+    next();
+};
+
+// Middleware logout function
+// (TODO REPLACE)
+function checkLogout(req, res, next) {
+    if(req.query.loggedOut)
+    {
+        console.log("User logged out (UNIMPLEMENTED)");
+    }
+    else
+    {
+        next();
+    }
+}
+
+// Middleware login validation function
+// (TODO REPLACE)
+function validateLogin(req, res, next) {
+    if(req.query.invalidEmail)
+    {
+        console.log("Invalid Email (UNIMPLEMENTED)");
+    }
+    else if(req.query.noAccount)
+    {
+        console.log("Email has no account (UNIMPLEMENTED)");
+    }
+    else if(req.query.invalidPassword)
+    {
+        console.log("Invalid Password (UNIMPLEMENTED)");
+    }
+    else
+    {
+        next();
+    }
+}
+
+// Middleware 
+
 // ensure database collection for sessions
 var mongoStore = MongoStore.create({
     mongoUrl: `mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_host}/sessions`,
@@ -64,11 +109,17 @@ app.use(session({
 }));
 
 // landing page
-app.get('/', (req, res) => {
-    if(req.query.loggedOut) {
-        console.log('UNIMPLEMENTED');
-    }
-    res.sendFile(__dirname + '/public/html/index.html');
+app.get('/', checkLogout, (req, res) => {
+    res.render('index', {
+        title: "Our Tomorrow",
+        css: ['styles/index.css', "https://fonts.googleapis.com/css2?family=Audiowide&display=swap"],
+        // Do note that only the latter of these two
+        // needs to be a crossorigin connection -
+        // I didn't bother differentiating the
+        // preconnects though so they both do
+        // crossorigin - shouldn't be an issue
+        preconnect: ["https://fonts.googleapis.com", "https://fonts.gstatic.com"]
+    });
 });
 
 /* 
@@ -77,30 +128,29 @@ app.get('/', (req, res) => {
  * while game logic and user registration can be moved to other .js files.
  */
 
-// TODO catch invalidCred and deal with it properly in `signUp.html`
+// TODO - remove middleware function,
+// catch invalidCred and deal with it properly in `signUp.html`
 app.get('/signUp', (req, res) => {
     if (req.query.invalidCred) {
         console.log('UNIMPLEMENTED');
     }
-
-    res.sendFile(__dirname + '/public/html/signUp.html');
+    res.render("signUp", {
+        title: "Log In - Our Tomorow",
+        css: ["styles/signUp.css", "https://fonts.googleapis.com/css2?family=Audiowide&display=swap"]
+    });
 });
 
-// TODO catch noSession, invalidEmail, noAccount, & invalidPassword, and deal with them properly in `login.html`
-app.get('/login', (req, res) => {
+// TODO - remove middleware function,
+// catch noSession, invalidEmail, noAccount, & invalidPassword
+// and deal with them properly in `login.html`
+app.get('/login', validateLogin, (req, res) => {
     if (req.query.noSession) {
         console.log('UNIMPLEMENTED');
     }
-    if (req.query.invalidEmail) {
-        console.log('UNIMPLEMENTED');
-    }
-    if (req.query.noAccount) {
-        console.log('UNIMPLEMENTED');
-    }
-    if (req.query.invalidPassword) {
-        console.log('UNIMPLEMENTED');
-    }
-    res.sendFile(__dirname + '/public/html/login.html');
+    res.render("login", {
+        title: "Log In - Our Tomorow",
+        css: ["styles/login.css", "https://fonts.googleapis.com/css2?family=Audiowide&display=swap"]
+    });
 });
 
 app.post('/submitUser', async (req, res) => {
@@ -146,7 +196,9 @@ app.post('/loggingin', async (req, res) => {
         return;
     }
 
-    const result = await userCollection.find({ email: email }).project({ email: 1, username: 1, password: 1, _id: 1 }).toArray();
+    const result = await userCollection.find({ email: email })
+                                       .project({ email: 1, username: 1, password: 1, _id: 1 })
+                                       .toArray();
 
     console.log(result);
     if (result.length != 1) {
@@ -170,12 +222,28 @@ app.post('/loggingin', async (req, res) => {
     }
 });
 
-app.get('/main', (req, res) => {
-    if (!req.session.authenticated) {
-        res.redirect(308, '/login?noSession=1');
+app.get('/main', validateSession, async (req, res) => {
+    // Get the user profile from the session's username
+    let user = await userCollection.find({ username: req.session.username })
+                                   .project({ email: 1, username: 1, password: 1, _id: 1 })
+                                   .toArray();
+    // If the user doesn't have the number to increment,
+    // add it
+    if(!user.number)
+    {
+        user.number = 0
     }
-    res.sendFile(__dirname + '/public/html/main.html');
+    // The "number" is a placeholder incrementer -
+    // to be replaced with other relevant stats as
+    // we get there
+    res.render("mainGame", {
+        number: user.number,
+        title: "Main Game Page",
+        css: ['styles/mainGame.css', "https://fonts.googleapis.com/icon?family=Material+Icons"]
+    });
 });
+
+// TODO as more game pages are created, add their index.js paths under `/main` to ensure we have proper authorization
 
 app.get('/logout', (req, res) => {
     req.session.destroy();
@@ -188,11 +256,34 @@ app.get('/weatherTest', (req,res) => {
         css: ["styles/index.css"],
         apiKey: process.env.WEATHER_API_KEY
     });
+
+// TODO REMOVE LATER
+app.get('/main/techTree', (req, res) => {
+    res.render("techTree", {
+        title: "Custom Tech Tree",
+        css: "styles/techTree.css"
+    })
+});
+
+// TODO implement proper html page
+app.get('/main/build', (req,res) => {
+    res.send(`Unimplemented Page
+        <br>
+        <form action='/main' method='get'>
+            <button>Return to main</button>
+        </form>
+        <form action='/logout' method='get'>
+            <button>Log out</button>
+        </form>
+        `);
 });
 
 // 404 page
 app.use(function (req, res) {
-    res.status(404).sendFile(__dirname + '/public/html/404.html');
+    res.status(404).render("404", {
+        title: "Page Not Found",
+        css: 'styles/404.css'
+    });
 });
 
 app.listen(port, () => {

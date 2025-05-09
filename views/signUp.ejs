@@ -1,0 +1,15 @@
+<%- include("templates/header") %>
+<div class="login-container">
+    <div class="login-box">
+        <h1>Welcome</h1>
+        <p class="subtitle">Sign up to join the mission</p>
+        <form action="/submitUser" method="post">
+            <input name="username" type="text" placeholder="username" required>
+            <input name="email" type="text" placeholder="email" required>
+            <input name="password" type="password" placeholder="password" required>
+            <button type="submit">Enter</button>
+        </form>
+        <p class="login-link">Returning? <a href="/login">login</a></p>
+    </div>
+</div>
+<%- include("templates/footer") %>
