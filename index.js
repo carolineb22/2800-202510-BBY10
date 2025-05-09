@@ -283,7 +283,7 @@ app.get('/main/build', validateSession, (req,res) => {
 app.use(function (req, res) {
     res.status(404).render("404", {
         title: "Page Not Found",
-        css: 'styles/404.css'
+        css: ['styles/404.css']
     });
 });
 
