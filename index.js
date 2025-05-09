@@ -259,7 +259,7 @@ app.get('/weatherTest', (req,res) => {
 });
 
 // TODO REMOVE LATER
-app.get('/main/techTree', (req, res) => {
+app.get('/main/techTree', validateSession, (req, res) => {
     res.render("techTree", {
         title: "Custom Tech Tree",
         css: "styles/techTree.css"
@@ -267,7 +267,7 @@ app.get('/main/techTree', (req, res) => {
 });
 
 // TODO implement proper html page
-app.get('/main/build', (req,res) => {
+app.get('/main/build', validateSession, (req,res) => {
     res.send(`Unimplemented Page
         <br>
         <form action='/main' method='get'>
