@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <title>Main Game Page</title>
+    <link rel="stylesheet" href="styles/mainGame.css" />
+    <!-- Link to Google Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Left Sidebar with centered text -->
+        <aside class="sidebar left">
+            <p class="sidebar-text">Left Sidebar</p>
+            <button id="incrementer">Click me!</button>
+            <button>Click me!</button>
+        </aside>
+
+        <main class="map">Map Area</main>
+
+        <!-- Right Sidebar with centered text -->
+        <aside class="sidebar right">
+            <p class="sidebar-text">Right Sidebar</p>
+        </aside>
+    </div>
+
+    <!-- Bottom Bar with Upgrades and Build Buttons -->
+    <div class="bottom-bar">
+        <button class="nav-button left">Upgrades</button>
+        <button class="nav-button right">Build</button>
+    </div>
+
+    <!-- Settings button in top-left -->
+    <div class="settings-button">
+        <i class="material-icons">settings</i>
+    </div>
+
+    <!-- Top HUD with time display and buttons -->
+    <div class="top-hud">
+        <span class="time-display">12:34</span>
+        <div class="hud-controls">
+            <!-- Play/Pause Button -->
+            <input type="checkbox" class="toggle-play" id="toggle-play" />
+            <label class="hud-button" for="toggle-play">
+                <i class="material-icons play">play_arrow</i> <!-- Play icon -->
+                <i class="material-icons pause">pause</i> <!-- Pause icon -->
+            </label>
+
+            <!-- Speed Change Button -->
+            <button class="hud-button"><i class="material-icons">fast_forward</i></button>
+        </div>
+    </div>
+    <script src="scripts/mainGame.js"></script>
+</body>
+
+</html>
