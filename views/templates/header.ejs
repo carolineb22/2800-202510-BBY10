@@ -7,7 +7,7 @@
     <% css.forEach((sheet) => {%>
             <link rel="stylesheet" href=<%=sheet%>>
     <% }); %>
-    <% if(preconnect) preconnect.forEach((p) => { %>
+    <% if(locals.preconnect) preconnect.forEach((p) => { %>
         <link rel="preconnect" href=<%=p%> crossorigin>
     <% }) %>
 </head>
