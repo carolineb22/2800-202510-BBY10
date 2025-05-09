@@ -1,61 +1,59 @@
-<%= include("templates/header") %>
-<body>
+<%- include("templates/header") %>
+<h1 style="text-align:center;">Custom Skill Tree</h1>
+<div id="skillPoints" style="text-align:center; font-size: 1.2em;">Skill Points: 0</div>
 
-    <h1 style="text-align:center;">Custom Skill Tree</h1>
-    <div id="skillPoints" style="text-align:center; font-size: 1.2em;">Skill Points: 0</div>
+<button id="addPointBtn"
+    style="display:block; margin: 10px auto; padding: 8px 16px; font-size: 14px; cursor:pointer;">(TEMP) +1 Skill
+    Point</button>
 
-    <button id="addPointBtn"
-        style="display:block; margin: 10px auto; padding: 8px 16px; font-size: 14px; cursor:pointer;">(TEMP) +1 Skill
-        Point</button>
+<div id="treeContainer">
+    <canvas id="connectorCanvas" width="1000" height="700"></canvas>
 
-    <div id="treeContainer">
-        <canvas id="connectorCanvas" width="1000" height="700"></canvas>
-
-        <div class="skill" id="skill1" data-name="Root Skill" data-cost="1" data-description="This is the root skill."
-            data-parent="" style="top: 50px; left: 440px;">
-            <!-- Text will be dynamically set from JS -->
-        </div>
-        <div class="skill" id="skill2" data-name="Left Child" data-cost="2"
-            data-description="This is a left child skill." data-parent="skill1" style="top: 200px; left: 300px;">
-            <!-- Text will be dynamically set from JS -->
-        </div>
-        <div class="skill" id="skill3" data-name="Right Child" data-cost="2"
-            data-description="This is a right child skill." data-parent="skill1" style="top: 200px; left: 580px;">
-            <!-- Text will be dynamically set from JS -->
-        </div>
-        <div class="skill" id="skill4" data-name="Far Left" data-cost="3" data-description="This is the far left skill."
-            data-parent="skill2" style="top: 370px; left: 180px;">
-            <!-- Text will be dynamically set from JS -->
-        </div>
-        <div class="skill" id="skill5" data-name="Bottom Middle" data-cost="3"
-            data-description="This is the bottom middle skill." data-parent="skill2" style="top: 370px; left: 370px;">
-            <!-- Text will be dynamically set from JS -->
-        </div>
-        <div class="skill" id="skill6" data-name="Far Right" data-cost="3"
-            data-description="This is the far right skill." data-parent="skill3" style="top: 370px; left: 700px;">
-            <!-- Text will be dynamically set from JS -->
-        </div>
-        <div class="skill" id="skill7" data-name="sdff" data-cost="3" data-description="sdfsdfsdfsdf"
-            data-parent="skill5" style="top: 370px; left: 550px;">
-            <!-- Text will be dynamically set from JS -->
-        </div>
-        <div class="skill" id="skill8" data-name="new thing" data-cost="6"
-            data-description="this is the discription and a test to see what happend with a long discription and blablablalbalb vnfsovbn srvsdojvb sdjb vsodj vsodjbv sodjv sodjv"
-            data-parent="skill6" style="top: 600px; left: 400px;">
-            <!-- Text will be dynamically set from JS -->
-        </div>
+    <div class="skill" id="skill1" data-name="Root Skill" data-cost="1" data-description="This is the root skill."
+        data-parent="" style="top: 50px; left: 440px;">
+        <!-- Text will be dynamically set from JS -->
     </div>
-
-
-
-    <!-- Info box for showing details of the unlocked skill -->
-    <div id="infoBox">
-        <h3 id="infoTitle">Skill Title</h3>
-        <p id="infoCost">Cost: 0 Skill Points</p>
-        <p id="infoDescription">Skill description will be shown here.</p>
-        <button id="unlockBtn">Unlock Skill</button>
-        <button id="cancelBtn">Cancel</button>
+    <div class="skill" id="skill2" data-name="Left Child" data-cost="2"
+        data-description="This is a left child skill." data-parent="skill1" style="top: 200px; left: 300px;">
+        <!-- Text will be dynamically set from JS -->
     </div>
+    <div class="skill" id="skill3" data-name="Right Child" data-cost="2"
+        data-description="This is a right child skill." data-parent="skill1" style="top: 200px; left: 580px;">
+        <!-- Text will be dynamically set from JS -->
+    </div>
+    <div class="skill" id="skill4" data-name="Far Left" data-cost="3" data-description="This is the far left skill."
+        data-parent="skill2" style="top: 370px; left: 180px;">
+        <!-- Text will be dynamically set from JS -->
+    </div>
+    <div class="skill" id="skill5" data-name="Bottom Middle" data-cost="3"
+        data-description="This is the bottom middle skill." data-parent="skill2" style="top: 370px; left: 370px;">
+        <!-- Text will be dynamically set from JS -->
+    </div>
+    <div class="skill" id="skill6" data-name="Far Right" data-cost="3"
+        data-description="This is the far right skill." data-parent="skill3" style="top: 370px; left: 700px;">
+        <!-- Text will be dynamically set from JS -->
+    </div>
+    <div class="skill" id="skill7" data-name="sdff" data-cost="3" data-description="sdfsdfsdfsdf"
+        data-parent="skill5" style="top: 370px; left: 550px;">
+        <!-- Text will be dynamically set from JS -->
+    </div>
+    <div class="skill" id="skill8" data-name="new thing" data-cost="6"
+        data-description="this is the discription and a test to see what happend with a long discription and blablablalbalb vnfsovbn srvsdojvb sdjb vsodj vsodjbv sodjv sodjv"
+        data-parent="skill6" style="top: 600px; left: 400px;">
+        <!-- Text will be dynamically set from JS -->
+    </div>
+</div>
 
-    <script src="scripts/techTree.js"></script>
-<%= include("templates/footer") %>
+
+
+<!-- Info box for showing details of the unlocked skill -->
+<div id="infoBox">
+    <h3 id="infoTitle">Skill Title</h3>
+    <p id="infoCost">Cost: 0 Skill Points</p>
+    <p id="infoDescription">Skill description will be shown here.</p>
+    <button id="unlockBtn">Unlock Skill</button>
+    <button id="cancelBtn">Cancel</button>
+</div>
+
+<script src="../scripts/techTree.js"></script>
+<%- include("templates/footer") %>

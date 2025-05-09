@@ -53,7 +53,10 @@ function validateSession(req, res, next) {
     if (!req.session.authenticated) {
         res.redirect(308, '/login?noSession=1');
     }
-    next();
+    else
+    {
+        next();
+    }
 };
 
 // Middleware logout function
@@ -262,7 +265,10 @@ app.get('/weatherTest', (req,res) => {
 app.get('/main/techTree', validateSession, (req, res) => {
     res.render("techTree", {
         title: "Custom Tech Tree",
-        css: ["styles/techTree.css"]
+        // Since techTree is a subdirectory of main,
+        // we have to go one directory up to get
+        // the style sheets (and JS)
+        css: ["../styles/techTree.css"]
     })
 });
 
