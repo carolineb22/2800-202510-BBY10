@@ -57,9 +57,7 @@ function validateSession(req, res, next) {
 };
 
 // Middleware logout function
-// (maybe replace the query system?)
-// (storing it as a cookie or as
-//  session data could be better)
+// (TODO REPLACE)
 function checkLogout(req, res, next) {
     if(req.query.loggedOut)
     {
@@ -72,9 +70,7 @@ function checkLogout(req, res, next) {
 }
 
 // Middleware login validation function
-// (maybe replace the query system?)
-// (storing it as a cookie or as
-//  session data could be better)
+// (TODO REPLACE)
 function validateLogin(req, res, next) {
     if(req.query.invalidEmail)
     {
@@ -200,7 +196,9 @@ app.post('/loggingin', async (req, res) => {
         return;
     }
 
-    const result = await userCollection.find({ email: email }).project({ email: 1, username: 1, password: 1, _id: 1 }).toArray();
+    const result = await userCollection.find({ email: email })
+                                       .project({ email: 1, username: 1, password: 1, _id: 1 })
+                                       .toArray();
 
     console.log(result);
     if (result.length != 1) {
@@ -226,7 +224,9 @@ app.post('/loggingin', async (req, res) => {
 
 app.get('/main', validateSession, async (req, res) => {
     // Get the user profile from the session's username
-    let user = await userCollection.find({ username: req.session.username }).project({ email: 1, username: 1, password: 1, _id: 1 }).toArray();
+    let user = await userCollection.find({ username: req.session.username })
+                                   .project({ email: 1, username: 1, password: 1, _id: 1 })
+                                   .toArray();
     // If the user doesn't have the number to increment,
     // add it
     if(!user.number)
