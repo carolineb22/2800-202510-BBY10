@@ -262,7 +262,7 @@ app.get('/weatherTest', (req,res) => {
 app.get('/main/techTree', validateSession, (req, res) => {
     res.render("techTree", {
         title: "Custom Tech Tree",
-        css: "styles/techTree.css"
+        css: ["styles/techTree.css"]
     })
 });
 
