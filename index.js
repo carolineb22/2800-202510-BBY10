@@ -243,17 +243,32 @@ app.get('/main', validateSession, async (req, res) => {
     });
 });
 
+// TODO as more game pages are created, add their index.js paths under `/main` to ensure we have proper authorization
+
 app.get('/logout', (req, res) => {
     req.session.destroy();
     res.redirect('/?loggedOut=1');
 });
 
 // TODO REMOVE LATER
-app.get('/techTree', validateSession, (req, res) => {
+app.get('/main/techTree', (req, res) => {
     res.render("techTree", {
         title: "Custom Tech Tree",
         css: "styles/techTree.css"
     })
+});
+
+// TODO implement proper html page
+app.get('/main/build', (req,res) => {
+    res.send(`Unimplemented Page
+        <br>
+        <form action='/main' method='get'>
+            <button>Return to main</button>
+        </form>
+        <form action='/logout' method='get'>
+            <button>Log out</button>
+        </form>
+        `);
 });
 
 // 404 page
