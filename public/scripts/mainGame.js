@@ -281,6 +281,27 @@ function displayActiveSector() {
     document.getElementById("sector_info").innerHTML = formattedInfo;
 }
 
+function displayBuildingSidebar() {
+    console.log("meowa");
+    if (activeElement) {
+        console.log("meowb");
+        let elem = getGeographicalElementById(activeElement);
+        if (elem) {
+            Object.values(BuildingTemplates).forEach(grah => {
+                if (!grah[7] || grah[7] == elem.id) {
+                    let newThing = document.createElement("p");
+                    newThing.innerHTML = `Build ${grah[2]}, Costs ${grah[5]}`
+                    newThing.classList = ["hud-button"];
+                    document.getElementById('gluh').appendChild(newThing);
+                    newThing.addEventListener('click', e => {
+                        buildBuilding(grah[0], elem.uuid);
+                    })
+                }
+            })
+        }
+    }
+}
+
 // GAME LOOP -----------------------------------------------------------------
 function gameLoop() {
     updateResources();
