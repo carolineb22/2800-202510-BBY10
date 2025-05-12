@@ -372,3 +372,11 @@ fastForward.addEventListener("click", e => {
     }
 
 })
+
+document.getElementById('cycle_sector').addEventListener("click", e => {
+    activeSector += 1;
+    if (activeSector >= Sectors.length) {
+        activeSector = 0;
+    }
+    displayActiveSector()
+})
