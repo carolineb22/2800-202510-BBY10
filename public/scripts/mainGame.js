@@ -1,8 +1,24 @@
-console.log(userCollection);
-var incrementer = document.getElementById("incrementer");
-incrementer.onclick = () => number++;
+// VALUES DECLARE -----------------------------------------------------------
+const Resources = {}
+const Sectors = [];
+const BaseDepletion = 10000;
 
-function save()
-{
-    // TODO figure out how to do
+let activeSector = 0;
+let activeElement = null;
+
+// ENUMS --------------------------------------------------------------------
+const BuildingTypes = {
+    Housing: "Housing",
+    Extraction: "Extraction",
+    Processing: "Processing"
+}
+
+const ResourceTypes = {
+    Water: "Water",
+    Food: "Food",
+    BuildingMaterials: "Building Materials",
+    Metal: "Metal",
+    Chemicals: "Chemicals",
+    AdvancedGoods: "Advanced Goods",
+    Metamaterials: "Metamaterials"
 }
