@@ -22,3 +22,38 @@ const ResourceTypes = {
     AdvancedGoods: "Advanced Goods",
     Metamaterials: "Metamaterials"
 }
+
+
+// TICK CONTROL --------------------------------------------------------------
+const tickInterval = 100; //in milliseconds
+const fastInterval = 50; //in milliseconds
+let fastMode = false;
+
+let a = 0;
+const e = document.getElementById("test");
+
+
+let gameInterval;
+
+function pause() {
+    if (gameInterval) {
+        clearInterval(gameInterval);
+        gameInterval = null;
+        console.log("cleared")
+    }
+}
+
+function resume() {
+    if (!gameInterval) {
+        gameInterval = setInterval(gameLoop, fastMode ? fastInterval : tickInterval);
+        console.log("started ticking");
+    }
+}
+
+document.getElementById('play_state').addEventListener("click", e => {
+    if (gameInterval) {
+        pause();
+    } else {
+        resume();
+    }
+})
