@@ -43,6 +43,73 @@ const GeographicalElementTemplates = {
     ]
 }
 
+const BuildingTemplates = {
+    building_logging_site: [
+        "building_logging_site",
+        BuildingTypes.Extraction,
+        "Logging Site",
+        [],
+        [
+            ["BuildingMaterials", 10]
+        ],
+        [
+            ["BuildingMaterials", 10000]
+        ],
+        1,
+        "element_forest"
+    ],
+    building_wood_power_plant: [
+        "building_wood_power_plant",
+        BuildingTypes.Extraction,
+        "Wood Power Plant",
+        [],
+        [],
+        [
+            ["BuildingMaterials", 30000]
+        ],
+        3,
+        "element_forest"
+    ],
+    building_forest_cabins: [
+        "building_forest_cabins",
+        BuildingTypes.Housing,
+        "Forest Cabins",
+        [],
+        [],
+        [
+            ["BuildingMaterials", 20000]
+        ],
+        null,
+        "element_forest"
+    ],
+    building_test: [
+        "building_test",
+        BuildingTypes.Extraction,
+        "Test Building",
+        [
+            ["Water", 20]
+        ],
+        [
+            ["Chemicals", 40]
+        ],
+        [
+            ["BuildingMaterials", 1000]
+        ],
+        null,
+        null
+    ],
+    building_impossible: [
+        "building_impossible",
+        BuildingTypes.Extraction,
+        "Impossible ahh building",
+        [],
+        [],
+        [],
+        null,
+        "surface_of_the_sun"
+    ]
+}
+
 // OBJECTS -------------------------------------------------------------------
 function GeographicalElement(id, name, passiveProduction, situationalBuildings, buildingBaseCapacity, depletesInto) {
     this.uuid = crypto.randomUUID(); //uuid of this element
