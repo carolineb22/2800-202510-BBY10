@@ -12,11 +12,36 @@
         <button id="incrementer">Incrementer</button>
     </aside>
 
-    <main class="map">Map Area</main>
+    <main class="map">
+        <div class="row">
+            <p class="col-md-6">TEMP DISPLAY</p>
+            <br>
+            <p class="col-md-6" id="resources">pp</p>
+            <br>
+            <p class="hud-button col-md-6" id="cycle_sector">Cycle this sector!</p>
+            <br>
+            <p class="col-md-6" id="sector_info">zz</p>
+            <br>
+        </div>
+        
+
+    </main>
+
+    
 
     <!-- Right Sidebar with centered text -->
     <aside class="sidebar right">
         <p class="sidebar-text">Right Sidebar</p>
+        <br>
+        <form>
+            <div class="form-group">
+              <label for="elementInput">Temporary Geographical Element Selection</label>
+              <input type="text" class="form-control" id="elementInput" placeholder="TEMP">
+            </div>
+            <p class="hud-button col-md-6" id="update_elem">Select</p>
+        </form>
+        <div id="gluh"></div>
+        
     </aside>
 </div>
 
@@ -50,13 +75,13 @@
     <div class="hud-controls">
         <!-- Play/Pause Button -->
         <input type="checkbox" class="toggle-play" id="toggle-play" />
-        <label class="hud-button" for="toggle-play">
+        <label class="hud-button" for="toggle-play" id="play_state">
             <i class="material-icons play">play_arrow</i> <!-- Play icon -->
             <i class="material-icons pause">pause</i> <!-- Pause icon -->
         </label>
 
         <!-- Speed Change Button -->
-        <button class="hud-button"><i class="material-icons">fast_forward</i></button>
+        <button class="hud-button" id="fast_forward"><i class="material-icons">fast_forward</i></button>
     </div>
 </div>
 <script src="scripts/mainGame.js"></script>
@@ -75,9 +100,4 @@
         dropdownMenu.classList.remove('show');
     });
 </script>
-
-    <script>
-    var number = <%= number %>;
-    console.log(number);
-    </script>
 <%- include("templates/footer")%>
