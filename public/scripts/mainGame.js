@@ -23,6 +23,16 @@ const ResourceTypes = {
     Metamaterials: "Metamaterials"
 }
 
+// GAME LOOP -----------------------------------------------------------------
+function gameLoop() {
+    updateResources();
+    displayActiveSector();
+
+    Sectors.forEach(sector => {
+        sector.doTick();
+    })
+
+}
 
 // TICK CONTROL --------------------------------------------------------------
 const tickInterval = 100; //in milliseconds
