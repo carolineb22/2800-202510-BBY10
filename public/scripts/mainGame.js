@@ -90,6 +90,23 @@ function Building(id, type, name, consumptionArray, productionArray, costArray, 
     
 }
 
+function Sector(id, name, geographicalElements, buildings) {
+    this.id = id;
+    this.name = name;
+    this.geographicalElements = geographicalElements;
+    this.buildings = buildings;
+
+    this.doTick = function() {
+        this.buildings.forEach(building => {
+            building.doTick();
+        })
+
+        this.geographicalElements.forEach(element => {
+            element.doTick();
+        })
+    }
+}
+
 // GAME LOOP -----------------------------------------------------------------
 function gameLoop() {
     updateResources();
