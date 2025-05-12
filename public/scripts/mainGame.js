@@ -23,6 +23,33 @@ const ResourceTypes = {
     Metamaterials: "Metamaterials"
 }
 
+// OBJECTS -------------------------------------------------------------------
+function GeographicalElement(id, name, passiveProduction, situationalBuildings, buildingBaseCapacity, depletesInto) {
+    this.uuid = crypto.randomUUID(); //uuid of this element
+    this.id = id; //id of this element, is seperate from uuid as multiple of the same element can inhabit a sector
+    this.name = name; //display name of this element
+    this.passiveProduction = passiveProduction; //array of arrays that contain a resource and production amount per tick
+    this.situationalBuildings = situationalBuildings; //array of building ids that can be built. subarrays are mutually exclusive.
+    this.buildingBaseCapacity = buildingBaseCapacity; //total buildings that can be made on that element.
+    this.depletion = BaseDepletion; //abritrary value of how much this element can take before being depleted.
+    this.depletesInto = depletesInto; //what element does this element turn into after being depleted? based on id
+
+
+    this.doTick = function() {
+        this.passiveProduction.forEach(val => {
+            Resources[val[0]] += val[1]
+        })
+    }
+
+    this.depleteBy = function(value) {
+        this.depletion -= value;
+
+        if (this.depletion <= 0) {
+            //TODO: Logic for depletion
+        }
+    }
+}
+
 // GAME LOOP -----------------------------------------------------------------
 function gameLoop() {
     updateResources();
