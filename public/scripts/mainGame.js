@@ -23,6 +23,26 @@ const ResourceTypes = {
     Metamaterials: "Metamaterials"
 }
 
+// TEMPLATES -----------------------------------------------------------------
+const GeographicalElementTemplates = {
+    element_forest: [
+        "element_forest",
+        "Forest",
+        [
+            ["BuildingMaterials", 0.1]
+        ],
+        [
+            [
+                ["building_logging_site", 1],
+                ["building_wood_power_plant", 1]
+            ],
+            ["building_forest_cabins", 1]
+        ],
+        2,
+        "element_grassland"
+    ]
+}
+
 // OBJECTS -------------------------------------------------------------------
 function GeographicalElement(id, name, passiveProduction, situationalBuildings, buildingBaseCapacity, depletesInto) {
     this.uuid = crypto.randomUUID(); //uuid of this element
