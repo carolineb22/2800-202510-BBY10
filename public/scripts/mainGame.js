@@ -380,3 +380,8 @@ document.getElementById('cycle_sector').addEventListener("click", e => {
     }
     displayActiveSector()
 })
+
+document.getElementById('update_elem').addEventListener("click", e => {
+    activeElement = document.getElementById('elementInput').value;
+    displayBuildingSidebar();
+})
