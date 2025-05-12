@@ -249,6 +249,38 @@ function updateResources() {
     document.getElementById("resources").innerHTML = formattedResources;
 }
 
+function displayActiveSector() {
+    let formattedInfo = "";
+    let sector = Sectors[activeSector];
+
+    formattedInfo += `Selected sector <b>${sector.name}</b><br><br>Geographical elements<br> `;
+    
+    sector.geographicalElements.forEach(element => {
+        formattedInfo += `<hr><br>${element.name}, ${element.depletion == BaseDepletion ? "untouched" : `${element.depletion}/${BaseDepletion} depletion`} TEMP id: ${element.uuid}<br>`
+        if (element.passiveProduction && element.passiveProduction.length) {
+            formattedInfo += `Passively makes: ${element.passiveProduction.map(e => `<br>${ResourceTypes[e[0]]}, ${e[1]}/tick`).join()}<br><br>`
+        }
+
+        let hasBuildings = false;
+        sector.buildings.forEach(val => {
+            if (val.builtOnElement == element.uuid) {
+                if(!hasBuildings) {
+                    formattedInfo += "Buildings:<br>";
+                    hasBuildings = true;
+                }
+                formattedInfo += `<hr>${val.getFormattedString()}`;
+            }
+        })
+        if (hasBuildings) {
+            formattedInfo += `<br><br>`;
+        }
+    })
+
+
+
+    document.getElementById("sector_info").innerHTML = formattedInfo;
+}
+
 // GAME LOOP -----------------------------------------------------------------
 function gameLoop() {
     updateResources();
