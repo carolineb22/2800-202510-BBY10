@@ -357,3 +357,18 @@ document.getElementById('play_state').addEventListener("click", e => {
         resume();
     }
 })
+
+const fastForward = document.getElementById('fast_forward');
+fastForward.addEventListener("click", e => {
+    fastMode = !fastMode;
+    pause()
+    resume()
+
+    if (fastMode) {
+        fastForward.style.backgroundColor = '#777';
+    }
+    else {
+        fastForward.style.backgroundColor = '#444';
+    }
+
+})
