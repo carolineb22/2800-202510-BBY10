@@ -302,6 +302,17 @@ function displayBuildingSidebar() {
     }
 }
 
+function buildBuilding(building_id, element_uuid) {
+    Sectors.forEach(sector => {
+    
+        if (sector.geographicalElements.map(val => val.uuid).join().includes(element_uuid)) {
+            let newBuilding = new Building(...BuildingTemplates[building_id], element_uuid)
+            sector.buildings.push(newBuilding);
+            console.log("made!");
+        }
+    })
+}
+
 // GAME LOOP -----------------------------------------------------------------
 function gameLoop() {
     updateResources();
