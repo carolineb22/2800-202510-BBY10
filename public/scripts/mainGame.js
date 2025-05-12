@@ -221,6 +221,24 @@ Sectors.push(new Sector("flumpland", "Flumpland", [
 ])
 )
 
+// HELPER FUNCTIONS ----------------------------------------------------------
+function getGeographicalElementById(id) {
+    let returnVal = null;
+    for (var sector of Sectors) {
+        for (var element of sector.geographicalElements) {
+            if (element.uuid == id) {
+                returnVal = element;
+                break;
+            }
+        }
+        if (returnVal) {
+            break
+        }
+    }
+    
+    return returnVal;
+} 
+
 // GAME LOOP -----------------------------------------------------------------
 function gameLoop() {
     updateResources();
