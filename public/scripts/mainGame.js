@@ -385,3 +385,7 @@ document.getElementById('update_elem').addEventListener("click", e => {
     activeElement = document.getElementById('elementInput').value;
     displayBuildingSidebar();
 })
+
+// ON OPEN -------------------------------------------------------------------
+updateResources();
+displayActiveSector();
