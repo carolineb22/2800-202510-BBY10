@@ -239,6 +239,16 @@ function getGeographicalElementById(id) {
     return returnVal;
 } 
 
+function updateResources() {
+    let formattedResources = "";
+    for (var key in Resources) {
+        formattedResources += `${ResourceTypes[key]}: ${Resources[key].toFixed(2)} <br>`;
+    }
+
+
+    document.getElementById("resources").innerHTML = formattedResources;
+}
+
 // GAME LOOP -----------------------------------------------------------------
 function gameLoop() {
     updateResources();
