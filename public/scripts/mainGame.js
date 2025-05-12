@@ -194,6 +194,33 @@ function Sector(id, name, geographicalElements, buildings) {
     }
 }
 
+// STORING ARRAYS INIT -------------------------------------------------------
+
+for (var key in ResourceTypes) {
+    Resources[key] = 0;
+}
+
+let gah = new GeographicalElement(...GeographicalElementTemplates.element_forest)
+Sectors.push(new Sector("northwest_boglo", "Northwest Boglo", [
+        gah,
+        new GeographicalElement(...GeographicalElementTemplates.element_forest),
+        new GeographicalElement(...GeographicalElementTemplates.element_forest),
+        new GeographicalElement(...GeographicalElementTemplates.element_forest)
+    ], 
+    [
+        new Building(...BuildingTemplates.building_logging_site, gah.uuid)
+    ])
+)
+Sectors.push(new Sector("flumpland", "Flumpland", [
+    new GeographicalElement(...GeographicalElementTemplates.element_forest),
+    new GeographicalElement(...GeographicalElementTemplates.element_forest),
+    new GeographicalElement(...GeographicalElementTemplates.element_forest)
+], 
+[
+    
+])
+)
+
 // GAME LOOP -----------------------------------------------------------------
 function gameLoop() {
     updateResources();
