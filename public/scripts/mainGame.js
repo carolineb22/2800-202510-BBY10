@@ -1,6 +1,6 @@
 // VALUES DECLARE -----------------------------------------------------------
-const Resources = {}
-const Sectors = [];
+const Resources = JSON.parse(databaseResources) || {};
+const Sectors = JSON.parse(databaseSectors) || [];
 const BaseDepletion = 10000;
 
 let activeSector = 0;
@@ -242,7 +242,8 @@ function getGeographicalElementById(id) {
 function updateResources() {
     let formattedResources = "";
     for (var key in Resources) {
-        formattedResources += `${ResourceTypes[key]}: ${Resources[key].toFixed(2)} <br>`;
+        let value = Resources[key];
+        formattedResources += `${ResourceTypes[key]}: ${value.toFixed(2)} <br>`;
     }
 
 
@@ -385,6 +386,14 @@ document.getElementById('update_elem').addEventListener("click", e => {
     activeElement = document.getElementById('elementInput').value;
     displayBuildingSidebar();
 })
+
+// SAVING/LOADING ------------------------------------------------------------
+
+function save()
+{
+    sessionStorage.sectors = Sectors;
+    window.location.assign(`/save?sectors=${JSON.stringify(Sectors)}&resources=${JSON.stringify(Resources)}`);
+}
 
 // ON OPEN -------------------------------------------------------------------
 updateResources();

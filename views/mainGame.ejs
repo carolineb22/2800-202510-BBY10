@@ -62,10 +62,8 @@
 
 <!-- Dropdown Menu -->
 <div class="dropdown-menu" id="settingsMenu">
-    <form action='/logout' method='get'>
-        <button class="dropdown-item">Log Out</button>
-    </form>
-    <button class="dropdown-item">Other Option</button>
+    <button class="dropdown-item" onclick="window.location.assign('/logout')">Log Out</button>
+    <button class="dropdown-item" onclick="save()">Save</button>
     <button class="dropdown-item">Another Option</button>
 </div>
 
@@ -84,8 +82,6 @@
         <button class="hud-button" id="fast_forward"><i class="material-icons">fast_forward</i></button>
     </div>
 </div>
-<script src="scripts/mainGame.js"></script>
-
 <script>
     const settingsBtn = document.querySelector('.settings-button');
     const dropdownMenu = document.getElementById('settingsMenu');
@@ -99,5 +95,14 @@
     document.body.addEventListener('click', () => {
         dropdownMenu.classList.remove('show');
     });
+
+    // Declare variables for mainGame.js
+    var unHTMLedResources = JSON.parse("\"<%=resources%>\"");
+    var databaseResources = unHTMLedResources.replace(/&#34;/g,'"')
+    var unHTMLedSectors = JSON.parse("\"<%=sectors%>\"");
+    var databaseSectors = unHTMLedSectors.replace(/&#34;/g,'"')
+    console.log(databaseResources);
+    console.log(databaseSectors);
 </script>
+<script src="scripts/mainGame.js"></script>
 <%- include("templates/footer")%>
