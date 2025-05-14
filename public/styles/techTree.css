@@ -2,16 +2,20 @@ html,
 body {
   margin: 0;
   overflow: hidden;
-  font-family: sans-serif;
+  font-family: 'Audiowide', sans-serif;
+  background: radial-gradient(ellipse at center, #1a1a2e 0%, #0f0f1a 100%);
+  color: white;
 }
 
 h1 {
   text-align: center;
+  color: #00e5ff;
 }
 
 #skillPoints {
   text-align: center;
   font-size: 1.2em;
+  color: #a0d9f6;
 }
 
 #addPointBtn {
@@ -20,6 +24,16 @@ h1 {
   padding: 8px 16px;
   font-size: 14px;
   cursor: pointer;
+  background: #00bcd4;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+#addPointBtn:hover {
+  background: #0097a7;
+  transform: translateY(-2px);
 }
 
 #treeWrapper {
@@ -27,7 +41,7 @@ h1 {
   height: calc(100vh - 100px);
   overflow: hidden;
   position: relative;
-  border: 1px solid #ccc;
+  border: 1px solid #444;
   cursor: grab;
 }
 
@@ -44,31 +58,52 @@ h1 {
   left: 0;
   z-index: 0;
   pointer-events: none;
+  color: #ff0000;
 }
-
 
 .skill {
   position: absolute;
   width: 120px;
   height: 60px;
-  background-color: #ddd;
-  border: 2px solid #444;
+  background-color: #222844; /* Solid dark bluish block */
+  border: 2px solid #00e5ff;
   border-radius: 8px;
   text-align: center;
   padding: 10px;
   z-index: 1;
+  color: #a0d9f6;
+  box-shadow: 0 0 10px rgba(0, 229, 255, 0.3);
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.skill:hover {
+  background-color: #2a3055; /* Slightly lighter for hover */
+  transform: translateY(-2px);
 }
 
 .unlocked {
-  background-color: lightgreen;
+  background-color: #006644; /* Solid green block */
+  border-color: #00ff80;
+  color: white;
+  box-shadow: 0 0 12px #00ff80;
 }
+
+.skill.disabled {
+  pointer-events: none;
+  filter: grayscale(100%);
+  border-color: #666;
+}
+
 
 #infoBox {
   position: absolute;
-  background: white;
-  border: 1px solid black;
+  background: rgba(0, 0, 0, 0.75);
+  border: 1px solid #00e5ff;
   padding: 10px;
   display: none;
   width: 200px;
   z-index: 10;
+  color: #a0d9f6;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 229, 255, 0.4);
 }
