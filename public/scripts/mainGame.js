@@ -5,6 +5,8 @@ const BaseDepletion = 10000;
 
 let activeSector = 0;
 let activeElement = null;
+// VALUES DECLARE -----------------------------------------------------------
+
 
 // ENUMS --------------------------------------------------------------------
 
@@ -25,6 +27,8 @@ const ResourceTypes = {
     AdvancedGoods: "Advanced Goods",
     Metamaterials: "Metamaterials"
 }
+// ENUMS --------------------------------------------------------------------
+
 
 // TEMPLATES -----------------------------------------------------------------
 
@@ -117,6 +121,8 @@ const BuildingTemplates = {
         "surface_of_the_sun"
     ]
 }
+// TEMPLATES -----------------------------------------------------------------
+
 
 // OBJECTS -------------------------------------------------------------------
 
@@ -256,19 +262,21 @@ function Sector(id, name, geographicalElements, buildings) {
     }
 }
 
-// STORING ARRAYS INIT -------------------------------------------------------
+// OBJECTS -------------------------------------------------------------------
 
+
+// STORING ARRAYS INIT -------------------------------------------------------
 for (var key in ResourceTypes) {
     Resources[key] = 0;
 }
 
 let gah = new GeographicalElement(...GeographicalElementTemplates.element_forest)
 Sectors.push(new Sector("northwest_boglo", "Northwest Boglo", [
-        gah,
-        new GeographicalElement(...GeographicalElementTemplates.element_forest),
-        new GeographicalElement(...GeographicalElementTemplates.element_forest),
-        new GeographicalElement(...GeographicalElementTemplates.element_forest)
-    ], 
+    gah,
+    new GeographicalElement(...GeographicalElementTemplates.element_forest),
+    new GeographicalElement(...GeographicalElementTemplates.element_forest),
+    new GeographicalElement(...GeographicalElementTemplates.element_forest)
+],
     [
         new Building(...BuildingTemplates.building_logging_site, gah.uuid)
     ])
@@ -277,11 +285,13 @@ Sectors.push(new Sector("flumpland", "Flumpland", [
     new GeographicalElement(...GeographicalElementTemplates.element_forest),
     new GeographicalElement(...GeographicalElementTemplates.element_forest),
     new GeographicalElement(...GeographicalElementTemplates.element_forest)
-], 
-[
-    
-])
+],
+    [
+
+    ])
 )
+// STORING ARRAYS INIT -------------------------------------------------------
+
 
 // HELPER FUNCTIONS ----------------------------------------------------------
 function getGeographicalElementById(id) {
@@ -297,16 +307,15 @@ function getGeographicalElementById(id) {
             break
         }
     }
-    
+
     return returnVal;
-} 
+}
 
 function updateResources() {
     let formattedResources = "";
     for (var key in Resources) {
         formattedResources += `${ResourceTypes[key]}: ${Resources[key].toFixed(2)} <br>`;
     }
-
 
     document.getElementById("resources").innerHTML = formattedResources;
 }
@@ -316,7 +325,7 @@ function displayActiveSector() {
     let sector = Sectors[activeSector];
 
     formattedInfo += `Selected sector <b>${sector.name}</b><br><br>Geographical elements<br> `;
-    
+
     sector.geographicalElements.forEach(element => {
         formattedInfo += `<hr><br>${element.name}, ${element.depletion == BaseDepletion ? "untouched" : `${element.depletion}/${BaseDepletion} depletion`} TEMP id: ${element.uuid}<br>`
         if (element.passiveProduction && element.passiveProduction.length) {
@@ -326,7 +335,7 @@ function displayActiveSector() {
         let hasBuildings = false;
         sector.buildings.forEach(val => {
             if (val.builtOnElement == element.uuid) {
-                if(!hasBuildings) {
+                if (!hasBuildings) {
                     formattedInfo += "Buildings:<br>";
                     hasBuildings = true;
                 }
@@ -337,8 +346,6 @@ function displayActiveSector() {
             formattedInfo += `<br><br>`;
         }
     })
-
-
 
     document.getElementById("sector_info").innerHTML = formattedInfo;
 }
@@ -366,7 +373,7 @@ function displayBuildingSidebar() {
 
 function buildBuilding(building_id, element_uuid) {
     Sectors.forEach(sector => {
-    
+
         if (sector.geographicalElements.map(val => val.uuid).join().includes(element_uuid)) {
             let newBuilding = new Building(...BuildingTemplates[building_id], element_uuid)
             sector.buildings.push(newBuilding);
@@ -374,25 +381,13 @@ function buildBuilding(building_id, element_uuid) {
         }
     })
 }
+// HELPER FUNCTIONS ----------------------------------------------------------
 
-// GAME LOOP -----------------------------------------------------------------
-function gameLoop() {
-    updateResources();
-    displayActiveSector();
-
-    Sectors.forEach(sector => {
-        sector.doTick();
-    })
-
-}
 
 // TICK CONTROL --------------------------------------------------------------
 const tickInterval = 100; //in milliseconds
 const fastInterval = 50; //in milliseconds
 let fastMode = false;
-
-const e = document.getElementById("test");
-
 let gameInterval;
 
 function pauseGame() {
@@ -432,7 +427,22 @@ fastForward.addEventListener("click", e => {
     }
 
 })
+// TICK CONTROL --------------------------------------------------------------
 
+
+// GAME LOOP -----------------------------------------------------------------
+function gameLoop() {
+    updateResources();
+    displayActiveSector();
+
+    Sectors.forEach(sector => {
+        sector.doTick();
+    })
+}
+// GAME LOOP -----------------------------------------------------------------
+
+
+// HTML EVENTS ---------------------------------------------------------------
 document.getElementById('cycle_sector').addEventListener("click", e => {
     activeSector += 1;
     if (activeSector >= Sectors.length) {
@@ -445,7 +455,10 @@ document.getElementById('update_elem').addEventListener("click", e => {
     activeElement = document.getElementById('elementInput').value;
     displayBuildingSidebar();
 })
+// HTML EVENTS ---------------------------------------------------------------
+
 
 // ON OPEN -------------------------------------------------------------------
 updateResources();
 displayActiveSector();
+// ON OPEN -------------------------------------------------------------------

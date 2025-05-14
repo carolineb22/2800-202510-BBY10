@@ -285,5 +285,5 @@ app.use(function (req, res) {
 });
 
 app.listen(port, () => {
-    console.log("Node web application listening on port " + port);
+    console.log(`Node web application listening on http://localhost:${port}`);
 });
