@@ -2,6 +2,9 @@
 <h1>Weather Info</h1>
 <p id="weather">Fetching weather...</p>
 <p id="cords">fetching cords...</p>
+<div id="puter-message">Generating advice based on weather...</div>
+
+<script src="https://js.puter.com/v2/"></script>
 
 <script>
 navigator.geolocation.getCurrentPosition(success, error);
@@ -28,8 +31,27 @@ function getWeather(lat, lon) {
             const description = data.weather[0].description;
             document.getElementById("weather").textContent = `Temperature: ${temp}°C, ${description}`;
             document.getElementById("cords").textContent = `Latitude: ${lat}, Longitude: ${lon}`;
+            
+            const weatherSummary = `The current temperature is ${temp}°C with ${description}.`;
+            generatePuterMessage(weatherSummary);
         })
         .catch(err => console.error("Weather API error:", err));
 }
+function generatePuterMessage(weatherInfo) {
+    const prompt = `Based on the weather report: "${weatherInfo}", give a friendly message or advice for someone deciding what to do today.`;
+
+    document.getElementById("puter-message").textContent = "Thinking...";
+
+    puter.ai.chat(prompt)
+      .then(response => {
+        document.getElementById("puter-message").textContent = response;
+        console.log("Puter message:", response);
+      })
+      .catch(err => {
+        console.error("Puter SDK error:", err);
+        document.getElementById("puter-message").textContent = "Could not fetch AI message.";
+      });
+  }
+
 </script>
 <%- include("templates/footer") %>
