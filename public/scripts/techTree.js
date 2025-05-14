@@ -1,5 +1,5 @@
 const skills = document.querySelectorAll('.skill');
-const svg = document.getElementById('connectorSVG'); // Reference to the SVG container
+const svg = document.getElementById('connectorSVG'); 
 
 let skillPoints = 0;
 const skillPointsDisplay = document.getElementById('skillPoints');
@@ -18,6 +18,9 @@ const treeWrapper = document.getElementById('treeWrapper');
 let currentSkill = null;
 let scale = 1;
 let translate = { x: 0, y: 0 };
+
+let interactionLocked = false;
+
 
 // Update skill point display
 function updateSkillPointsDisplay() {
@@ -59,14 +62,22 @@ function getCenter(elem) {
 
 // Show info box near skill
 function showInfoBox(skill) {
+  interactionLocked = true; // Lock interaction while showing info box
   infoTitle.textContent = skill.dataset.name;
   infoCost.textContent = `Cost: ${skill.dataset.cost} Skill Points`;
   infoDescription.textContent = skill.dataset.description;
   infoBox.style.display = 'block';
 
-  infoBox.style.left = (skill.offsetLeft + skill.offsetWidth / 2 - 100) * scale + translate.x + 'px';
-  infoBox.style.top = (skill.offsetTop + skill.offsetHeight + 10) * scale + translate.y + 'px';
+  const center = getCenter(skill);
+
+  // Apply the current scale and translation to the position
+  const x = center.x * scale + translate.x;
+  const y = center.y * scale + translate.y;
+
+  infoBox.style.left = `${x - infoBox.offsetWidth / 2}px`;
+  infoBox.style.top = `${y + 20}px`; // Slightly below the skill box
 }
+
 
 // Unlock skill
 unlockBtn.addEventListener('click', () => {
@@ -75,25 +86,31 @@ unlockBtn.addEventListener('click', () => {
   const cost = parseInt(currentSkill.dataset.cost);
   const parentId = currentSkill.dataset.parent;
 
+  // Check if the parent skill is unlocked
   if (parentId && !document.getElementById(parentId).classList.contains('unlocked')) {
     alert("You must unlock the parent skill first.");
     return;
   }
 
+  // Check if there are enough skill points to unlock the skill
   if (skillPoints >= cost) {
-    skillPoints -= cost;
-    currentSkill.classList.add('unlocked');
-    updateSkillPointsDisplay();
-    infoBox.style.display = 'none';
+    skillPoints -= cost;  // Deduct the skill points
+    currentSkill.classList.add('unlocked');  // Mark the skill as unlocked
+    updateSkillPointsDisplay();  // Update the skill points display
+    infoBox.style.display = 'none';  // Hide the info box
+    interactionLocked = false;  // Unlock interaction (pan/zoom)
   } else {
     alert("Not enough skill points.");
   }
 });
 
+// Cancel action (close the info box)
 cancelBtn.addEventListener('click', () => {
-  infoBox.style.display = 'none';
-  currentSkill = null;
+  infoBox.style.display = 'none';  // Hide the info box
+  currentSkill = null;  // Reset the current skill
+  interactionLocked = false;  // Unlock interaction (pan/zoom)
 });
+
 
 // Add skill point
 addPointBtn.addEventListener('click', () => {
@@ -116,6 +133,7 @@ let startX, startY;
 
 // Zoom functionality
 treeWrapper.addEventListener('wheel', e => {
+  if (interactionLocked) return;
   e.preventDefault();
   const scaleFactor = 1.1;
   const mouseX = e.offsetX;
@@ -140,6 +158,7 @@ treeWrapper.addEventListener('wheel', e => {
 
 // Enable dragging of the skill tree
 treeWrapper.addEventListener('mousedown', (e) => {
+  if (interactionLocked) return;
   isDragging = true;
   startX = e.clientX;
   startY = e.clientY;
