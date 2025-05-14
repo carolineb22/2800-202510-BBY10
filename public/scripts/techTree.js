@@ -1,5 +1,5 @@
 const skills = document.querySelectorAll('.skill');
-const svg = document.getElementById('connectorSVG'); 
+const svg = document.getElementById('connectorSVG');
 
 let skillPoints = 0;
 const skillPointsDisplay = document.getElementById('skillPoints');
@@ -18,9 +18,7 @@ const treeWrapper = document.getElementById('treeWrapper');
 let currentSkill = null;
 let scale = 1;
 let translate = { x: 0, y: 0 };
-
 let interactionLocked = false;
-
 
 // Update skill point display
 function updateSkillPointsDisplay() {
@@ -29,7 +27,7 @@ function updateSkillPointsDisplay() {
 
 // Draw skill connectors using SVG
 function drawLines() {
-  svg.innerHTML = ''; // Clear old lines
+  svg.innerHTML = '';
 
   skills.forEach(skill => {
     const parentId = skill.dataset.parent;
@@ -44,15 +42,24 @@ function drawLines() {
         line.setAttribute('y1', start.y);
         line.setAttribute('x2', end.x);
         line.setAttribute('y2', end.y);
-        line.setAttribute('stroke', '#444');
         line.setAttribute('stroke-width', '2');
+
+        // Determine color
+        if (skill.classList.contains('unlocked')) {
+          line.setAttribute('stroke', '#00ff80'); // green = unlocked
+        } else if (parent.classList.contains('unlocked')) {
+          line.setAttribute('stroke', '#00e5ff'); // blue = available
+        } else {
+          line.setAttribute('stroke', '#888'); // gray = locked
+        }
+
         svg.appendChild(line);
       }
     }
   });
 }
 
-// Get center position of an element relative to treeContainer
+// Get center of a skill box
 function getCenter(elem) {
   return {
     x: elem.offsetLeft + elem.offsetWidth / 2,
@@ -60,81 +67,95 @@ function getCenter(elem) {
   };
 }
 
-// Show info box near skill
+// Show info box
 function showInfoBox(skill) {
-  interactionLocked = true; // Lock interaction while showing info box
+  interactionLocked = true;
   infoTitle.textContent = skill.dataset.name;
   infoCost.textContent = `Cost: ${skill.dataset.cost} Skill Points`;
   infoDescription.textContent = skill.dataset.description;
   infoBox.style.display = 'block';
 
   const center = getCenter(skill);
-
-  // Apply the current scale and translation to the position
   const x = center.x * scale + translate.x;
   const y = center.y * scale + translate.y;
 
   infoBox.style.left = `${x - infoBox.offsetWidth / 2}px`;
-  infoBox.style.top = `${y + 20}px`; // Slightly below the skill box
+  infoBox.style.top = `${y + 20}px`;
 }
 
+// Update which skills are enabled/disabled based on their parent
+function updateSkillStates() {
+  skills.forEach(skill => {
+    const parentId = skill.dataset.parent;
 
-// Unlock skill
+    if (!parentId) {
+      skill.classList.remove('disabled');
+      return;
+    }
+
+    const parent = document.getElementById(parentId);
+    if (parent && parent.classList.contains('unlocked')) {
+      skill.classList.remove('disabled');
+    } else {
+      skill.classList.add('disabled');
+    }
+  });
+}
+
+// Unlock button
 unlockBtn.addEventListener('click', () => {
   if (!currentSkill) return;
 
   const cost = parseInt(currentSkill.dataset.cost);
   const parentId = currentSkill.dataset.parent;
 
-  // Check if the parent skill is unlocked
   if (parentId && !document.getElementById(parentId).classList.contains('unlocked')) {
     alert("You must unlock the parent skill first.");
     return;
   }
 
-  // Check if there are enough skill points to unlock the skill
   if (skillPoints >= cost) {
-    skillPoints -= cost;  // Deduct the skill points
-    currentSkill.classList.add('unlocked');  // Mark the skill as unlocked
-    updateSkillPointsDisplay();  // Update the skill points display
-    infoBox.style.display = 'none';  // Hide the info box
-    interactionLocked = false;  // Unlock interaction (pan/zoom)
+    skillPoints -= cost;
+    currentSkill.classList.add('unlocked');
+    updateSkillPointsDisplay();
+    updateSkillStates();
+    drawLines();
+    infoBox.style.display = 'none';
+    interactionLocked = false;
   } else {
     alert("Not enough skill points.");
   }
 });
 
-// Cancel action (close the info box)
+// Cancel button
 cancelBtn.addEventListener('click', () => {
-  infoBox.style.display = 'none';  // Hide the info box
-  currentSkill = null;  // Reset the current skill
-  interactionLocked = false;  // Unlock interaction (pan/zoom)
+  infoBox.style.display = 'none';
+  currentSkill = null;
+  interactionLocked = false;
 });
 
-
-// Add skill point
+// Add skill point button
 addPointBtn.addEventListener('click', () => {
   skillPoints++;
   updateSkillPointsDisplay();
 });
 
-// Skill click
+// Set up each skill block
 skills.forEach(skill => {
   skill.innerHTML = `${skill.dataset.name}<br>(Cost: ${skill.dataset.cost})`;
+
   skill.addEventListener('click', () => {
+    if (skill.classList.contains('disabled')) return;
     currentSkill = skill;
     showInfoBox(skill);
   });
 });
 
-// Zoom and Pan
-let isDragging = false;
-let startX, startY;
-
-// Zoom functionality
+// Zoom
 treeWrapper.addEventListener('wheel', e => {
   if (interactionLocked) return;
   e.preventDefault();
+
   const scaleFactor = 1.1;
   const mouseX = e.offsetX;
   const mouseY = e.offsetY;
@@ -142,21 +163,19 @@ treeWrapper.addEventListener('wheel', e => {
   const worldX = (mouseX - translate.x) / scale;
   const worldY = (mouseY - translate.y) / scale;
 
-  if (e.deltaY < 0) {
-    scale *= scaleFactor;
-  } else {
-    scale /= scaleFactor;
-  }
+  scale = e.deltaY < 0 ? scale * scaleFactor : scale / scaleFactor;
 
   translate.x = mouseX - worldX * scale;
   translate.y = mouseY - worldY * scale;
 
-  // Apply scaling and translation to the entire skill tree and SVG
   treeContainer.style.transform = `translate(${translate.x}px, ${translate.y}px) scale(${scale})`;
   drawLines();
 });
 
-// Enable dragging of the skill tree
+// Pan
+let isDragging = false;
+let startX, startY;
+
 treeWrapper.addEventListener('mousedown', (e) => {
   if (interactionLocked) return;
   isDragging = true;
@@ -175,9 +194,8 @@ document.addEventListener('mousemove', (e) => {
   translate.x += dx;
   translate.y += dy;
 
-  // Apply the same transformation to both container and SVG
   treeContainer.style.transform = `translate(${translate.x}px, ${translate.y}px) scale(${scale})`;
-  drawLines(); // Redraw connector lines
+  drawLines();
 });
 
 document.addEventListener('mouseup', () => {
@@ -187,4 +205,5 @@ document.addEventListener('mouseup', () => {
 window.addEventListener('load', () => {
   updateSkillPointsDisplay();
   drawLines();
+  updateSkillStates(); // Initialize skill enable/disable state
 });
