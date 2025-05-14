@@ -391,13 +391,11 @@ const tickInterval = 100; //in milliseconds
 const fastInterval = 50; //in milliseconds
 let fastMode = false;
 
-let a = 0;
 const e = document.getElementById("test");
-
 
 let gameInterval;
 
-function pause() {
+function pauseGame() {
     if (gameInterval) {
         clearInterval(gameInterval);
         gameInterval = null;
@@ -405,7 +403,7 @@ function pause() {
     }
 }
 
-function resume() {
+function resumeGame() {
     if (!gameInterval) {
         gameInterval = setInterval(gameLoop, fastMode ? fastInterval : tickInterval);
         console.log("started ticking");
@@ -414,17 +412,17 @@ function resume() {
 
 document.getElementById('play_state').addEventListener("click", e => {
     if (gameInterval) {
-        pause();
+        pauseGame();
     } else {
-        resume();
+        resumeGame();
     }
 })
 
 const fastForward = document.getElementById('fast_forward');
 fastForward.addEventListener("click", e => {
     fastMode = !fastMode;
-    pause()
-    resume()
+    pauseGame()
+    resumeGame()
 
     if (fastMode) {
         fastForward.style.backgroundColor = '#777';
