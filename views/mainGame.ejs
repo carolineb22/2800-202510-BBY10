@@ -62,10 +62,8 @@
 
 <!-- Dropdown Menu -->
 <div class="dropdown-menu" id="settingsMenu">
-    <form action='/logout' method='get'>
-        <button class="dropdown-item">Log Out</button>
-    </form>
-    <button class="dropdown-item">Other Option</button>
+    <button class="dropdown-item" onclick="window.location.assign('/logout')">Log Out</button>
+    <button class="dropdown-item" onclick="save()">Save</button>
     <button class="dropdown-item">Another Option</button>
 </div>
 
@@ -84,9 +82,6 @@
         <button class="hud-button" id="fast_forward"><i class="material-icons">fast_forward</i></button>
     </div>
 </div>
-
-<script src="scripts/mainGame.js"></script>
-
 <script>
     const settingsBtn = document.querySelector('.settings-button');
     const dropdownMenu = document.getElementById('settingsMenu');
@@ -100,5 +95,16 @@
     document.body.addEventListener('click', () => {
         dropdownMenu.classList.remove('show');
     });
+
+    // Declare variables for mainGame.js
+    let unHTMLedResources = JSON.parse("\"<%=resources%>\"");
+    let stringifiedResources = unHTMLedResources.replace(/&#34;/g,'"');
+    var databaseResources = JSON.parse(stringifiedResources) || {};
+    let unHTMLedSectors = JSON.parse("\"<%=sectors%>\"");
+    let stringifiedSectors = unHTMLedSectors.replace(/&#34;/g,'"');
+    var databaseSectors = JSON.parse(stringifiedSectors);
+    console.log(databaseResources);
+    console.log(databaseSectors);
 </script>
+<script src="scripts/mainGame.js"></script>
 <%- include("templates/footer")%>

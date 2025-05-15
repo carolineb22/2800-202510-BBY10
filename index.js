@@ -46,6 +46,7 @@ var { database } = include('databaseConnection');
 
 // ensure database 'users' collection
 const userCollection = database.db(mongodb_database).collection('users');
+const saveCollection = database.db(mongodb_database).collection('test_numbers');
 
 // Middleware authentication function
 function validateSession(req, res, next) {
@@ -217,23 +218,61 @@ app.post('/loggingin', async (req, res) => {
     }
 });
 
+app.get('/save', validateSession, async (req,res) => {
+    console.log("Save request received!");
+    // Get user from database
+    let user = await userCollection.find({ username: req.session.username })
+                                   .project({ email: 1, username: 1, password: 1, _id: 1 })
+                                   .toArray();
+    console.log(user);
+    // If no user, return
+    if(!user) {
+        console.log("Could not save.");
+        res.status(501)
+        return;
+    }
+    // Else, parse query syntax
+    try
+    {
+        sectors = JSON.parse(req.query.sectors);
+        resources = JSON.parse(req.query.resources);
+        console.log(sectors);
+        // Upsert (update or insert) user data into database
+        await saveCollection.updateOne(
+        {username: req.session.username}, // Search criteria
+        {$set: {                          // Info to upsert
+            user_id: user[0]._id,
+            sector: sectors,
+            resources: resources}},
+        {upsert: true});                  // Declare upsert
+        console.log("Save successful!");
+    } catch(e) {
+        // If error, then report it
+        console.error(e);
+    }
+    res.redirect('/main');
+});
+
 app.get('/main', validateSession, async (req, res) => {
     // Get the user profile from the session's username
-    let user = await userCollection.find({ username: req.session.username })
-        .project({ email: 1, username: 1, password: 1, _id: 1 })
-        .toArray();
-    // If the user doesn't have the number to increment,
-    // add it
-    if (!user.number) {
-        user.number = 0
+    let userArray = await userCollection.find({ username: req.session.username })
+                                        .project({_id: 1})
+                                        .toArray();
+    let user = userArray[0];
+    console.log([user, user._id])
+    if(!user) {
+        console.error(`Access to main with invalid username: ${req.session.username}`);
+        res.redirect("/login");
+        return;
     }
-    // The "number" is a placeholder incrementer -
-    // to be replaced with other relevant stats as
-    // we get there
+    let statsArray = await saveCollection.find({user_id: user._id}).toArray();
+    let userStats = statsArray[0];
+    console.log(userStats);
     res.render("mainGame", {
-        number: user.number,
         title: "Main Game Page",
-        css: ['styles/mainGame.css', "https://fonts.googleapis.com/icon?family=Material+Icons"]
+        css: ['styles/mainGame.css', "https://fonts.googleapis.com/icon?family=Material+Icons"],
+        resources: userStats ? JSON.stringify(userStats.resources) : "{}",
+        sectors: userStats ? JSON.stringify(userStats.sector) : "[]"
     });
 });
 

@@ -1,7 +1,46 @@
 // VALUES DECLARE -----------------------------------------------------------
-const Resources = {}
-const Sectors = [];
 const BaseDepletion = 10000;
+
+// Load the saved data from the database
+const Resources = databaseResources;
+
+// Load the sectors from the database
+var tempSectors = [];
+databaseSectors.forEach((sector) => {
+    let tempGeographicalElements = [];
+    if(sector.geographicalElements) {
+        sector.geographicalElements.forEach(element => {
+            let tempBuildings = [];
+            if(element.buildings) {
+                element.buildings.forEach((b) => {
+                    tempBuildings.push(new Building(b.id,
+                                                    b.type,
+                                                    b.name,
+                                                    b.consumptionArray,
+                                                    b.productionArray,
+                                                    b.costArray,
+                                                    b.depletion,
+                                                    b.needsType,
+                                                    element.uuid))
+                });
+            }
+            tempGeographicalElements.push(new GeographicalElement(element.uuid,
+                                                                  element.id,
+                                                                  element.name,
+                                                                  element.passiveProduction,
+                                                                  element.situationalBuildings,
+                                                                  element.buildingBaseCapacity,
+                                                                  element.depletion,
+                                                                  element.depletesInto,
+                                                                  tempBuildings));
+    })};
+    tempSectors.push(new Sector(sector.id,
+                                sector.name,
+                                tempGeographicalElements));
+});
+
+const Sectors = tempSectors;
+console.log(Sectors)
 
 let activeSector = 0;
 let activeElement = null;
@@ -36,6 +75,7 @@ const ResourceTypes = {
 // View GeographicalElement() for explanation on how to create new GeographicalElements.
 const GeographicalElementTemplates = {
     element_forest: [
+        crypto.randomUUID(),
         "element_forest",
         "Forest",
         [
@@ -48,8 +88,10 @@ const GeographicalElementTemplates = {
             ],
             ["building_forest_cabins", 1]
         ],
+        BaseDepletion,
         2,
-        "element_grassland"
+        "element_grassland",
+        []
     ]
 }
 
@@ -143,15 +185,16 @@ const BuildingTemplates = {
 //     buildingBaseCapacity,    -- The total buildings you can have built at a time on this GE
 //     "depletesInto"   -- The ID (Internal name) of the GE that this turns into upon resource depletion.
 // ]
-function GeographicalElement(id, name, passiveProduction, situationalBuildings, buildingBaseCapacity, depletesInto) {
-    this.uuid = crypto.randomUUID(); //uuid of this element
+function GeographicalElement(uuid, id, name, passiveProduction, situationalBuildings, buildingBaseCapacity, depletion, depletesInto, buildings) {
+    this.uuid = uuid; //uuid of this element
     this.id = id; //id of this element, is seperate from uuid as multiple of the same element can inhabit a sector
     this.name = name; //display name of this element
     this.passiveProduction = passiveProduction; //array of arrays that contain a resource and production amount per tick
     this.situationalBuildings = situationalBuildings; //array of building ids that can be built. subarrays are mutually exclusive.
     this.buildingBaseCapacity = buildingBaseCapacity; //total buildings that can be made on that element.
-    this.depletion = BaseDepletion; //abritrary value of how much this element can take before being depleted.
+    this.depletion = depletion; //abritrary value of how much this element can take before being depleted.
     this.depletesInto = depletesInto; //what element does this element turn into after being depleted? based on id
+    this.buildings = buildings;
 
     // Whenever this GeographicalElement is called to do a tick,
     // run through every resource that this GE has in passiveProduction 
@@ -239,64 +282,54 @@ function Building(id, type, name, consumptionArray, productionArray, costArray, 
 //     [
 //         exampleGeographicalElement,      -- geographicalElements array.
 //         exampleGeographicalElement       -- an array of GE objects tied to this sector. 
-//     ],
-//     [
-//             exampleBuilding, -- buildings array
-//             exampleBuilding  -- a list of Building objects tied to this sector.
 //     ]
-// ]
-function Sector(id, name, geographicalElements, buildings) {
+function Sector(id, name, geographicalElements) {
     this.id = id;
     this.name = name;
     this.geographicalElements = geographicalElements;
-    this.buildings = buildings;
 
     this.doTick = function() {
-        this.buildings.forEach(building => {
-            building.doTick();
-        })
-
         this.geographicalElements.forEach(element => {
             element.doTick();
+            element.buildings.forEach(building => {
+                building.doTick();
+            })
         })
     }
 }
-
 // OBJECTS -------------------------------------------------------------------
-
+ 
 
 // STORING ARRAYS INIT -------------------------------------------------------
+// (only do if Resources or Sectors are empty)
 for (var key in ResourceTypes) {
-    Resources[key] = 0;
+    if (!Resources[key]) Resources[key] = 0;
 }
 
 let gah = new GeographicalElement(...GeographicalElementTemplates.element_forest)
-Sectors.push(new Sector("northwest_boglo", "Northwest Boglo", [
-    gah,
-    new GeographicalElement(...GeographicalElementTemplates.element_forest),
-    new GeographicalElement(...GeographicalElementTemplates.element_forest),
-    new GeographicalElement(...GeographicalElementTemplates.element_forest)
-],
-    [
-        new Building(...BuildingTemplates.building_logging_site, gah.uuid)
-    ])
-)
-Sectors.push(new Sector("flumpland", "Flumpland", [
-    new GeographicalElement(...GeographicalElementTemplates.element_forest),
-    new GeographicalElement(...GeographicalElementTemplates.element_forest),
-    new GeographicalElement(...GeographicalElementTemplates.element_forest)
-],
-    [
 
+if(Sectors.length == 0)
+{
+    Sectors.push(new Sector("northwest_boglo", "Northwest Boglo", [
+            gah,
+            new GeographicalElement(...GeographicalElementTemplates.element_forest),
+            new GeographicalElement(...GeographicalElementTemplates.element_forest),
+            new GeographicalElement(...GeographicalElementTemplates.element_forest)
+        ])
+    )
+    Sectors.push(new Sector("flumpland", "Flumpland", [
+        new GeographicalElement(...GeographicalElementTemplates.element_forest),
+        new GeographicalElement(...GeographicalElementTemplates.element_forest),
+        new GeographicalElement(...GeographicalElementTemplates.element_forest)
     ])
-)
-// STORING ARRAYS INIT -------------------------------------------------------
-
+    )
+}
 
 // HELPER FUNCTIONS ----------------------------------------------------------
 function getGeographicalElementById(id) {
     let returnVal = null;
     for (var sector of Sectors) {
+        // console.log(sector.geographicalElements)
         for (var element of sector.geographicalElements) {
             if (element.uuid == id) {
                 returnVal = element;
@@ -314,7 +347,8 @@ function getGeographicalElementById(id) {
 function updateResources() {
     let formattedResources = "";
     for (var key in Resources) {
-        formattedResources += `${ResourceTypes[key]}: ${Resources[key].toFixed(2)} <br>`;
+        let value = Resources[key];
+        formattedResources += `${ResourceTypes[key]}: ${value.toFixed(2)} <br>`;
     }
 
     document.getElementById("resources").innerHTML = formattedResources;
@@ -333,7 +367,7 @@ function displayActiveSector() {
         }
 
         let hasBuildings = false;
-        sector.buildings.forEach(val => {
+        element.buildings.forEach(val => {
             if (val.builtOnElement == element.uuid) {
                 if (!hasBuildings) {
                     formattedInfo += "Buildings:<br>";
@@ -373,12 +407,13 @@ function displayBuildingSidebar() {
 
 function buildBuilding(building_id, element_uuid) {
     Sectors.forEach(sector => {
-
-        if (sector.geographicalElements.map(val => val.uuid).join().includes(element_uuid)) {
-            let newBuilding = new Building(...BuildingTemplates[building_id], element_uuid)
-            sector.buildings.push(newBuilding);
-            console.log("made!");
-        }
+        sector.geographicalElements.forEach(element => {
+            if (element.uuid == element_uuid) {
+                let newBuilding = new Building(...BuildingTemplates[building_id], element.uuid)
+                element.buildings.push(newBuilding);
+                console.log("made!");
+            }
+        })
     })
 }
 // HELPER FUNCTIONS ----------------------------------------------------------
@@ -457,6 +492,13 @@ document.getElementById('update_elem').addEventListener("click", e => {
 })
 // HTML EVENTS ---------------------------------------------------------------
 
+
+// SAVING/LOADING ------------------------------------------------------------
+
+function save()
+{
+    window.location.assign(`/save?sectors=${JSON.stringify(Sectors)}&resources=${JSON.stringify(Resources)}`);
+}
 
 // ON OPEN -------------------------------------------------------------------
 updateResources();
