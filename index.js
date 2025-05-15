@@ -64,25 +64,6 @@ function validateSession(req, res, next) {
     }
 };
 
-
-// Middleware login validation function
-// TODO REPLACE with login page ejs params, add these warnings to /login page for quick feedback.
-function validateLogin(req, res, next) {
-    if (req.query.invalidEmail) {
-        console.log("Invalid Email (UNIMPLEMENTED)");
-    }
-    else if (req.query.noAccount) {
-        console.log("Email has no account (UNIMPLEMENTED)");
-    }
-    else if (req.query.invalidPassword) {
-        console.log("Invalid Password (UNIMPLEMENTED)");
-    }
-    else {
-        next();
-    }
-}
-
-
 // ensure database collection for sessions
 var mongoStore = MongoStore.create({
     mongoUrl: `mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_host}/sessions`,
@@ -123,26 +104,64 @@ app.get('/', (req, res) => {
 // TODO - remove middleware function,
 // catch invalidCred and deal with it properly in `signUp.html`
 app.get('/signUp', (req, res) => {
-    if (req.query.invalidCred) {
-        console.log('UNIMPLEMENTED');
+    var errors = [];
+
+    var invalidCred = req.query.invalidCred;
+    var duplicateUsername = req.query.duplicateUsername;
+    var duplicateEmail = req.query.duplicateEmail;
+
+    if (invalidCred) {
+        errors.push("Invalid account credentials");
     }
+    if (duplicateUsername) {
+        errors.push("This username is already taken");
+    }
+    if (duplicateEmail) {
+        errors.push("This email is already taken");
+    }
+
     res.render("signUp", {
-        title: "Log In - Our Tomorow",
-        css: ["styles/signUp.css", "https://fonts.googleapis.com/css2?family=Audiowide&display=swap"]
+        title: "Signup - Our Tomorow",
+        css: ["styles/signUp.css", "https://fonts.googleapis.com/css2?family=Audiowide&display=swap"],
+        errors: errors
     });
 });
 
 
-// TODO - remove middleware function,
-// catch noSession, invalidEmail, noAccount, & invalidPassword
-// and deal with them properly in `login.html`
-app.get('/login', validateLogin, (req, res) => {
-    if (req.query.noSession) {
-        console.log('UNIMPLEMENTED');
+// TODO - remove middleware function
+app.get('/login', (req, res) => {
+    var errors = [];
+
+    var noSession = req.query.noSession;
+    var invalidEmail = req.query.invalidEmail;
+    var noAccount = req.query.noAccount;
+    var invalidPassword = req.query.invalidPassword;
+    var maliciousUsername = req.query.maliciousUsername;
+    var invalidUsername = req.query.invalidUsername;
+
+    if (noSession) {
+        errors.push("You are not logged in");
     }
+    if (invalidEmail) {
+        errors.push("Invalid Email");
+    }
+    if (noAccount) {
+        errors.push("No account found");
+    }
+    if (invalidPassword) {
+        errors.push("Incorrect password");
+    }
+    if (maliciousUsername) {
+        errors.push("Malformed username");
+    }
+    if (invalidUsername) {
+        errors.push("Invalid username");
+    }
+
     res.render("login", {
-        title: "Log In - Our Tomorow",
-        css: ["styles/login.css", "https://fonts.googleapis.com/css2?family=Audiowide&display=swap"]
+        title: "Login - Our Tomorow",
+        css: ["styles/login.css", "https://fonts.googleapis.com/css2?family=Audiowide&display=swap"],
+        errors: errors
     });
 });
 
@@ -167,22 +186,19 @@ app.post('/submitUser', async (req, res) => {
         return;
     }
 
-
     // TODO find a way to merge these two queries for efficiency
     var duplicateUsername = await userCollection.find({ username: username }).toArray();
-
     var duplicateEmail = await userCollection.find({ email: email }).toArray();
     
     if (duplicateUsername.length != 0) {
-        res.redirect('/signUp?duplicateUsername?=1'); // TODO add this flag to /signUp checks
+        res.redirect('/signUp?duplicateUsername=1');
         return;
     }
 
     if (duplicateEmail.length != 0) {
-        res.redirect('/signUp?duplicateEmail=1') // TODO add this flag to /signUp checks
+        res.redirect('/signUp?duplicateEmail=1');
         return;
     }
-
 
     var hashedPassword = await bcrypt.hash(password, saltRounds);
 
@@ -305,7 +321,7 @@ app.get('/main', validateSession, async (req, res) => {
     const validationResult = schema.validate({ username });
 
     if (validationResult.error != null) {
-        res.redirect('/login?maliciousUsername=1'); // TODO add this flag to the /login checks
+        res.redirect('/login?maliciousUsername=1');
         return;
     }
 
@@ -320,7 +336,7 @@ app.get('/main', validateSession, async (req, res) => {
 
     if (!user) {
         console.error(`Access to main with invalid username: ${username}`);
-        res.redirect("/login?invalidUsername=1"); // TODO add this flag to the /login checks
+        res.redirect("/login?invalidUsername=1");
         return;
     }
 
