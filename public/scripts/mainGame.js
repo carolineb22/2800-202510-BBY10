@@ -24,7 +24,8 @@ databaseSectors.forEach((sector) => {
                                                     element.uuid))
                 });
             }
-            tempGeographicalElements.push(new GeographicalElement(element.id,
+            tempGeographicalElements.push(new GeographicalElement(element.uuid,
+                                                                  element.id,
                                                                   element.name,
                                                                   element.passiveProduction,
                                                                   element.situationalBuildings,
@@ -64,6 +65,7 @@ const ResourceTypes = {
 // TEMPLATES -----------------------------------------------------------------
 const GeographicalElementTemplates = {
     element_forest: [
+        crypto.randomUUID(),
         "element_forest",
         "Forest",
         [
@@ -151,8 +153,8 @@ const BuildingTemplates = {
 }
 
 // OBJECTS -------------------------------------------------------------------
-function GeographicalElement(id, name, passiveProduction, situationalBuildings, buildingBaseCapacity, depletion, depletesInto, buildings) {
-    this.uuid = crypto.randomUUID(); //uuid of this element
+function GeographicalElement(uuid, id, name, passiveProduction, situationalBuildings, buildingBaseCapacity, depletion, depletesInto, buildings) {
+    this.uuid = uuid; //uuid of this element
     this.id = id; //id of this element, is seperate from uuid as multiple of the same element can inhabit a sector
     this.name = name; //display name of this element
     this.passiveProduction = passiveProduction; //array of arrays that contain a resource and production amount per tick
