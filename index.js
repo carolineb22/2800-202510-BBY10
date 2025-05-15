@@ -1,6 +1,5 @@
-/* All code below is taken from lessons learned in COMP2800.
- * 
- */
+/* The following code is all from lessons learned in 2537 */
+
 require("./utils.js");
 require('dotenv').config();
 
@@ -54,8 +53,7 @@ function validateSession(req, res, next) {
     if (!req.session.authenticated) {
         res.redirect(308, '/login?noSession=1');
     }
-    else
-    {
+    else {
         next();
     }
 };
@@ -63,12 +61,10 @@ function validateSession(req, res, next) {
 // Middleware logout function
 // (TODO REPLACE)
 function checkLogout(req, res, next) {
-    if(req.query.loggedOut)
-    {
+    if (req.query.loggedOut) {
         console.log("User logged out (UNIMPLEMENTED)");
     }
-    else
-    {
+    else {
         next();
     }
 }
@@ -76,20 +72,16 @@ function checkLogout(req, res, next) {
 // Middleware login validation function
 // (TODO REPLACE)
 function validateLogin(req, res, next) {
-    if(req.query.invalidEmail)
-    {
+    if (req.query.invalidEmail) {
         console.log("Invalid Email (UNIMPLEMENTED)");
     }
-    else if(req.query.noAccount)
-    {
+    else if (req.query.noAccount) {
         console.log("Email has no account (UNIMPLEMENTED)");
     }
-    else if(req.query.invalidPassword)
-    {
+    else if (req.query.invalidPassword) {
         console.log("Invalid Password (UNIMPLEMENTED)");
     }
-    else
-    {
+    else {
         next();
     }
 }
@@ -201,8 +193,8 @@ app.post('/loggingin', async (req, res) => {
     }
 
     const result = await userCollection.find({ email: email })
-                                       .project({ email: 1, username: 1, password: 1, _id: 1 })
-                                       .toArray();
+        .project({ email: 1, username: 1, password: 1, _id: 1 })
+        .toArray();
 
     console.log(result);
     if (result.length != 1) {
@@ -291,7 +283,7 @@ app.get('/logout', (req, res) => {
     res.redirect('/');
 });
 
-app.get('/weatherTest', (req,res) => {
+app.get('/weatherTest', (req, res) => {
     res.render("weatherTest", {
         title: "Weather Test",
         css: ["styles/index.css"],
@@ -311,7 +303,7 @@ app.get('/main/techTree', validateSession, (req, res) => {
 });
 
 // TODO implement proper html page
-app.get('/main/build', validateSession, (req,res) => {
+app.get('/main/build', validateSession, (req, res) => {
     res.send(`Unimplemented Page
         <br>
         <form action='/main' method='get'>
@@ -332,5 +324,5 @@ app.use(function (req, res) {
 });
 
 app.listen(port, () => {
-    console.log("Node web application listening on port " + port);
+    console.log(`Node web application listening on http://localhost:${port}`);
 });

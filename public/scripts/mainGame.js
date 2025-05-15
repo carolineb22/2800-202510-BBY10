@@ -44,14 +44,19 @@ console.log(Sectors)
 
 let activeSector = 0;
 let activeElement = null;
+// VALUES DECLARE -----------------------------------------------------------
+
 
 // ENUMS --------------------------------------------------------------------
+
+// Some examples of building types.
 const BuildingTypes = {
     Housing: "Housing",
     Extraction: "Extraction",
     Processing: "Processing"
 }
 
+// some example resources
 const ResourceTypes = {
     Water: "Water",
     Food: "Food",
@@ -61,8 +66,13 @@ const ResourceTypes = {
     AdvancedGoods: "Advanced Goods",
     Metamaterials: "Metamaterials"
 }
+// ENUMS --------------------------------------------------------------------
+
 
 // TEMPLATES -----------------------------------------------------------------
+
+// Testing templates for a Geographical Element
+// View GeographicalElement() for explanation on how to create new GeographicalElements.
 const GeographicalElementTemplates = {
     element_forest: [
         crypto.randomUUID(),
@@ -85,6 +95,8 @@ const GeographicalElementTemplates = {
     ]
 }
 
+// Testing templates for Buildings
+// View Building() for explanation on how to create new Buildings
 const BuildingTemplates = {
     building_logging_site: [
         "building_logging_site",
@@ -151,8 +163,28 @@ const BuildingTemplates = {
         "surface_of_the_sun"
     ]
 }
+// TEMPLATES -----------------------------------------------------------------
+
 
 // OBJECTS -------------------------------------------------------------------
+
+// JSON template for creating a GeographicalElement:
+// [
+//     "id",    -- the internal name of this GE. (What the developer sees)
+//     "name",  -- the external name of this GE. (What the player sees)
+//     [                                    -- passiveProduction array of resources.
+//         ["Resource", productionAmount]   -- the resourcetype and it's production amount per tick. 
+//     ],
+//     [                                        -- situationalBuildings, array of arrays.
+//         [                                    -- The types of buildings that can be built on this GE.
+//             ["building_id_1", max_amount],   -- since these groups are mutually exclusive (XOR), in this example 
+//             ["building_id_2", max_amount]    -- if you built a building_id_3, you would be locked out of building any
+//         ],                                   -- of IDs, 1 or 2. The IDs in this case being the internal names of that 
+//         ["building_id_3", max_amount]        -- particular building. max_amount being the maximum amount of that building
+//     ],                                       -- you can build on this GE.
+//     buildingBaseCapacity,    -- The total buildings you can have built at a time on this GE
+//     "depletesInto"   -- The ID (Internal name) of the GE that this turns into upon resource depletion.
+// ]
 function GeographicalElement(uuid, id, name, passiveProduction, situationalBuildings, buildingBaseCapacity, depletion, depletesInto, buildings) {
     this.uuid = uuid; //uuid of this element
     this.id = id; //id of this element, is seperate from uuid as multiple of the same element can inhabit a sector
@@ -164,7 +196,9 @@ function GeographicalElement(uuid, id, name, passiveProduction, situationalBuild
     this.depletesInto = depletesInto; //what element does this element turn into after being depleted? based on id
     this.buildings = buildings;
 
-
+    // Whenever this GeographicalElement is called to do a tick,
+    // run through every resource that this GE has in passiveProduction 
+    // and increment by some set value
     this.doTick = function() {
         this.passiveProduction.forEach(val => {
             Resources[val[0]] += val[1]
@@ -180,6 +214,26 @@ function GeographicalElement(uuid, id, name, passiveProduction, situationalBuild
     }
 }
 
+// JSON template for creating a Building:
+// [
+//     "id",    -- internal name of this Building (what the developer sees)
+//     BuildingTypes.Foo,   -- the type of production that this Building does.
+//     "name",  -- External name of this Building (what the player sees)
+//     [                                    -- consumptionArray
+//         ["resource", amount_per_tick]    -- resources used up per tick
+//     ],
+//     [                                    -- productionArray
+//         ["resource", amount_per_tick]    -- resources produced per tick
+//     ],
+//     [                        -- costArray
+//         ["resource", cost]   -- resources and their cost needed to build this Building
+//     ],
+//     depletion,   -- the amount of the parent GeographicalElement's resource that this Building
+//                  -- depletes per tick (depletion/tick). Can be null, but must be present.
+//     "needsType", -- the ID (internal name) of the GE that this building can be built on.
+//     builtOnElement   -- the UUID of the GE that this Building is built on.
+//                      -- This is left out of the JSON internally since UUIDs change each session.
+// ]
 function Building(id, type, name, consumptionArray, productionArray, costArray, depletion, needsType, builtOnElement) {
     this.uuid = crypto.randomUUID(); //uuid of this element
     this.id = id; //id of this element, is seperate from uuid as multiple of the same building can inhabit an element
@@ -198,7 +252,8 @@ function Building(id, type, name, consumptionArray, productionArray, costArray, 
 
     if (needsType) {
         this.needsType = needsType;
-    } 
+    }
+
     this.doTick = function() {
         this.productionArray.forEach(val => {
             Resources[val[0]] += val[1]
@@ -220,6 +275,14 @@ function Building(id, type, name, consumptionArray, productionArray, costArray, 
     
 }
 
+// JSON Template for creating a sector
+// [
+//     "id",    -- The internal name for this sector (what the developer sees)
+//     "name",  -- the external name for this sector (what the player sees)
+//     [
+//         exampleGeographicalElement,      -- geographicalElements array.
+//         exampleGeographicalElement       -- an array of GE objects tied to this sector. 
+//     ]
 function Sector(id, name, geographicalElements) {
     this.id = id;
     this.name = name;
@@ -234,10 +297,11 @@ function Sector(id, name, geographicalElements) {
         })
     }
 }
+// OBJECTS -------------------------------------------------------------------
+ 
 
 // STORING ARRAYS INIT -------------------------------------------------------
-// (only do if arrays aren't already initialized)
-
+// (only do if Resources or Sectors are empty)
 for (var key in ResourceTypes) {
     if (!Resources[key]) Resources[key] = 0;
 }
@@ -276,9 +340,9 @@ function getGeographicalElementById(id) {
             break
         }
     }
-    
+
     return returnVal;
-} 
+}
 
 function updateResources() {
     let formattedResources = "";
@@ -286,7 +350,6 @@ function updateResources() {
         let value = Resources[key];
         formattedResources += `${ResourceTypes[key]}: ${value.toFixed(2)} <br>`;
     }
-
 
     document.getElementById("resources").innerHTML = formattedResources;
 }
@@ -296,7 +359,7 @@ function displayActiveSector() {
     let sector = Sectors[activeSector];
 
     formattedInfo += `Selected sector <b>${sector.name}</b><br><br>Geographical elements<br> `;
-    
+
     sector.geographicalElements.forEach(element => {
         formattedInfo += `<hr><br>${element.name}, ${element.depletion == BaseDepletion ? "untouched" : `${element.depletion}/${BaseDepletion} depletion`} TEMP id: ${element.uuid}<br>`
         if (element.passiveProduction && element.passiveProduction.length) {
@@ -306,7 +369,7 @@ function displayActiveSector() {
         let hasBuildings = false;
         element.buildings.forEach(val => {
             if (val.builtOnElement == element.uuid) {
-                if(!hasBuildings) {
+                if (!hasBuildings) {
                     formattedInfo += "Buildings:<br>";
                     hasBuildings = true;
                 }
@@ -317,8 +380,6 @@ function displayActiveSector() {
             formattedInfo += `<br><br>`;
         }
     })
-
-
 
     document.getElementById("sector_info").innerHTML = formattedInfo;
 }
@@ -355,30 +416,16 @@ function buildBuilding(building_id, element_uuid) {
         })
     })
 }
+// HELPER FUNCTIONS ----------------------------------------------------------
 
-// GAME LOOP -----------------------------------------------------------------
-function gameLoop() {
-    updateResources();
-    displayActiveSector();
-
-    Sectors.forEach(sector => {
-        sector.doTick();
-    })
-
-}
 
 // TICK CONTROL --------------------------------------------------------------
 const tickInterval = 100; //in milliseconds
 const fastInterval = 50; //in milliseconds
 let fastMode = false;
-
-let a = 0;
-const e = document.getElementById("test");
-
-
 let gameInterval;
 
-function pause() {
+function pauseGame() {
     if (gameInterval) {
         clearInterval(gameInterval);
         gameInterval = null;
@@ -386,7 +433,7 @@ function pause() {
     }
 }
 
-function resume() {
+function resumeGame() {
     if (!gameInterval) {
         gameInterval = setInterval(gameLoop, fastMode ? fastInterval : tickInterval);
         console.log("started ticking");
@@ -395,17 +442,17 @@ function resume() {
 
 document.getElementById('play_state').addEventListener("click", e => {
     if (gameInterval) {
-        pause();
+        pauseGame();
     } else {
-        resume();
+        resumeGame();
     }
 })
 
 const fastForward = document.getElementById('fast_forward');
 fastForward.addEventListener("click", e => {
     fastMode = !fastMode;
-    pause()
-    resume()
+    pauseGame()
+    resumeGame()
 
     if (fastMode) {
         fastForward.style.backgroundColor = '#777';
@@ -415,7 +462,22 @@ fastForward.addEventListener("click", e => {
     }
 
 })
+// TICK CONTROL --------------------------------------------------------------
 
+
+// GAME LOOP -----------------------------------------------------------------
+function gameLoop() {
+    updateResources();
+    displayActiveSector();
+
+    Sectors.forEach(sector => {
+        sector.doTick();
+    })
+}
+// GAME LOOP -----------------------------------------------------------------
+
+
+// HTML EVENTS ---------------------------------------------------------------
 document.getElementById('cycle_sector').addEventListener("click", e => {
     activeSector += 1;
     if (activeSector >= Sectors.length) {
@@ -428,6 +490,8 @@ document.getElementById('update_elem').addEventListener("click", e => {
     activeElement = document.getElementById('elementInput').value;
     displayBuildingSidebar();
 })
+// HTML EVENTS ---------------------------------------------------------------
+
 
 // SAVING/LOADING ------------------------------------------------------------
 
@@ -439,3 +503,4 @@ function save()
 // ON OPEN -------------------------------------------------------------------
 updateResources();
 displayActiveSector();
+// ON OPEN -------------------------------------------------------------------
