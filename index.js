@@ -211,12 +211,21 @@ app.post('/loggingin', async (req, res) => {
 });
 
 app.get('/save', validateSession, async (req, res) => {
+    var username = req.body.username;
 
     console.log("Save request received!");
 
+    const schema = Joi.object({ username: Joi.string().alphanum().max(20).required() });
+
+    const validationResult = schema.validate({ username });
+
+    if (validationResult.error != null) {
+        res.redirect('/main?saveError=1');
+        return;
+    }
+
     // Get user from database
-    // TODO add SQL injection checks, currently sends the raw query to the db, unsafe.
-    let user = await userCollection.find({ username: req.session.username })
+    let user = await userCollection.find({ username: username })
         .project({ email: 1, username: 1, password: 1, _id: 1 })
         .toArray();
 
@@ -238,7 +247,7 @@ app.get('/save', validateSession, async (req, res) => {
 
         // Upsert (update or insert) user data into database
         await saveCollection.updateOne(
-            { username: req.session.username }, // Search criteria
+            { username: username }, // Search criteria
             {
                 $set: {                          // Info to upsert
                     user_id: user[0]._id,
@@ -258,10 +267,19 @@ app.get('/save', validateSession, async (req, res) => {
 });
 
 app.get('/main', validateSession, async (req, res) => {
+    var username = req.body.username;
+
+    const schema = Joi.object({ username: Joi.string().alphanum().max(20).required() });
+
+    const validationResult = schema.validate({ username });
+
+    if (validationResult.error != null) {
+        res.redirect('/login?maliciousUsername=1'); // TODO add this flag to the /login checks
+        return;
+    }
 
     // Get the user profile from the session's username
-    // TODO add SQL injection checks, currently sends the raw query to the db, unsafe.
-    let userArray = await userCollection.find({ username: req.session.username })
+    let userArray = await userCollection.find({ username: username })
         .project({ _id: 1 })
         .toArray();
 
@@ -270,7 +288,7 @@ app.get('/main', validateSession, async (req, res) => {
     console.log([user, user._id]);
 
     if (!user) {
-        console.error(`Access to main with invalid username: ${req.session.username}`);
+        console.error(`Access to main with invalid username: ${username}`);
         res.redirect("/login");
         return;
     }
