@@ -272,7 +272,8 @@ app.get('/main', validateSession, async (req, res) => {
         title: "Main Game Page",
         css: ['styles/mainGame.css', "https://fonts.googleapis.com/icon?family=Material+Icons"],
         resources: userStats ? JSON.stringify(userStats.resources) : "{}",
-        sectors: userStats ? JSON.stringify(userStats.sector) : "[]"
+        sectors: userStats ? JSON.stringify(userStats.sector) : "[]",
+        apiKey: process.env.WEATHER_API_KEY
     });
 });
 

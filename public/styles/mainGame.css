@@ -230,6 +230,46 @@ body {
     }
 }
 
+.weather-ticker {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-100%);
+      background-color: rgba(0, 0, 0, 0.75);
+      color: #fff;
+      padding: 6px 20px;
+      border-radius: 8px;
+      width: 60%;
+      overflow: hidden;
+      white-space: nowrap;
+      box-shadow: 0 0 8px #000;
+      z-index: 1000;
+      opacity: 0;
+      transition: transform 0.5s ease, opacity 0.5s ease;
+    }
+
+    .weather-ticker.visible {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    .weather-headline {
+      display: inline-block;
+      white-space: nowrap;
+      will-change: transform;
+      animation-fill-mode: forwards;
+    }
+
+    @keyframes scroll-left {
+      0% {
+        transform: translateX(100%);
+      }
+
+      100% {
+        transform: translateX(-100%);
+      }
+    }
+
 /* === Portrait Mode === */
 @media (orientation: portrait) {
     .container {
