@@ -9,7 +9,6 @@ const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const bcrypt = require('bcrypt');
 const Joi = require('joi');
-const util = require('util');
 
 /* secret information section */
 const mongodb_host = process.env.MONGODB_HOST;
@@ -24,7 +23,7 @@ const node_session_secret = process.env.NODE_SESSION_SECRET;
 // ensure port
 const port = process.env.PORT || 3000;
 
-// ensure express
+// Initialize express
 const app = express();
 
 // session maxAge
@@ -39,6 +38,7 @@ app.use(express.urlencoded({ extended: false }));
 // ensure public directory for styles/content delivery
 app.use(express.static(__dirname + "/public"));
 
+// set our content delivery to EJS
 app.set('view engine', 'ejs');
 
 // ensure database connection
@@ -51,26 +51,15 @@ const saveCollection = database.db(mongodb_database).collection('test_numbers');
 // Middleware authentication function
 function validateSession(req, res, next) {
     if (!req.session.authenticated) {
-        res.redirect(308, '/login?noSession=1');
+        res.redirect('/login?noSession=1');
     }
     else {
         next();
     }
 };
 
-// Middleware logout function
-// (TODO REPLACE)
-function checkLogout(req, res, next) {
-    if (req.query.loggedOut) {
-        console.log("User logged out (UNIMPLEMENTED)");
-    }
-    else {
-        next();
-    }
-}
-
 // Middleware login validation function
-// (TODO REPLACE)
+// TODO REPLACE with login page ejs params, add these warnings to /login page for quick feedback.
 function validateLogin(req, res, next) {
     if (req.query.invalidEmail) {
         console.log("Invalid Email (UNIMPLEMENTED)");
@@ -85,8 +74,6 @@ function validateLogin(req, res, next) {
         next();
     }
 }
-
-// Middleware 
 
 // ensure database collection for sessions
 var mongoStore = MongoStore.create({
@@ -105,7 +92,7 @@ app.use(session({
 }));
 
 // landing page
-app.get('/', checkLogout, (req, res) => {
+app.get('/', (req, res) => {
     res.render('index', {
         title: "Our Tomorrow",
         css: ['styles/index.css', "https://fonts.googleapis.com/css2?family=Audiowide&display=swap"],
@@ -158,13 +145,14 @@ app.post('/submitUser', async (req, res) => {
         {
             username: Joi.string().alphanum().max(20).required(),
             password: Joi.string().max(20).required(),
-            email: Joi.string().email({ maxDomainSegments: 2, tlds: { allow: ['com', 'net', 'ca'] } }) // TODO loosen restrictions on email requirements
+            email: Joi.string().email({ minDomainSegments: 2, tlds: { allow: false } })
         });
 
     const validationResult = schema.validate({ username, password, email });
+
     if (validationResult.error != null) {
         console.log(validationResult.error);
-        res.redirect(308, "/signUp?invalidCred=1");
+        res.redirect("/signUp?invalidCred=1");
         return;
     }
 
@@ -184,11 +172,12 @@ app.post('/loggingin', async (req, res) => {
     var email = req.body.email;
     var password = req.body.password;
 
-    const schema = Joi.string().email({ maxDomainSegments: 2, tlds: { allow: ['com', 'net', 'ca'] } })
+    const schema = Joi.string().email({ minDomainSegments: 2, tlds: { allow: false } })
     const validationResult = schema.validate(email);
+
     if (validationResult.error != null) {
         console.log(validationResult.error);
-        res.redirect(308, "/login?invalidEmail=1");
+        res.redirect("/login?invalidEmail=1");
         return;
     }
 
@@ -197,13 +186,16 @@ app.post('/loggingin', async (req, res) => {
         .toArray();
 
     console.log(result);
+
     if (result.length != 1) {
         console.log("user not found");
-        res.redirect(308, "/login?noAccount=1");
+        res.redirect("/login?noAccount=1");
         return;
     }
+
     if (await bcrypt.compare(password, result[0].password)) {
         console.log("correct password");
+
         req.session.authenticated = true;
         req.session.username = result[0].username;
         req.session.cookie.maxAge = expireTime;
@@ -213,61 +205,81 @@ app.post('/loggingin', async (req, res) => {
     }
     else {
         console.log("incorrect password");
-        res.redirect(308, "/login?invalidPassword=1");
+        res.redirect("/login?invalidPassword=1");
         return;
     }
 });
 
-app.get('/save', validateSession, async (req,res) => {
+app.get('/save', validateSession, async (req, res) => {
+
     console.log("Save request received!");
+
     // Get user from database
+    // TODO add SQL injection checks, currently sends the raw query to the db, unsafe.
     let user = await userCollection.find({ username: req.session.username })
-                                   .project({ email: 1, username: 1, password: 1, _id: 1 })
-                                   .toArray();
+        .project({ email: 1, username: 1, password: 1, _id: 1 })
+        .toArray();
+
     console.log(user);
+
     // If no user, return
-    if(!user) {
+    if (!user) {
         console.log("Could not save.");
         res.status(501)
         return;
     }
+
     // Else, parse query syntax
-    try
-    {
+    try {
         sectors = JSON.parse(req.query.sectors);
         resources = JSON.parse(req.query.resources);
+
         console.log(sectors);
+
         // Upsert (update or insert) user data into database
         await saveCollection.updateOne(
-        {username: req.session.username}, // Search criteria
-        {$set: {                          // Info to upsert
-            user_id: user[0]._id,
-            sector: sectors,
-            resources: resources}},
-        {upsert: true});                  // Declare upsert
+            { username: req.session.username }, // Search criteria
+            {
+                $set: {                          // Info to upsert
+                    user_id: user[0]._id,
+                    sector: sectors,
+                    resources: resources
+                }
+            },
+            { upsert: true });                  // Declare upsert
+
         console.log("Save successful!");
-    } catch(e) {
+    } catch (e) {
         // If error, then report it
         console.error(e);
     }
+
     res.redirect('/main');
 });
 
 app.get('/main', validateSession, async (req, res) => {
+
     // Get the user profile from the session's username
+    // TODO add SQL injection checks, currently sends the raw query to the db, unsafe.
     let userArray = await userCollection.find({ username: req.session.username })
-                                        .project({_id: 1})
-                                        .toArray();
+        .project({ _id: 1 })
+        .toArray();
+
     let user = userArray[0];
-    console.log([user, user._id])
-    if(!user) {
+
+    console.log([user, user._id]);
+
+    if (!user) {
         console.error(`Access to main with invalid username: ${req.session.username}`);
         res.redirect("/login");
         return;
     }
-    let statsArray = await saveCollection.find({user_id: user._id}).toArray();
+
+    let statsArray = await saveCollection.find({ user_id: user._id }).toArray();
     let userStats = statsArray[0];
+
     console.log(userStats);
+
     res.render("mainGame", {
         title: "Main Game Page",
         css: ['styles/mainGame.css', "https://fonts.googleapis.com/icon?family=Material+Icons"],
@@ -275,8 +287,6 @@ app.get('/main', validateSession, async (req, res) => {
         sectors: userStats ? JSON.stringify(userStats.sector) : "[]"
     });
 });
-
-// TODO as more game pages are created, add their index.js paths under `/main` to ensure we have proper authorization
 
 app.get('/logout', (req, res) => {
     req.session.destroy();
@@ -291,7 +301,6 @@ app.get('/weatherTest', (req, res) => {
     });
 });
 
-// TODO REMOVE LATER
 app.get('/main/techTree', validateSession, (req, res) => {
     res.render("techTree", {
         title: "Custom Tech Tree",
@@ -302,7 +311,7 @@ app.get('/main/techTree', validateSession, (req, res) => {
     })
 });
 
-// TODO implement proper html page
+// TODO flagged for removal in next sprint
 app.get('/main/build', validateSession, (req, res) => {
     res.send(`Unimplemented Page
         <br>
