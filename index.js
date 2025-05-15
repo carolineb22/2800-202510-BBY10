@@ -3,12 +3,14 @@
 require("./utils.js");
 require('dotenv').config();
 
+
 // declare package requirements
 const express = require('express');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const bcrypt = require('bcrypt');
 const Joi = require('joi');
+
 
 /* secret information section */
 const mongodb_host = process.env.MONGODB_HOST;
@@ -19,6 +21,7 @@ const mongodb_session_secret = process.env.MONGODB_SESSION_SECRET;
 
 const node_session_secret = process.env.NODE_SESSION_SECRET;
 /* END secret section */
+
 
 // ensure port
 const port = process.env.PORT || 3000;
@@ -32,6 +35,7 @@ const expireTime = 24 * 60 * 60 * 1000;
 // how many times to salt the passwords
 const saltRounds = 10;
 
+
 // ensure we can read from forms
 app.use(express.urlencoded({ extended: false }));
 
@@ -41,12 +45,14 @@ app.use(express.static(__dirname + "/public"));
 // set our content delivery to EJS
 app.set('view engine', 'ejs');
 
+
 // ensure database connection
 var { database } = include('databaseConnection');
 
 // ensure database 'users' collection
 const userCollection = database.db(mongodb_database).collection('users');
 const saveCollection = database.db(mongodb_database).collection('test_numbers');
+
 
 // Middleware authentication function
 function validateSession(req, res, next) {
@@ -57,6 +63,7 @@ function validateSession(req, res, next) {
         next();
     }
 };
+
 
 // Middleware login validation function
 // TODO REPLACE with login page ejs params, add these warnings to /login page for quick feedback.
@@ -75,6 +82,7 @@ function validateLogin(req, res, next) {
     }
 }
 
+
 // ensure database collection for sessions
 var mongoStore = MongoStore.create({
     mongoUrl: `mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_host}/sessions`,
@@ -91,6 +99,12 @@ app.use(session({
     resave: true
 }));
 
+/* --------------------------------------------------------
+ * Page serving functions go here. 
+ * Things like post functions for forms can be placed here,
+ * while game logic can be moved to client-side .js files.
+ */
+
 // landing page
 app.get('/', (req, res) => {
     res.render('index', {
@@ -105,11 +119,6 @@ app.get('/', (req, res) => {
     });
 });
 
-/* 
- * other page serving functions go here. 
- * Things like post functions for forms can be placed here,
- * while game logic and user registration can be moved to other .js files.
- */
 
 // TODO - remove middleware function,
 // catch invalidCred and deal with it properly in `signUp.html`
@@ -123,6 +132,7 @@ app.get('/signUp', (req, res) => {
     });
 });
 
+
 // TODO - remove middleware function,
 // catch noSession, invalidEmail, noAccount, & invalidPassword
 // and deal with them properly in `login.html`
@@ -135,6 +145,7 @@ app.get('/login', validateLogin, (req, res) => {
         css: ["styles/login.css", "https://fonts.googleapis.com/css2?family=Audiowide&display=swap"]
     });
 });
+
 
 app.post('/submitUser', async (req, res) => {
     var username = req.body.username;
@@ -156,6 +167,23 @@ app.post('/submitUser', async (req, res) => {
         return;
     }
 
+
+    // TODO find a way to merge these two queries for efficiency
+    var duplicateUsername = await userCollection.find({ username: username }).toArray();
+
+    var duplicateEmail = await userCollection.find({ email: email }).toArray();
+    
+    if (duplicateUsername.length != 0) {
+        res.redirect('/signUp?duplicateUsername?=1'); // TODO add this flag to /signUp checks
+        return;
+    }
+
+    if (duplicateEmail.length != 0) {
+        res.redirect('/signUp?duplicateEmail=1') // TODO add this flag to /signUp checks
+        return;
+    }
+
+
     var hashedPassword = await bcrypt.hash(password, saltRounds);
 
     await userCollection.insertOne({ username: username, password: hashedPassword, email: email });
@@ -167,6 +195,7 @@ app.post('/submitUser', async (req, res) => {
 
     res.redirect('/main');
 });
+
 
 app.post('/loggingin', async (req, res) => {
     var email = req.body.email;
@@ -210,8 +239,9 @@ app.post('/loggingin', async (req, res) => {
     }
 });
 
+
 app.get('/save', validateSession, async (req, res) => {
-    var username = req.body.username;
+    var username = req.session.username;
 
     console.log("Save request received!");
 
@@ -266,8 +296,9 @@ app.get('/save', validateSession, async (req, res) => {
     res.redirect('/main');
 });
 
+
 app.get('/main', validateSession, async (req, res) => {
-    var username = req.body.username;
+    var username = req.session.username;
 
     const schema = Joi.object({ username: Joi.string().alphanum().max(20).required() });
 
@@ -289,7 +320,7 @@ app.get('/main', validateSession, async (req, res) => {
 
     if (!user) {
         console.error(`Access to main with invalid username: ${username}`);
-        res.redirect("/login");
+        res.redirect("/login?invalidUsername=1"); // TODO add this flag to the /login checks
         return;
     }
 
@@ -305,6 +336,7 @@ app.get('/main', validateSession, async (req, res) => {
         sectors: userStats ? JSON.stringify(userStats.sector) : "[]"
     });
 });
+
 
 app.get('/logout', (req, res) => {
     req.session.destroy();
@@ -341,6 +373,9 @@ app.get('/main/build', validateSession, (req, res) => {
         </form>
         `);
 });
+
+
+/* Do not add more pages after here, as they'll be caught by the 404 page and wont be displayed. */
 
 // 404 page
 app.use(function (req, res) {
