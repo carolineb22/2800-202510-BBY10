@@ -97,10 +97,12 @@
     });
 
     // Declare variables for mainGame.js
-    var unHTMLedResources = JSON.parse("\"<%=resources%>\"");
-    var databaseResources = unHTMLedResources.replace(/&#34;/g,'"')
-    var unHTMLedSectors = JSON.parse("\"<%=sectors%>\"");
-    var databaseSectors = unHTMLedSectors.replace(/&#34;/g,'"')
+    let unHTMLedResources = JSON.parse("\"<%=resources%>\"");
+    let stringifiedResources = unHTMLedResources.replace(/&#34;/g,'"');
+    var databaseResources = JSON.parse(stringifiedResources) || {};
+    let unHTMLedSectors = JSON.parse("\"<%=sectors%>\"");
+    let stringifiedSectors = unHTMLedSectors.replace(/&#34;/g,'"');
+    var databaseSectors = JSON.parse(stringifiedSectors);
     console.log(databaseResources);
     console.log(databaseSectors);
 </script>

@@ -279,8 +279,8 @@ app.get('/main', validateSession, async (req, res) => {
     res.render("mainGame", {
         title: "Main Game Page",
         css: ['styles/mainGame.css', "https://fonts.googleapis.com/icon?family=Material+Icons"],
-        resources: JSON.stringify(userStats.resources),
-        sectors: JSON.stringify(userStats.sector)
+        resources: userStats ? JSON.stringify(userStats.resources) : "{}",
+        sectors: userStats ? JSON.stringify(userStats.sector) : "[]"
     });
 });
 
