@@ -9,6 +9,9 @@
             <input name="password" type="password" placeholder="password" required>
             <button type="submit">Enter</button>
         </form>
+        <% if (errors) errors.forEach((message) => { %>
+            <p><%= message %><br></p>
+        <% }) %>
         <p class="login-link">Returning? <a href="/login">login</a></p>
     </div>
 </div>
