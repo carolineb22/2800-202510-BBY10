@@ -416,6 +416,68 @@ function buildBuilding(building_id, element_uuid) {
         })
     })
 }
+
+
+
+
+function wipeCurrentSector() {
+    document.getElementsByClassName("sector_display").map(element => {
+        element.remove();
+    }) //only ever should be one, wipes all as a precaution
+}
+
+function displayNewSector(sector) {
+    let newSector = document.getElementById("sector").cloneNode(true);
+    newSector.firstChild.innerHTML = `Overview of ${sector.name}`;
+    addGeoElemsToNode(sector.geographicalElements, newSector.lastChild)
+}
+
+
+function addGeoElemsToNode(elementArray, detailNode) {
+    elementArray.forEach(element => {
+        let newElem = document.getElementById("geoelement").cloneNode(true);
+        newElem.querySelector('.geoelement_name').innerHTML = `${element.name}`
+        newElem.querySelector('.depletion').innerHTML = `Depletion: ${element.depletion}/${BaseDepletion}` //change to individual max depletion later.
+        newElem.querySelector('.geoelement_build').addEventListener("click", e => {
+            openBuildMenu(element.uuid)
+        })
+
+        if (element.passiveProduction && element.passiveProduction.length != 0) {
+            let textDisplay = document.createElement("p");
+            textDisplay.innerHTML = "Passive production:";
+            newElem.querySelector('.passive_production').appendChild(textDisplay);
+            newElem.querySelector('.passive_production').appendChild(document.createElement("br"));
+            element.passiveProduction.forEach(passiveProductionArray => {
+                let passiveInfo = document.createElement("p");
+                passiveInfo.innerHTML = `${ResourceTypes[passiveProductionArray[0]]}: ${passiveProductionArray[1]}/tick}`;
+                newElem.querySelector('.passive_production').appendChild(passiveInfo);
+            })
+            newElem.querySelector('.passive_production').appendChild(document.createElement("br"));
+        }
+
+        if (element.buildings && element.buildings.length != 0) {
+            let textDisplay = document.createElement("p");
+            textDisplay.innerHTML = "Buildings:";
+            newElem.querySelector('.buildings').appendChild(textDisplay);
+            newElem.querySelector('.buildings').appendChild(document.createElement("br"));
+            element.passiveProduction.forEach(building => {
+                let buildingNode = document.getElementById("building").cloneNode(true);
+                buildingNode.querySelector('.building_name')
+                buildingNode.querySelector('.building_type')
+                buildingNode.querySelector('.consumption')
+                buildingNode.querySelector('.production')
+
+
+            })
+            newElem.querySelector('.buildings').appendChild(document.createElement("br"));
+        }
+
+
+
+        detailNode.append(newElem);
+    })
+}
+
 // HELPER FUNCTIONS ----------------------------------------------------------
 
 

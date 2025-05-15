@@ -108,3 +108,41 @@
 </script>
 <script src="scripts/mainGame.js"></script>
 <%- include("templates/footer")%>
+<template id="resource">
+    <p class="resource_display"></p>
+</template>
+<template id="sector">
+    <div class="sector_display">
+        <p class="sector_name"></p>
+        <br>
+        <div class="sector_details">
+
+        </div>
+    </div>
+
+</template>
+<template id="building">
+    <p class="building_name"></p>
+    <p class="building_type"></p>
+    <div class="consumption">
+
+    </div>
+    <div class="production">
+
+    </div>
+</template>
+<template id="geoelement">
+    <div class="individualgeoelement">
+        <br>
+        <p class="geoelement_name"></p>
+        <p class="depletion"></p>
+        <button class="hud-button geoelement_build"></button>
+        <div class="passive_production">
+
+        </div>
+        <div class="buildings">
+
+        </div>
+        <hr>
+    </div>
+</template>
