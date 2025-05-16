@@ -29,6 +29,38 @@ function updateSkillPointsDisplay() {
 function drawLines() {
   svg.innerHTML = '';
 
+  // 1. Calculate bounding box of all skills
+  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+
+  skills.forEach(skill => {
+    const left = parseFloat(skill.style.left);
+    const top = parseFloat(skill.style.top);
+    const width = skill.offsetWidth;
+    const height = skill.offsetHeight;
+
+    const x = left;
+    const y = top;
+
+    minX = Math.min(minX, x);
+    minY = Math.min(minY, y);
+    maxX = Math.max(maxX, x + width);
+    maxY = Math.max(maxY, y + height);
+  });
+
+  // Add padding
+  const padding = 100;
+  minX -= padding;
+  minY -= padding;
+  maxX += padding;
+  maxY += padding;
+
+  // 2. Resize and reposition the SVG
+  svg.setAttribute("width", maxX - minX);
+  svg.setAttribute("height", maxY - minY);
+  svg.style.left = `${minX}px`;
+  svg.style.top = `${minY}px`;
+
+  // 3. Draw lines adjusted to new SVG origin
   skills.forEach(skill => {
     const parentId = skill.dataset.parent;
     if (parentId) {
@@ -38,19 +70,18 @@ function drawLines() {
         const end = getCenter(skill);
 
         const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-        line.setAttribute('x1', start.x);
-        line.setAttribute('y1', start.y);
-        line.setAttribute('x2', end.x);
-        line.setAttribute('y2', end.y);
+        line.setAttribute('x1', start.x - minX);
+        line.setAttribute('y1', start.y - minY);
+        line.setAttribute('x2', end.x - minX);
+        line.setAttribute('y2', end.y - minY);
         line.setAttribute('stroke-width', '2');
 
-        // Determine color
         if (skill.classList.contains('unlocked')) {
-          line.setAttribute('stroke', '#00ff80'); // green = unlocked
+          line.setAttribute('stroke', '#00ff80');
         } else if (parent.classList.contains('unlocked')) {
-          line.setAttribute('stroke', '#00e5ff'); // blue = available
+          line.setAttribute('stroke', '#00e5ff');
         } else {
-          line.setAttribute('stroke', '#888'); // gray = locked
+          line.setAttribute('stroke', '#888');
         }
 
         svg.appendChild(line);
@@ -72,7 +103,7 @@ function showInfoBox(skill) {
   interactionLocked = true;
   infoTitle.textContent = skill.dataset.name;
   infoCost.textContent = `Cost: ${skill.dataset.cost} Skill Points`;
-  infoDescription.textContent = skill.dataset.description;
+   infoDescription.innerHTML = skill.dataset.description;
   infoBox.style.display = 'block';
 
   const center = getCenter(skill);
