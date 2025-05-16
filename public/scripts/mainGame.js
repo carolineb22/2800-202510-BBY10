@@ -1,3 +1,4 @@
+
 // VALUES DECLARE -----------------------------------------------------------
 const BaseDepletion = 10000;
 
@@ -20,7 +21,6 @@ databaseSectors.forEach((sector) => {
                                                     b.productionArray,
                                                     b.costArray,
                                                     b.depletion,
-                                                    b.needsType,
                                                     element.uuid))
                 });
             }
@@ -109,8 +109,7 @@ const BuildingTemplates = {
         [
             ["BuildingMaterials", 10000]
         ],
-        1,
-        "element_forest"
+        1
     ],
     building_wood_power_plant: [
         "building_wood_power_plant",
@@ -121,8 +120,7 @@ const BuildingTemplates = {
         [
             ["BuildingMaterials", 30000]
         ],
-        3,
-        "element_forest"
+        3
     ],
     building_forest_cabins: [
         "building_forest_cabins",
@@ -133,8 +131,7 @@ const BuildingTemplates = {
         [
             ["BuildingMaterials", 20000]
         ],
-        null,
-        "element_forest"
+        null
     ],
     building_test: [
         "building_test",
@@ -149,7 +146,6 @@ const BuildingTemplates = {
         [
             ["BuildingMaterials", 1000]
         ],
-        null,
         null
     ],
     building_impossible: [
@@ -159,8 +155,7 @@ const BuildingTemplates = {
         [],
         [],
         [],
-        null,
-        "surface_of_the_sun"
+        null
     ]
 }
 // TEMPLATES -----------------------------------------------------------------
@@ -234,7 +229,7 @@ function GeographicalElement(uuid, id, name, passiveProduction, situationalBuild
 //     builtOnElement   -- the UUID of the GE that this Building is built on.
 //                      -- This is left out of the JSON internally since UUIDs change each session.
 // ]
-function Building(id, type, name, consumptionArray, productionArray, costArray, depletion, needsType, builtOnElement) {
+function Building(id, type, name, consumptionArray, productionArray, costArray, depletion, builtOnElement) {
     this.uuid = crypto.randomUUID(); //uuid of this element
     this.id = id; //id of this element, is seperate from uuid as multiple of the same building can inhabit an element
     this.type = type; //type of building, used for seperation into categories for build meny
@@ -248,10 +243,6 @@ function Building(id, type, name, consumptionArray, productionArray, costArray, 
     if (depletion) {
         this.doesDeplete = true; //nvm it does deplete 
         this.depletion = depletion; //amount to deplete by
-    }
-
-    if (needsType) {
-        this.needsType = needsType;
     }
 
     this.doTick = function() {
@@ -390,24 +381,79 @@ function buildBuilding(building_id, element_uuid) {
     })
 }
 
+function openBuildMenu(element_uuid) {
+    let buildMenuNode = document.getElementById('build_menu').content.cloneNode(true);
+    let buildTabsNode = buildMenuNode.querySelector('.build_tabs');
 
+    makeBuildMenuTab(buildTabsNode, "All", element_uuid);
+    Object.entries(BuildingTypes).forEach(type => {
+        makeBuildMenuTab(buildTabsNode, type[0], element_uuid)
+    })
+    
+    document.getElementById("build_sidebar").replaceChildren(buildMenuNode);
+    switchBuildTab("All", element_uuid);
+}
 
+function makeBuildMenuTab(buildTabsNode, tab_name, element_uuid) {
+    let buildTabNode = document.createElement('p');
+    buildTabNode.classList = [`hud-button col-sm-6 text-sm-center ${tab_name}`];
+    buildTabNode.innerHTML = tab_name;
+    buildTabNode.addEventListener("click", e => {
+        switchBuildTab(tab_name, element_uuid);
+    })
 
+    buildTabsNode.appendChild(buildTabNode);
+}
 
+function switchBuildTab(tab_name, element_uuid) {
+    Array.from(document.getElementById("build_sidebar").querySelector(".build_tabs").children).forEach(tabNode => {
+        tabNode.style.backgroundColor = "#444";
+    })
+    document.getElementById("build_sidebar").querySelector(`.${tab_name}`).style.backgroundColor = "#777";
 
+    let geoElem = getGeographicalElementById(element_uuid);
+    let buildingsNode = document.querySelector('.building_options_display');
+    buildingsNode.replaceChildren();
 
+    geoElem.situationalBuildings.forEach(building => {
+        if (Array.isArray(building[0])) {//is a mutually exclusive group
+            buildingsNode.appendChild(document.createElement("hr"));
+            let mutExGroupDisplay = document.createElement("p");
+            mutExGroupDisplay.innerHTML = "Mutually Exclusive Group";
+            buildingsNode.appendChild(mutExGroupDisplay);
+            building.forEach(mutexBuilding => {
+                let buildingTemplate = BuildingTemplates[mutexBuilding[0]]
+                let buildingInfo = document.createElement("p");
+                buildingInfo.innerHTML = `Build ${buildingTemplate[2]}, Costs ${buildingTemplate[5]}`
+                buildingInfo.classList = ["hud-button"];
+                buildingsNode.appendChild(buildingInfo);
+                buildingInfo.addEventListener('click', e => {
+                buildBuilding(buildingTemplate[0], element_uuid);
+            })
+            })
 
+            buildingsNode.appendChild(document.createElement("hr"));
+        } else {//is a normal group
+            
+            
+            let buildingTemplate = BuildingTemplates[building[0]]
+            let buildingInfo = document.createElement("p");
+            if(buildingTemplate[1] == tab_name || tab_name == "All") {
+                buildingInfo.innerHTML = `Build ${buildingTemplate[2]}, Costs ${buildingTemplate[5]}`
+                buildingInfo.classList = ["hud-button"];
+                buildingsNode.appendChild(buildingInfo);
+                buildingInfo.addEventListener('click', e => {
+                    buildBuilding(buildingTemplate[0], element_uuid);
+                })
+            }
 
-
-
-
-
-
-
-
-
-
-
+            
+    
+            
+        }
+    })
+    
+}
 
 
 
@@ -433,9 +479,7 @@ function addGeoElemsToNode(elementArray, detailNode) {
         let geoElementNode = document.getElementById("geoelement").content.cloneNode(true);
         geoElementNode.querySelector('.geoelement_name').innerHTML = `${element.name}`
         geoElementNode.querySelector('.depletion').innerHTML = `Depletion: ${element.depletion}/${BaseDepletion}` //change to individual max depletion later.
-        geoElementNode.querySelector('.geoelement_build').addEventListener("click", e => {
-            openBuildMenu(element.uuid)
-        })
+        
 
         if (element.passiveProduction && element.passiveProduction.length != 0) {
             let passiveTextDisplay = document.createElement("p");
@@ -446,14 +490,14 @@ function addGeoElemsToNode(elementArray, detailNode) {
                 passiveInfo.innerHTML = `${ResourceTypes[passiveProductionArray[0]]}: ${passiveProductionArray[1]}/tick`;
                 geoElementNode.querySelector('.passive_production').appendChild(passiveInfo);
             })
-            geoElementNode.querySelector('.passive_production').appendChild(document.createElement("br"));
+ 
         }
 
         if (element.buildings && element.buildings.length != 0) {
+            geoElementNode.querySelector('.buildings').appendChild(document.createElement("br"));
             let buildingTextDisplay = document.createElement("p");
             buildingTextDisplay.innerHTML = "Buildings:";
             geoElementNode.querySelector('.buildings').appendChild(buildingTextDisplay);
-            geoElementNode.querySelector('.buildings').appendChild(document.createElement("br"));
             element.buildings.forEach(building => {
                 let buildingNode = document.getElementById("building").content.cloneNode(true);
                 buildingNode.querySelector('.building_name').innerHTML = `${building.name} | ${BuildingTypes[building.type]}`;
@@ -489,7 +533,9 @@ function addGeoElemsToNode(elementArray, detailNode) {
                 geoElementNode.querySelector('.buildings').appendChild(buildingNode);
 
             })
-            geoElementNode.querySelector('.buildings').appendChild(document.createElement("br"));
+            geoElementNode.querySelector('.geoelement_build').addEventListener("click", e => {
+                openBuildMenu(element.uuid)
+            })
         }
 
 
@@ -560,15 +606,16 @@ function gameLoop() {
 
 
 // HTML EVENTS ---------------------------------------------------------------
-/*
+
 document.getElementById('cycle_sector').addEventListener("click", e => {
     activeSector += 1;
     if (activeSector >= Sectors.length) {
         activeSector = 0;
     }
-    //displayActiveSector()
+    wipeCurrentSector();
+    displayNewSector(Sectors[activeSector])
 })
-*/
+
 /*
 document.getElementById('update_elem').addEventListener("click", e => {
     activeElement = document.getElementById('elementInput').value;
@@ -586,5 +633,5 @@ function save()
 }
 
 // ON OPEN -------------------------------------------------------------------
-displayNewSector(Sectors[0])
+displayNewSector(Sectors[activeSector])
 // ON OPEN -------------------------------------------------------------------
