@@ -479,7 +479,9 @@ function addGeoElemsToNode(elementArray, detailNode) {
         let geoElementNode = document.getElementById("geoelement").content.cloneNode(true);
         geoElementNode.querySelector('.geoelement_name').innerHTML = `${element.name}`
         geoElementNode.querySelector('.depletion').innerHTML = `Depletion: ${element.depletion}/${BaseDepletion}` //change to individual max depletion later.
-        
+        geoElementNode.querySelector('.geoelement_build').addEventListener("click", e => {
+            openBuildMenu(element.uuid)
+        })
 
         if (element.passiveProduction && element.passiveProduction.length != 0) {
             let passiveTextDisplay = document.createElement("p");
@@ -532,9 +534,6 @@ function addGeoElemsToNode(elementArray, detailNode) {
                 
                 geoElementNode.querySelector('.buildings').appendChild(buildingNode);
 
-            })
-            geoElementNode.querySelector('.geoelement_build').addEventListener("click", e => {
-                openBuildMenu(element.uuid)
             })
         }
 
