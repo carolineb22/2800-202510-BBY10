@@ -1,59 +1,199 @@
 <%- include("templates/header") %>
-<h1 style="text-align:center;">Custom Skill Tree</h1>
-<div id="skillPoints" style="text-align:center; font-size: 1.2em;">Skill Points: 0</div>
 
-<button id="addPointBtn"
-    style="display:block; margin: 10px auto; padding: 8px 16px; font-size: 14px; cursor:pointer;">(TEMP) +1 Skill
-    Point</button>
+    <h1>Skill Tree Name</h1>
+    <div id="skillPoints">Skill Points: 0</div>
+    <button id="addPointBtn">(TEMP) +1 Skill Point</button>
 
-<div id="treeContainer">
-    <canvas id="connectorCanvas" width="1000" height="700"></canvas>
+    <div id="treeWrapper">
+        <div id="treeContainer">
+            
+            <svg id="connectorSVG" width="1000" height="1000"></svg>
 
-    <div class="skill" id="skill1" data-name="Root Skill" data-cost="1" data-description="This is the root skill."
-        data-parent="" style="top: 50px; left: 440px;">
-        <!-- Text will be dynamically set from JS -->
-    </div>
-    <div class="skill" id="skill2" data-name="Left Child" data-cost="2"
-        data-description="This is a left child skill." data-parent="skill1" style="top: 200px; left: 300px;">
-        <!-- Text will be dynamically set from JS -->
-    </div>
-    <div class="skill" id="skill3" data-name="Right Child" data-cost="2"
-        data-description="This is a right child skill." data-parent="skill1" style="top: 200px; left: 580px;">
-        <!-- Text will be dynamically set from JS -->
-    </div>
-    <div class="skill" id="skill4" data-name="Far Left" data-cost="3" data-description="This is the far left skill."
-        data-parent="skill2" style="top: 370px; left: 180px;">
-        <!-- Text will be dynamically set from JS -->
-    </div>
-    <div class="skill" id="skill5" data-name="Bottom Middle" data-cost="3"
-        data-description="This is the bottom middle skill." data-parent="skill2" style="top: 370px; left: 370px;">
-        <!-- Text will be dynamically set from JS -->
-    </div>
-    <div class="skill" id="skill6" data-name="Far Right" data-cost="3"
-        data-description="This is the far right skill." data-parent="skill3" style="top: 370px; left: 700px;">
-        <!-- Text will be dynamically set from JS -->
-    </div>
-    <div class="skill" id="skill7" data-name="sdff" data-cost="3" data-description="sdfsdfsdfsdf"
-        data-parent="skill5" style="top: 370px; left: 550px;">
-        <!-- Text will be dynamically set from JS -->
-    </div>
-    <div class="skill" id="skill8" data-name="new thing" data-cost="6"
-        data-description="this is the discription and a test to see what happend with a long discription and blablablalbalb vnfsovbn srvsdojvb sdjb vsodj vsodjbv sodjv sodjv"
-        data-parent="skill6" style="top: 600px; left: 400px;">
-        <!-- Text will be dynamically set from JS -->
-    </div>
-</div>
+            <!-- Skill boxes -->
+
+             <!-- The root skill -->
+            <div class="skill" id="root" data-name="Kelper-22b" data-cost="0"
+                data-description="This is the root skill." data-parent="" style="top: 500px; left: 500px;">
+            </div>
 
 
 
-<!-- Info box for showing details of the unlocked skill -->
-<div id="infoBox">
-    <h3 id="infoTitle">Skill Title</h3>
-    <p id="infoCost">Cost: 0 Skill Points</p>
-    <p id="infoDescription">Skill description will be shown here.</p>
-    <button id="unlockBtn">Unlock Skill</button>
-    <button id="cancelBtn">Cancel</button>
-</div>
+            <!-- Housing upgrade-->
+            <div class="skill" id="houseRoot" data-name="Housing" data-cost="0"
+                data-description="This is the root skill for housing." data-parent="root" style="top: 500px; left: 300px;">
+            </div>
+            
+            <div class="skill" id="PrimitiveShelters" data-name="Primitive Shelters" data-cost="1"
+                data-description="Small caves or shelters made from branches and leaves.<br><br>[enter starts here] does this work?" data-parent="houseRoot" style="top: 500px; left: 100px;">
+            </div> 
 
-<script src="../scripts/techTree.js"></script>
-<%- include("templates/footer") %>
+            <div class="skill" id="MudDwellings" data-name="Mud Dwellings" data-cost="1"
+                data-description="Simple structures made from mud and straw." data-parent="PrimitiveShelters" style="top: 500px; left: -100px;">
+            </div>
+            <div class="skill" id="Brick&PlasterHomes" data-name="Brick & Plaster Homes" data-cost="1"
+                data-description="Durable, long-term housing with improved insulation and comfort." data-parent="MudDwellings" style="top: 500px; left: -300px;">
+            </div>
+            <div class="skill" id="RegionalInfrastructure" data-name="Regional Infrastructure" data-cost="1"
+                data-description="Introduction of sewers and water lines in growing towns." data-parent="Brick&PlasterHomes" style="top: 500px; left: -500px;">
+            </div>
+            <div class="skill" id="Eco‑CityRegulations" data-name="Eco‑City Regulations" data-cost="1"
+                data-description="City laws and urban planning aimed at reducing emissions and environmental impact" data-parent="RegionalInfrastructure" style="top: 500px; left: -700px;">
+            </div>
+             <div class="skill" id="PublicTransitNetworks" data-name="Public Transit Networks" data-cost="1"
+                data-description="Mass transportation systems are central to urban growth." data-parent="Eco‑CityRegulations" style="top: 300px; left: -900px;">
+            </div>
+            <div class="skill" id="UrbanRenewalProjects" data-name="Urban Renewal Projects" data-cost="1"
+                data-description="Retrofitting existing homes with green tech." data-parent="Eco‑CityRegulations" style="top: 700px; left: -900px;">
+            </div>
+
+
+
+             <!-- Agriculture upgrade-->
+            <div class="skill" id="agriRoot" data-name="Agriculture" data-cost="0"
+                data-description="This is the root skill for Agriculture." data-parent="root" style="top: 350px; left: 500px;">
+            </div>
+            <div class="skill" id="ForagingSocieties" data-name="Foraging Societies" data-cost="0"
+                data-description="People gather wild fruits, nuts, and roots from forests and plains, relying on seasonal abundance." data-parent="agriRoot" style="top: 200px; left: 500px;">
+            </div>
+            <div class="skill" id="RiversideFarming" data-name="Riverside Farming" data-cost="0"
+                data-description="Villagers plant seeds along riverbanks, using natural floodwaters to nourish crops." data-parent="ForagingSocieties" style="top: 50px; left: 500px;">
+            </div>
+            <div class="skill" id="BasicFarming" data-name="Basic Farming" data-cost="0"
+                data-description="Adoption of tools (hoes, plows) to till and sow fields by hand." data-parent="RiversideFarming" style="top: -100px; left: 500px;">
+            </div>
+            <div class="skill" id="CropRotation" data-name="Crop Rotation" data-cost="0"
+                data-description="Rotating legume, grain, and root crops to restore soil nitrogen and prevent nutrient depletion." data-parent="BasicFarming" style="top: -250px; left: 600px;">
+            </div>
+            <div class="skill" id="PollinatorManagement" data-name="Pollinator Management" data-cost="0"
+                data-description="Beekeeping and provision of nesting habitats to boost insect pollination of fields and orchards." data-parent="BasicFarming" style="top: -250px; left: 400px;">
+            </div>
+            <div class="skill" id="CropDiversity" data-name="Crop Diversity" data-cost="0"
+                data-description="Cultivation of multiple crop varieties (heirloom, hybrid, GMO) to spread risk and adapt to pests/climate." data-parent="PollinatorManagement" style="top: -400px; left: 400px;">
+            </div>
+            <div class="skill" id="MechanicalHarvesting" data-name="Mechanical Harvesting" data-cost="0"
+                data-description="Introduction of machines like the McCormick reaper and mechanized combines to speed harvesting." data-parent="CropDiversity" style="top: -550px; left: 300px;">
+            </div>
+            <div class="skill" id="Agrochemicals" data-name="Agrochemicals" data-cost="0"
+                data-description="Synthesis of synthetic fertilizers, herbicides, and pesticides for higher yields and pest control." data-parent="CropDiversity" style="top: -550px; left: 500px;">
+            </div>
+            <div class="skill" id="GeneticEngineering" data-name="Genetic Engineering" data-cost="0"
+                data-description="Use of CRISPR and traditional breeding to develop drought‑tolerant, pest‑resistant, and higher‑nutrient crops." data-parent="MechanicalHarvesting" style="top: -700px; left: 300px;">
+            </div>
+            <div class="skill" id="PrecisionAgriculture" data-name="Precision Agriculture" data-cost="0"
+                data-description="Deployment of GPS‑guided equipment and IoT sensors to optimize planting, watering, and fertilization." data-parent="GeneticEngineering" style="top: -850px; left: 300px;">
+            </div>
+            <div class="skill" id="VerticalFarming" data-name="Vertical Farming" data-cost="0"
+                data-description="Multi‑story indoor farms using LED lighting, hydroponics, and climate control to grow crops year‑round." data-parent="PrecisionAgriculture" style="top: -1000px; left: 300px;">
+            </div>
+            <div class="skill" id="AutonomousAgriculture" data-name="Autonomous Agriculture" data-cost="0"
+                data-description="Fully automated farms with drones, robotic harvesters, and AI management optimizing every step of production." data-parent="VerticalFarming" style="top: -1150px; left: 300px;">
+            </div>
+
+
+
+             <!-- Drinking Water upgrade-->
+            <div class="skill" id="waterRoot" data-name="Drinking Water" data-cost="0"
+                data-description="This is the root skill for drinking water." data-parent="root" style="top: 500px; left: 700px;">
+            </div>
+            <div class="skill" id="UntreatedWater" data-name="Untreated Water" data-cost="0"
+                data-description="Villagers draw directly from streams and rivers without treatment, exposing them to pathogens and contaminants present in the natural water source." data-parent="waterRoot" style="top: 500px; left: 900px;">
+            </div>
+            <div class="skill" id="GroundwaterWells" data-name="Groundwater Wells" data-cost="0"
+                data-description="Simple hand‑dug wells lined with stone or wood provide safer access to groundwater, reducing reliance on surface sources and cutting common illnesses." data-parent="UntreatedWater" style="top: 350px; left: 1100px;">
+            </div>
+            <div class="skill" id="BasicFiltration" data-name="Basic Filtration" data-cost="0"
+                data-description="Filtering water through cloth, sand, gravel layers." data-parent="UntreatedWater" style="top: 650px; left: 1100px;">
+            </div>
+            <div class="skill" id="BoilingWater" data-name="Boiling Water" data-cost="0"
+                data-description="Use of nano‑scale membranes and advanced adsorption materials to filter out microscopic pollutants, bacteria, and chemical residues from drinking water." data-parent="BasicFiltration" style="top: 650px; left: 1300px;">
+            </div>
+            <div class="skill" id="ActivatedCarbonFilter" data-name="Activated Carbon Filter" data-cost="0"
+                data-description="Use activated charcoal to clean water." data-parent="BasicFiltration" style="top: 500px; left: 1300px;">
+            </div>
+            <div class="skill" id="Chlorination" data-name="Chlorination" data-cost="0"
+                data-description="Use activated charcoal to clean water." data-parent="BasicFiltration" style="top: 800px; left: 1300px;">
+            </div>
+            <div class="skill" id="WaterDistribution" data-name="Water Distribution" data-cost="0"
+                data-description="Mass transportation systems are central to urban growth." data-parent="GroundwaterWells" style="top: 350px; left: 1300px;">
+            </div>
+            <div class="skill" id="WaterRecycling" data-name="Water Recycling" data-cost="0"
+                data-description="Treat and reuse wastewater (grey/black) for potable use." data-parent="ActivatedCarbonFilter" style="top: 500px; left: 1500px;">
+            </div>
+            <div class="skill" id="DesalinationPlant" data-name="Desalination Plant" data-cost="0"
+                data-description="Self-contained vertical cities with integrated services (hospitals, schools, parks, greenery)." data-parent="WaterDistribution" style="top: 350px; left: 1500px;">
+            </div>
+            <div class="skill" id="NanotechPurification" data-name="Nanotech Purification" data-cost="0"
+                data-description="Self-contained vertical cities with integrated services (hospitals, schools, parks, greenery)." data-parent="DesalinationPlant" style="top: 350px; left: 1700px;">
+            </div>
+            
+
+             <!-- Gen Tech upgrade-->
+            <div class="skill" id="techRoot" data-name="Technology" data-cost="0"
+                data-description="This is the root skill for technology." data-parent="root" style="top: 650px; left: 500px;">
+            </div>
+            <div class="skill" id="StoneTools" data-name="Stone Tools" data-cost="0"
+                data-description="Crafting of sharpened stone implements (axes, chisels, hammers) from flint and obsidian, drastically reducing manual labor in construction, woodcutting, and resource gathering." data-parent="techRoot" style="top: 800px; left: 500px;">
+            </div>
+            <div class="skill" id="Metalworking" data-name="Metalworking" data-cost="0"
+                data-description="Development of smelting and forging techniques to extract and shape metals (copper, bronze, iron), producing stronger, more durable tools, weapons, and structural components." data-parent="StoneTools" style="top: 950px; left: 500px;">
+            </div>
+            <div class="skill" id="IrrigationSystems" data-name="Irrigation Systems" data-cost="0"
+                data-description="Basic wooden homes and log cabins that support small families." data-parent="Metalworking" style="top: 1100px; left: 700px;">
+            </div>
+            <div class="skill" id="Sailing" data-name="Sailing" data-cost="0"
+                data-description="Advances in shipbuilding and sail design (square and lateen sails) allow vessels to harness wind power, opening maritime trade routes and exploration of distant regions." data-parent="Metalworking" style="top: 1100px; left: 300px;">
+            </div>
+            <div class="skill" id="Chemistry" data-name="Chemistry" data-cost="0"
+                data-description="Systematic study and scaling of chemical reactions—developing acids, bases, salts, dyes, fertilizers, and industrial compounds through controlled synthesis." data-parent="Metalworking" style="top: 1100px; left: 500px;">
+            </div>
+            <div class="skill" id="Windmills" data-name="Windmills" data-cost="0"
+                data-description="Erection of large, wind driven mills that convert wind energy into mechanical power for grinding grain and pumping water, massively scaling food and water processing." data-parent="IrrigationSystems" style="top: 1250px; left: 700px;">
+            </div>
+            <div class="skill" id="SteamPower" data-name="Steam Power" data-cost="0"
+                data-description="Harnessing high‑pressure steam engines to power locomotives and steamboats, revolutionizing land and river transport by moving heavy loads over long distances quickly." data-parent="Windmills" style="top: 1250px; left: 700px;">
+            </div>
+            <div class="skill" id="RenewableEnergy" data-name="Renewable Energy" data-cost="0"
+                data-description="Construction of large-scale wind farms, hydroelectric dams, and solar arrays to harness natural power sources, cutting carbon emissions and stabilizing the grid." data-parent="SteamPower" style="top: 1400px; left: 500px;">
+            </div>
+            <div class="skill" id="CombustionEngine" data-name="Combustion Engine" data-cost="0"
+                data-description="Invention of internal combustion engines burning gasoline or diesel, providing compact power units for early machinery and laying the foundation for motor vehicles." data-parent="SteamPower" style="top: 1400px; left: 700px;">
+            </div>
+            <div class="skill" id="ColdChainLogistics" data-name="Cold Chain Logistics" data-cost="0"
+                data-description="Implementation of insulated railcars, refrigerated ships, and mechanized cooling systems to maintain low temperatures in transit, drastically reducing food spoilage." data-parent="SteamPower" style="top: 1400px; left: 900px;">
+            </div>
+            <div class="skill" id="ElectricLight" data-name="Electric Light" data-cost="0"
+                data-description="Deployment of electrical generation (dynamos) and distribution networks to power arc lamps and incandescent bulbs, extending productive hours in factories and urban areas." data-parent="CombustionEngine" style="top: 1550px; left: 800px;">
+            </div>
+            <div class="skill" id="Automobiles" data-name="Automobiles" data-cost="0"
+                data-description="Mass production of gasoline‑powered cars, trucks, and buses, enabling flexible overland transport of people and goods, and spurring the growth of road networks." data-parent="CombustionEngine" style="top: 1550px; left: 600px;">
+            </div>
+            <div class="skill" id="Computers&Internet" data-name="Computers & Internet" data-cost="0"
+                data-description="Rise of digital computing hardware and the global data network, enabling rapid data processing, remote communication, decentralized research, and online collaboration." data-parent="ElectricLight" style="top: 1700px; left: 800px;">
+            </div>
+            <div class="skill" id="Nanotechnology" data-name="Nanotechnology" data-cost="0"
+                data-description="Mastery of matter at the nanoscale—building molecular machines, advanced sensors, and ultra‑high‑performance materials (e.g., carbon nanotubes, nano‑membranes)." data-parent="Computers&Internet" style="top: 1850px; left: 900px;">
+            </div>
+            <div class="skill" id="CRISPR" data-name="CRISPR" data-cost="0"
+                data-description="Gene‑editing technology using CRISPR‑Cas systems to precisely modify DNA, enabling the development of disease‑resistant crops, enhanced livestock, and improved human health." data-parent="Computers&Internet" style="top: 1850px; left: 700px;">
+            </div>
+            <div class="skill" id="ArtificialIntelligence" data-name="Artificial Intelligence" data-cost="0"
+                data-description="Development of advanced algorithms, neural networks, and machine‑learning systems that allow software to analyze data, optimize processes, and even make autonomous decisions." data-parent="CRISPR" style="top: 2000px; left: 700px;">
+            </div>
+            <div class="skill" id="Automation" data-name="Automation" data-cost="0"
+                data-description="Integration of programmable machines, robotic arms, and conveyor systems into factories, automating repetitive tasks and dramatically increasing production throughput." data-parent="ArtificialIntelligence" style="top: 2150px; left: 700px;">
+            </div>
+
+            
+        </div>
+    </div>
+
+    <div id="infoBox">
+        <h3 id="infoTitle">Skill Title</h3>
+        <p id="infoCost">Cost: 0 Skill Points</p>
+        <p id="infoDescription">Skill description will be shown here.</p>
+        <button id="unlockBtn">Unlock Skill</button>
+        <button id="cancelBtn">Cancel</button>
+    </div>
+
+    <script src="../scripts/techTree.js"></script>
+    <%- include("templates/footer") %>
