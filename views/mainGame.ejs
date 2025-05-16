@@ -17,17 +17,15 @@
   </div>
 
     <main class="map">
-        <div class="row">
-            <p class="col-md-6">TEMP DISPLAY</p>
-            <br>
-            <p class="col-md-6" id="resources">pp</p>
-            <br>
-            <p class="hud-button col-md-6" id="cycle_sector">Cycle this sector!</p>
-            <br>
-            <p class="col-md-6" id="sector_info">zz</p>
-            <br>
-        </div>
         
+        <div id="gerge" class="row">
+            <hr>
+            <button class="hud-button" id="cycle_sector">Cycle sector!</button>
+            <hr>
+            <br><br><br>
+            
+        </div>
+    
 
     </main>
 
@@ -35,16 +33,12 @@
 
     <!-- Right Sidebar with centered text -->
     <aside class="sidebar right">
-        <p class="sidebar-text">Right Sidebar</p>
+        <p class="sidebar-text">Build Menu</p>
+        <hr>
         <br>
-        <form>
-            <div class="form-group">
-                <label for="elementInput">Temporary Geographical Element Selection</label>
-                <input type="text" class="form-control" id="elementInput" placeholder="TEMP">
-            </div>
-            <p class="hud-button col-md-6" id="update_elem">Select</p>
-        </form>
-        <div id="gluh"></div>
+        <div id="build_sidebar">
+
+        </div>
         
     </aside>
 </div>
@@ -86,6 +80,60 @@
         <button class="hud-button" id="fast_forward"><i class="material-icons">fast_forward</i></button>
     </div>
 </div>
+
+<template id="resource">
+    <p class="resource_display"></p>
+</template>
+<template id="sector">
+    <div class="sector_display">
+        <p class="sector_name"></p>
+        <br>
+        <div class="sector_details">
+
+        </div>
+    </div>
+
+</template>
+<template id="building">
+    <div class="building_display">
+        <p class="building_name"></p>
+        <div class="building_production">
+    
+        </div>
+        <div class="building_consumption">
+    
+        </div>
+    </div>
+    
+</template>
+<template id="geoelement">
+    <div class="geoelement_display">
+        <br>
+        <p class="geoelement_name"></p>
+        <button class="hud-button geoelement_build">Build</button>
+        <p class="depletion"></p>
+        <div class="passive_production">
+
+        </div>
+        <div class="buildings">
+
+        </div>
+        <br>
+        <hr>
+    </div>
+</template>
+<template id="build_menu">
+    <hr>
+    <div class="row build_tabs">
+
+    </div>
+    <hr>
+    <br>
+    <div class="building_options_display">
+
+    </div>
+</template>
+
 <script>
     const settingsBtn = document.querySelector('.settings-button');
     const dropdownMenu = document.getElementById('settingsMenu');
@@ -111,8 +159,6 @@
     console.log(databaseSectors);
 </script>
 <script src="scripts/mainGame.js"></script>
-
-
 <!-- Puter SDK -->
   <script src="https://js.puter.com/v2/"></script>
 
