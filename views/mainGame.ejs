@@ -13,17 +13,10 @@
     </aside>
 
     <main class="map">
-        <div class="row">
-            <p class="col-md-6">TEMP DISPLAY</p>
-            <br>
-            <p class="col-md-6" id="resources">pp</p>
-            <br>
-            <p class="hud-button col-md-6" id="cycle_sector">Cycle this sector!</p>
-            <br>
-            <p class="col-md-6" id="sector_info">zz</p>
-            <br>
+        <div id="gerge" class="row">
+            
         </div>
-        
+    
 
     </main>
 
@@ -82,6 +75,48 @@
         <button class="hud-button" id="fast_forward"><i class="material-icons">fast_forward</i></button>
     </div>
 </div>
+
+<template id="resource">
+    <p class="resource_display"></p>
+</template>
+<template id="sector">
+    <div class="sector_display">
+        <p class="sector_name"></p>
+        <br>
+        <div class="sector_details">
+
+        </div>
+    </div>
+
+</template>
+<template id="building">
+    <div class="building_display">
+        <p class="building_name"></p>
+        <div class="building_production">
+    
+        </div>
+        <div class="building_consumption">
+    
+        </div>
+    </div>
+    
+</template>
+<template id="geoelement">
+    <div class="geoelement_display">
+        <br>
+        <p class="geoelement_name"></p>
+        <p class="depletion"></p>
+        <button class="hud-button geoelement_build"></button>
+        <div class="passive_production">
+
+        </div>
+        <div class="buildings">
+
+        </div>
+        <hr>
+    </div>
+</template>
+
 <script>
     const settingsBtn = document.querySelector('.settings-button');
     const dropdownMenu = document.getElementById('settingsMenu');
@@ -108,41 +143,3 @@
 </script>
 <script src="scripts/mainGame.js"></script>
 <%- include("templates/footer")%>
-<template id="resource">
-    <p class="resource_display"></p>
-</template>
-<template id="sector">
-    <div class="sector_display">
-        <p class="sector_name"></p>
-        <br>
-        <div class="sector_details">
-
-        </div>
-    </div>
-
-</template>
-<template id="building">
-    <p class="building_name"></p>
-    <p class="building_type"></p>
-    <div class="consumption">
-
-    </div>
-    <div class="production">
-
-    </div>
-</template>
-<template id="geoelement">
-    <div class="individualgeoelement">
-        <br>
-        <p class="geoelement_name"></p>
-        <p class="depletion"></p>
-        <button class="hud-button geoelement_build"></button>
-        <div class="passive_production">
-
-        </div>
-        <div class="buildings">
-
-        </div>
-        <hr>
-    </div>
-</template>

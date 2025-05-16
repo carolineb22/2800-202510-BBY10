@@ -307,6 +307,9 @@ for (var key in ResourceTypes) {
 }
 
 let gah = new GeographicalElement(...GeographicalElementTemplates.element_forest)
+gah.buildings = [
+    new Building(...BuildingTemplates.building_logging_site, gah.uuid)
+]
 
 if(Sectors.length == 0)
 {
@@ -354,36 +357,6 @@ function updateResources() {
     document.getElementById("resources").innerHTML = formattedResources;
 }
 
-function displayActiveSector() {
-    let formattedInfo = "";
-    let sector = Sectors[activeSector];
-
-    formattedInfo += `Selected sector <b>${sector.name}</b><br><br>Geographical elements<br> `;
-
-    sector.geographicalElements.forEach(element => {
-        formattedInfo += `<hr><br>${element.name}, ${element.depletion == BaseDepletion ? "untouched" : `${element.depletion}/${BaseDepletion} depletion`} TEMP id: ${element.uuid}<br>`
-        if (element.passiveProduction && element.passiveProduction.length) {
-            formattedInfo += `Passively makes: ${element.passiveProduction.map(e => `<br>${ResourceTypes[e[0]]}, ${e[1]}/tick`).join()}<br><br>`
-        }
-
-        let hasBuildings = false;
-        element.buildings.forEach(val => {
-            if (val.builtOnElement == element.uuid) {
-                if (!hasBuildings) {
-                    formattedInfo += "Buildings:<br>";
-                    hasBuildings = true;
-                }
-                formattedInfo += `<hr>${val.getFormattedString()}`;
-            }
-        })
-        if (hasBuildings) {
-            formattedInfo += `<br><br>`;
-        }
-    })
-
-    document.getElementById("sector_info").innerHTML = formattedInfo;
-}
-
 function displayBuildingSidebar() {
     console.log("meowa");
     if (activeElement) {
@@ -420,61 +393,108 @@ function buildBuilding(building_id, element_uuid) {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 function wipeCurrentSector() {
-    document.getElementsByClassName("sector_display").map(element => {
-        element.remove();
-    }) //only ever should be one, wipes all as a precaution
+    Array.prototype.map.call(document.getElementsByClassName("sector_display"), elem => {
+        elem.remove();//only ever should be one, wipes all as a precaution
+    })
 }
 
 function displayNewSector(sector) {
-    let newSector = document.getElementById("sector").cloneNode(true);
-    newSector.firstChild.innerHTML = `Overview of ${sector.name}`;
-    addGeoElemsToNode(sector.geographicalElements, newSector.lastChild)
+    let newSector = document.getElementById("sector").content.cloneNode(true);
+    newSector.querySelector('.sector_name').innerHTML = `Overview of ${sector.name}`;
+    console.log(newSector)
+    addGeoElemsToNode(sector.geographicalElements, newSector.querySelector('.sector_details'))
+    
+    document.getElementById('gerge').appendChild(newSector);
+    
 }
 
 
 function addGeoElemsToNode(elementArray, detailNode) {
     elementArray.forEach(element => {
-        let newElem = document.getElementById("geoelement").cloneNode(true);
-        newElem.querySelector('.geoelement_name').innerHTML = `${element.name}`
-        newElem.querySelector('.depletion').innerHTML = `Depletion: ${element.depletion}/${BaseDepletion}` //change to individual max depletion later.
-        newElem.querySelector('.geoelement_build').addEventListener("click", e => {
+        let geoElementNode = document.getElementById("geoelement").content.cloneNode(true);
+        geoElementNode.querySelector('.geoelement_name').innerHTML = `${element.name}`
+        geoElementNode.querySelector('.depletion').innerHTML = `Depletion: ${element.depletion}/${BaseDepletion}` //change to individual max depletion later.
+        geoElementNode.querySelector('.geoelement_build').addEventListener("click", e => {
             openBuildMenu(element.uuid)
         })
 
         if (element.passiveProduction && element.passiveProduction.length != 0) {
-            let textDisplay = document.createElement("p");
-            textDisplay.innerHTML = "Passive production:";
-            newElem.querySelector('.passive_production').appendChild(textDisplay);
-            newElem.querySelector('.passive_production').appendChild(document.createElement("br"));
+            let passiveTextDisplay = document.createElement("p");
+            passiveTextDisplay.innerHTML = "Passive production:";
+            geoElementNode.querySelector('.passive_production').appendChild(passiveTextDisplay);
             element.passiveProduction.forEach(passiveProductionArray => {
                 let passiveInfo = document.createElement("p");
-                passiveInfo.innerHTML = `${ResourceTypes[passiveProductionArray[0]]}: ${passiveProductionArray[1]}/tick}`;
-                newElem.querySelector('.passive_production').appendChild(passiveInfo);
+                passiveInfo.innerHTML = `${ResourceTypes[passiveProductionArray[0]]}: ${passiveProductionArray[1]}/tick`;
+                geoElementNode.querySelector('.passive_production').appendChild(passiveInfo);
             })
-            newElem.querySelector('.passive_production').appendChild(document.createElement("br"));
+            geoElementNode.querySelector('.passive_production').appendChild(document.createElement("br"));
         }
 
         if (element.buildings && element.buildings.length != 0) {
-            let textDisplay = document.createElement("p");
-            textDisplay.innerHTML = "Buildings:";
-            newElem.querySelector('.buildings').appendChild(textDisplay);
-            newElem.querySelector('.buildings').appendChild(document.createElement("br"));
-            element.passiveProduction.forEach(building => {
-                let buildingNode = document.getElementById("building").cloneNode(true);
-                buildingNode.querySelector('.building_name')
-                buildingNode.querySelector('.building_type')
-                buildingNode.querySelector('.consumption')
-                buildingNode.querySelector('.production')
+            let buildingTextDisplay = document.createElement("p");
+            buildingTextDisplay.innerHTML = "Buildings:";
+            geoElementNode.querySelector('.buildings').appendChild(buildingTextDisplay);
+            geoElementNode.querySelector('.buildings').appendChild(document.createElement("br"));
+            element.buildings.forEach(building => {
+                let buildingNode = document.getElementById("building").content.cloneNode(true);
+                buildingNode.querySelector('.building_name').innerHTML = `${building.name} | ${BuildingTypes[building.type]}`;
 
+                if (building.productionArray && building.productionArray.length != 0) {
+                    let productionTextDisplay = document.createElement("p");
+                    productionTextDisplay.innerHTML = "Production:";
+                    buildingNode.querySelector('.building_production').appendChild(productionTextDisplay);
+
+
+
+                    building.productionArray.forEach(production => {
+                        let productionInfo = document.createElement('p');
+                        productionInfo.innerHTML = `${ResourceTypes[production[0]]}: ${production[1]}/tick`;
+                        buildingNode.querySelector('.building_production').appendChild(productionInfo);
+                    })
+                }
+
+                if (building.consumptionArray && building.consumptionArray.length != 0) {
+                    let consumptionTextDisplay = document.createElement("p");
+                    consumptionTextDisplay.innerHTML = "Consumption:";
+                    buildingNode.querySelector('.building_consumption').appendChild(consumptionTextDisplay);
+
+
+                    building.consumptionArray.forEach(consumption => {
+                        let consumptionInfo = document.createElement('p');
+                        consumptionInfo.innerHTML = `${ResourceTypes[consumption[0]]}: ${consumption[1]}/tick`;
+                        buildingNode.querySelector('.building_consumption').appendChild(consumptionInfo);
+                    })
+                }
+                
+                
+                geoElementNode.querySelector('.buildings').appendChild(buildingNode);
 
             })
-            newElem.querySelector('.buildings').appendChild(document.createElement("br"));
+            geoElementNode.querySelector('.buildings').appendChild(document.createElement("br"));
         }
 
 
 
-        detailNode.append(newElem);
+        detailNode.appendChild(geoElementNode);
     })
 }
 
@@ -529,8 +549,8 @@ fastForward.addEventListener("click", e => {
 
 // GAME LOOP -----------------------------------------------------------------
 function gameLoop() {
-    updateResources();
-    displayActiveSector();
+    //updateResources();
+    //displayActiveSector();
 
     Sectors.forEach(sector => {
         sector.doTick();
@@ -540,18 +560,21 @@ function gameLoop() {
 
 
 // HTML EVENTS ---------------------------------------------------------------
+/*
 document.getElementById('cycle_sector').addEventListener("click", e => {
     activeSector += 1;
     if (activeSector >= Sectors.length) {
         activeSector = 0;
     }
-    displayActiveSector()
+    //displayActiveSector()
 })
-
+*/
+/*
 document.getElementById('update_elem').addEventListener("click", e => {
     activeElement = document.getElementById('elementInput').value;
     displayBuildingSidebar();
 })
+*/
 // HTML EVENTS ---------------------------------------------------------------
 
 
@@ -563,6 +586,5 @@ function save()
 }
 
 // ON OPEN -------------------------------------------------------------------
-updateResources();
-displayActiveSector();
+displayNewSector(Sectors[0])
 // ON OPEN -------------------------------------------------------------------
