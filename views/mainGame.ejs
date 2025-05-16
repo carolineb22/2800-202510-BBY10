@@ -4,13 +4,17 @@
     <aside class="sidebar left">
         <p class="sidebar-text">Kepler 22-b</p>
         <div id="global-resources">
-            <p>Global Resources</p>
+            <!-- <p>Global Resources</p> -->
         </div>
         <div id="sector-resources">
-            <p>Sector Resources</p>
+            <!-- <p>Sector Resources</p> -->
         </div>
-        <button id="incrementer">Incrementer</button>
+        <!-- <button id="incrementer">Incrementer</button> -->
     </aside>
+
+    <div class="weather-ticker">
+    <div class="weather-headline" id="puter-message">Generating advice based on weather...</div>
+  </div>
 
     <main class="map">
         
@@ -155,4 +159,93 @@
     console.log(databaseSectors);
 </script>
 <script src="scripts/mainGame.js"></script>
+<!-- Puter SDK -->
+  <script src="https://js.puter.com/v2/"></script>
+
+  <!-- Weather + Puter Logic -->
+  <script>
+    navigator.geolocation.getCurrentPosition(success, error);
+
+    function success(position) {
+      const latitude = position.coords.latitude;
+      const longitude = position.coords.longitude;
+      console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
+      getWeather(latitude, longitude);
+    }
+
+    function error() {
+      console.error("Unable to retrieve your location");
+      document.getElementById("weather").textContent = "Location access denied.";
+      document.getElementById("puter-message").textContent = "Unable to get location. Cannot generate advice.";
+    }
+
+    function getWeather(lat, lon) {
+      const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=<%= apiKey %>`;
+
+      fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          console.log("Weather Data:", data);
+          const temp = data.main.temp;
+          const description = data.weather[0].description;
+
+          const weatherSummary = `The current temperature is ${temp}°C with ${description}.`;
+          generatePuterMessage(weatherSummary);
+        })
+        .catch(err => {
+          console.error("Weather API error:", err);
+          document.getElementById("weather").textContent = "Failed to load weather data.";
+          document.getElementById("puter-message").textContent = "Weather fetch error — cannot generate advice.";
+        });
+    }
+
+    function generatePuterMessage(weatherInfo) {
+    const prompt = `Based on the weather report: "${weatherInfo}", give a friendly message or advice for someone deciding what to do today. Don't include any additional questions as the user won't be able to ask them. Not too long. Kinda like a weather headline. include the tem and discript always.`;
+
+    const ticker = document.querySelector(".weather-ticker");
+    const headline = document.getElementById("puter-message");
+
+    headline.textContent = "Thinking...";
+
+    puter.ai.chat(prompt)
+        .then(response => {
+            headline.textContent = response;
+            console.log("Puter message:", response);
+
+            // Show ticker
+            ticker.classList.add("visible");
+
+            // Trigger scroll
+            setTimeout(() => {
+                const duration = updateTickerScrollSpeed();
+
+                // Wait for scroll to finish before hiding
+                headline.addEventListener("animationend", () => {
+                    ticker.classList.remove("visible");
+                    headline.style.animation = "none";
+                }, { once: true });
+            }, 100);
+        })
+        .catch(err => {
+            console.error("Puter SDK error:", err);
+            headline.textContent = "Could not fetch AI message.";
+        });
+}
+
+   function updateTickerScrollSpeed() {
+    const headline = document.getElementById("puter-message");
+    const speed = 50; // pixels per second
+
+    headline.style.animation = "none"; // Reset
+
+    const width = headline.offsetWidth;
+    const duration = width / speed;
+
+    requestAnimationFrame(() => {
+        headline.style.animation = `scroll-left ${duration}s linear forwards`;
+    });
+
+    return duration;
+}
+  </script>
 <%- include("templates/footer")%>
