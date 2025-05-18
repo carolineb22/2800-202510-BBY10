@@ -101,9 +101,21 @@ function getCenter(elem) {
 // Show info box
 function showInfoBox(skill) {
   interactionLocked = true;
+  currentSkill = skill;
+
+  const isUnlocked = skill.classList.contains('unlocked');
   infoTitle.textContent = skill.dataset.name;
-  infoCost.textContent = `Cost: ${skill.dataset.cost} Skill Points`;
-   infoDescription.innerHTML = skill.dataset.description;
+  infoDescription.innerHTML = skill.dataset.description;
+
+  if (isUnlocked) {
+    infoCost.style.display = 'none';
+    unlockBtn.style.display = 'none';
+  } else {
+    infoCost.style.display = 'block';
+    unlockBtn.style.display = 'inline-block';
+    infoCost.textContent = `Cost: ${skill.dataset.cost} Skill Points`;
+  }
+
   infoBox.style.display = 'block';
 
   const center = getCenter(skill);
@@ -113,6 +125,7 @@ function showInfoBox(skill) {
   infoBox.style.left = `${x - infoBox.offsetWidth / 2}px`;
   infoBox.style.top = `${y + 20}px`;
 }
+
 
 // Update which skills are enabled/disabled based on their parent
 function updateSkillStates() {
