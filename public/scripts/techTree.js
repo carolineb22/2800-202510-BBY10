@@ -104,50 +104,57 @@ function showInfoBox(skill) {
   currentSkill = skill;
 
   const isUnlocked = skill.classList.contains('unlocked');
-  infoTitle.textContent = skill.dataset.name;
-  infoDescription.innerHTML = skill.dataset.description;
+  const { name, description, cost, requirements = '' } = skill.dataset;
 
-  if (isUnlocked) {
-    infoCost.style.display = 'none';
-    unlockBtn.style.display = 'none';
-  } else {
-    infoCost.style.display = 'block';
-    unlockBtn.style.display = 'inline-block';
-    infoCost.textContent = `Cost: ${skill.dataset.cost} Skill Points`;
+  infoTitle.textContent = name;
+  infoDescription.innerHTML = description;
+  infoCost.style.display = isUnlocked ? 'none' : 'block';
+  unlockBtn.style.display = isUnlocked ? 'none' : 'inline-block';
+  infoCost.textContent = `Cost: ${cost} Skill Points`;
+
+  if (!isUnlocked && requirements) {
+    const reqHTML = requirements.split(',').map(id => {
+      const req = document.getElementById(id.trim());
+      const met = req?.classList.contains('unlocked');
+      const color = met ? 'limegreen' : 'red';
+      const reqName = req?.dataset.name || id;
+      return `<span style="color: ${color};">${reqName}</span>`;
+    }).join(', ');
+    infoDescription.innerHTML += `<br><strong>Requires:</strong> ${reqHTML}`;
   }
 
+  const { x, y } = getCenter(skill);
+  infoBox.style.left = `${x * scale + translate.x - infoBox.offsetWidth / 2}px`;
+  infoBox.style.top = `${y * scale + translate.y + 20}px`;
   infoBox.style.display = 'block';
-
-  const center = getCenter(skill);
-  const x = center.x * scale + translate.x;
-  const y = center.y * scale + translate.y;
-
-  infoBox.style.left = `${x - infoBox.offsetWidth / 2}px`;
-  infoBox.style.top = `${y + 20}px`;
 }
+
 
 
 // Update which skills are enabled/disabled based on their parent
 function updateSkillStates() {
   skills.forEach(skill => {
     const parentId = skill.dataset.parent;
+    const requirements = skill.dataset.requirements?.split(',').filter(Boolean) || [];
     const cost = parseInt(skill.dataset.cost);
     const canAfford = skillPoints >= cost;
 
-    const isParentUnlocked = !parentId || (document.getElementById(parentId)?.classList.contains('unlocked'));
+    const parentUnlocked = !parentId || document.getElementById(parentId)?.classList.contains('unlocked');
+    const requirementsMet = requirements.every(reqId => document.getElementById(reqId)?.classList.contains('unlocked'));
 
-    if (isParentUnlocked) {
+    if (parentUnlocked) {
       skill.classList.remove('disabled');
 
-      // Update cost color
-      const costTextMatch = skill.innerHTML.match(/(Cost:.*?)(<br>|$)/);
-      if (costTextMatch) {
-        skill.innerHTML = `${skill.dataset.name}<br><span style="color: ${canAfford ? 'yellow' : 'white'};">Cost: ${cost}</span>`;
-      }
+      // Show unmet requirements as part of info box only
+      const requirementsMet = requirements.every(reqId => document.getElementById(reqId)?.classList.contains('unlocked'));
+
+      skill.innerHTML = `${skill.dataset.name}<br><span style="color: ${canAfford ? 'yellow' : 'white'};">Cost: ${cost}</span>`;
     } else {
       skill.classList.add('disabled');
+  
       skill.innerHTML = `${skill.dataset.name}<br><span style="color: white;">Cost: ${cost}</span>`;
     }
+
   });
 }
 
@@ -158,6 +165,22 @@ unlockBtn.addEventListener('click', () => {
 
   const cost = parseInt(currentSkill.dataset.cost);
   const parentId = currentSkill.dataset.parent;
+  const requirements = currentSkill.dataset.requirements?.split(',').filter(Boolean) || [];
+
+  const unmetRequirements = requirements.filter(reqId => !document.getElementById(reqId)?.classList.contains('unlocked'));
+  const parentUnlocked = !parentId || document.getElementById(parentId)?.classList.contains('unlocked');
+
+  if (!parentUnlocked) {
+    alert("You must unlock the parent skill first.");
+    return;
+  }
+
+  if (unmetRequirements.length > 0) {
+    const reqNames = unmetRequirements.map(id => document.getElementById(id)?.dataset.name || id);
+    alert(`You must unlock the following first: ${reqNames.join(', ')}`);
+    return;
+  }
+
 
   if (parentId && !document.getElementById(parentId).classList.contains('unlocked')) {
     alert("You must unlock the parent skill first.");
