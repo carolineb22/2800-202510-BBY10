@@ -45,6 +45,8 @@ app.use(express.static(__dirname + "/public"));
 // set our content delivery to EJS
 app.set('view engine', 'ejs');
 
+app.use(express.json());  
+
 
 // ensure database connection
 var { database } = include('databaseConnection');
@@ -256,60 +258,57 @@ app.post('/loggingin', async (req, res) => {
 });
 
 
-app.get('/save', validateSession, async (req, res) => {
-    var username = req.session.username;
-
-    console.log("Save request received!");
-
-    const schema = Joi.object({ username: Joi.string().alphanum().max(20).required() });
-
-    const validationResult = schema.validate({ username });
-
-    if (validationResult.error != null) {
-        res.redirect('/main?saveError=1');
-        return;
-    }
-
-    // Get user from database
-    let user = await userCollection.find({ username: username })
-        .project({ email: 1, username: 1, password: 1, _id: 1 })
-        .toArray();
-
-    console.log(user);
-
-    // If no user, return
-    if (!user) {
-        console.log("Could not save.");
-        res.status(501)
-        return;
-    }
-
-    // Else, parse query syntax
+app.post('/save', validateSession, async (req, res) => {
     try {
-        sectors = JSON.parse(req.query.sectors);
-        resources = JSON.parse(req.query.resources);
+        // Check if body exists
+        if (!req.body) {
+            return res.status(400).send("No data received");
+        }
 
-        console.log(sectors);
+        const { sectors, resources } = req.body;
+        
+        // Validate required fields
+        if (!sectors || !resources) {
+            return res.status(400).send("Missing sectors or resources data");
+        }
 
-        // Upsert (update or insert) user data into database
+        // Rest of your existing code...
+        const username = req.session.username;
+        
+        const schema = Joi.object({ username: Joi.string().alphanum().max(20).required() });
+        const validationResult = schema.validate({ username });
+
+        if (validationResult.error) {
+            return res.status(400).send("Invalid username");
+        }
+
+        // Get user
+        let user = await userCollection.find({ username: username })
+            .project({ _id: 1 })
+            .toArray();
+
+        if (!user.length) {
+            return res.status(401).send("User not found");
+        }
+
         await saveCollection.updateOne(
-            { username: username }, // Search criteria
+            { username: username },
             {
-                $set: {                          // Info to upsert
+                $set: {
                     user_id: user[0]._id,
                     sector: sectors,
                     resources: resources
                 }
             },
-            { upsert: true });                  // Declare upsert
+            { upsert: true }
+        );
 
-        console.log("Save successful!");
+        return res.sendStatus(200);
+        
     } catch (e) {
-        // If error, then report it
         console.error(e);
+        return res.status(500).send("Save error");
     }
-
-    res.redirect('/main');
 });
 
 
