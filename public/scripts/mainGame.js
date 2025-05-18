@@ -626,9 +626,25 @@ document.getElementById('update_elem').addEventListener("click", e => {
 
 // SAVING/LOADING ------------------------------------------------------------
 
-function save()
-{
-    window.location.assign(`/save?sectors=${JSON.stringify(Sectors)}&resources=${JSON.stringify(Resources)}`);
+function save() {
+    fetch('/save', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',  // This header is crucial
+        },
+        body: JSON.stringify({  // Make sure to stringify
+            sectors: Sectors,
+            resources: Resources
+        })
+    })
+    .then(response => {
+        if (!response.ok) {
+            console.error('Save failed');
+        }
+        return response.text();
+    })
+    .then(text => console.log(text))
+    .catch(error => console.error('Error:', error));
 }
 
 // ON OPEN -------------------------------------------------------------------
