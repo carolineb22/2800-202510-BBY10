@@ -101,9 +101,21 @@ function getCenter(elem) {
 // Show info box
 function showInfoBox(skill) {
   interactionLocked = true;
+  currentSkill = skill;
+
+  const isUnlocked = skill.classList.contains('unlocked');
   infoTitle.textContent = skill.dataset.name;
-  infoCost.textContent = `Cost: ${skill.dataset.cost} Skill Points`;
-   infoDescription.innerHTML = skill.dataset.description;
+  infoDescription.innerHTML = skill.dataset.description;
+
+  if (isUnlocked) {
+    infoCost.style.display = 'none';
+    unlockBtn.style.display = 'none';
+  } else {
+    infoCost.style.display = 'block';
+    unlockBtn.style.display = 'inline-block';
+    infoCost.textContent = `Cost: ${skill.dataset.cost} Skill Points`;
+  }
+
   infoBox.style.display = 'block';
 
   const center = getCenter(skill);
@@ -114,24 +126,31 @@ function showInfoBox(skill) {
   infoBox.style.top = `${y + 20}px`;
 }
 
+
 // Update which skills are enabled/disabled based on their parent
 function updateSkillStates() {
   skills.forEach(skill => {
     const parentId = skill.dataset.parent;
+    const cost = parseInt(skill.dataset.cost);
+    const canAfford = skillPoints >= cost;
 
-    if (!parentId) {
-      skill.classList.remove('disabled');
-      return;
-    }
+    const isParentUnlocked = !parentId || (document.getElementById(parentId)?.classList.contains('unlocked'));
 
-    const parent = document.getElementById(parentId);
-    if (parent && parent.classList.contains('unlocked')) {
+    if (isParentUnlocked) {
       skill.classList.remove('disabled');
+
+      // Update cost color
+      const costTextMatch = skill.innerHTML.match(/(Cost:.*?)(<br>|$)/);
+      if (costTextMatch) {
+        skill.innerHTML = `${skill.dataset.name}<br><span style="color: ${canAfford ? 'yellow' : 'white'};">Cost: ${cost}</span>`;
+      }
     } else {
       skill.classList.add('disabled');
+      skill.innerHTML = `${skill.dataset.name}<br><span style="color: white;">Cost: ${cost}</span>`;
     }
   });
 }
+
 
 // Unlock button
 unlockBtn.addEventListener('click', () => {
@@ -148,6 +167,10 @@ unlockBtn.addEventListener('click', () => {
   if (skillPoints >= cost) {
     skillPoints -= cost;
     currentSkill.classList.add('unlocked');
+
+    // Update skill content to show "Purchased"
+    currentSkill.innerHTML = `${currentSkill.dataset.name}<br><span style="color: lime;">Unlocked</span>`;
+
     updateSkillPointsDisplay();
     updateSkillStates();
     drawLines();
@@ -157,6 +180,7 @@ unlockBtn.addEventListener('click', () => {
     alert("Not enough skill points.");
   }
 });
+
 
 // Cancel button
 cancelBtn.addEventListener('click', () => {
@@ -169,7 +193,9 @@ cancelBtn.addEventListener('click', () => {
 addPointBtn.addEventListener('click', () => {
   skillPoints++;
   updateSkillPointsDisplay();
+  updateSkillStates(); // <- add this line
 });
+
 
 // Set up each skill block
 skills.forEach(skill => {
