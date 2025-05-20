@@ -46,6 +46,9 @@ class SkillEffects {
         if (additiveMatch) {
             effects.push(...this.handleAdditiveEffect(line, parseInt(additiveMatch[1])));
         }
+
+        effects.push(...this.handleUnlockEffects(line));
+        
         return effects;
     }
 
@@ -73,6 +76,21 @@ class SkillEffects {
         if (line.includes('building capacity')) {
             effects.push({ type: 'additive', stat: 'buildingCapacity', value });
         }
+        return effects;
+    }
+
+    handleUnlockEffects(line) {
+        const effects = [];
+        const unlockMap = {
+            'Unlocks new regions': 'newRegions',
+            // ... (other unlock mappings)
+        };
+
+        Object.entries(unlockMap).forEach(([keyword, feature]) => {
+            if (line.includes(keyword)) {
+                effects.push({ type: 'unlock', feature });
+            }
+        });
         return effects;
     }
 }
