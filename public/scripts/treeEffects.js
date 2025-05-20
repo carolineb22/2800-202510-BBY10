@@ -37,18 +37,23 @@ class SkillEffects {
         const effects = [];
         if (!line || line.includes('NO EFFECT')) return effects;
 
+        // Percentage modifiers
         const percentageMatch = line.match(/([+-]?\d+)%/);
         if (percentageMatch) {
             const value = parseFloat(percentageMatch[1]) / 100;
             effects.push(...this.handlePercentageEffect(line, value));
         }
+
+        // Additive values
         const additiveMatch = line.match(/\+(\d+)\s/);
         if (additiveMatch) {
             effects.push(...this.handleAdditiveEffect(line, parseInt(additiveMatch[1])));
         }
 
-        effects.push(...this.handleUnlockEffects(line));
-        
+        // Unlocks
+        const unlockEffects = this.handleUnlockEffects(line);
+        effects.push(...unlockEffects);
+
         return effects;
     }
 
@@ -56,7 +61,23 @@ class SkillEffects {
         const effects = [];
         const effectMap = [
             { keywords: ['food yield'], effect: { type: 'resource', resource: 'Food' } },
-            // ... (other effect mappings)
+            { keywords: ['build speed', 'gather speed'], effect: { type: 'multiplier', stat: 'buildSpeed' } },
+            { keywords: ['research speed'], effect: { type: 'multiplier', stat: 'researchSpeed' } },
+            { keywords: ['disease rate'], effect: { type: 'multiplier', stat: 'diseaseRate' } },
+            {
+                keywords: ['environmental strain', 'environment quality'],
+                effect: { type: 'multiplier', stat: 'environmentalStrain', invert: true }
+            },
+            { keywords: ['transport pollution'], effect: { type: 'multiplier', stat: 'transportPollution' } },
+            { keywords: ['labor', 'worker requirements'], effect: { type: 'multiplier', stat: 'laborRequirements' } },
+            { keywords: ['land use'], effect: { type: 'multiplier', stat: 'landUse' } },
+            { keywords: ['harvest speed'], effect: { type: 'multiplier', stat: 'harvestSpeed' } },
+            { keywords: ['food quality'], effect: { type: 'multiplier', stat: 'foodQuality' } },
+            { keywords: ['material efficiency'], effect: { type: 'multiplier', stat: 'materialEfficiency' } },
+            { keywords: ['energy capacity'], effect: { type: 'multiplier', stat: 'energyCapacity' } },
+            { keywords: ['food spoilage'], effect: { type: 'multiplier', stat: 'foodSpoilage' } },
+            { keywords: ['water output'], effect: { type: 'resource', resource: 'Water' } },
+            { keywords: ['output', 'chemical', 'chem'], effect: { type: 'multiplier', stat: 'chemProcessEfficiency' } }
         ];
 
         effectMap.forEach(({ keywords, effect }) => {
@@ -65,10 +86,11 @@ class SkillEffects {
                 effects.push({ ...effect, value: val });
             }
         });
+
         return effects;
     }
 
-     handleAdditiveEffect(line, value) {
+    handleAdditiveEffect(line, value) {
         const effects = [];
         if (line.includes('population cap')) {
             effects.push({ type: 'additive', stat: 'populationCap', value });
@@ -83,7 +105,11 @@ class SkillEffects {
         const effects = [];
         const unlockMap = {
             'Unlocks new regions': 'newRegions',
-            // ... (other unlock mappings)
+            'Unlocks new areas': 'newAreas',
+            'advanced chem': 'advancedChemProcesses',
+            'automation': 'automation',
+            'vertical farm': 'verticalFarming',
+            'water recycling': 'waterRecycling'
         };
 
         Object.entries(unlockMap).forEach(([keyword, feature]) => {
@@ -91,6 +117,7 @@ class SkillEffects {
                 effects.push({ type: 'unlock', feature });
             }
         });
+
         return effects;
     }
 
@@ -114,8 +141,16 @@ class SkillEffects {
                     break;
             }
         });
+
+        this.updateGameSystems();
+        console.log(`Applied effects for ${skillId}`, this.modifiers);
     }
 
+    updateGameSystems() {
+        // Updates happen through the modifier system
+    }
+
+    // Methods
     getResourceMultiplier(resource) {
         return this.modifiers.resourceProduction[resource] || 1.0;
     }
@@ -133,4 +168,5 @@ class SkillEffects {
     }
 }
 
+// Initialize globally
 window.skillEffects = new SkillEffects();
