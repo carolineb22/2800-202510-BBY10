@@ -42,6 +42,10 @@ class SkillEffects {
             const value = parseFloat(percentageMatch[1]) / 100;
             effects.push(...this.handlePercentageEffect(line, value));
         }
+        const additiveMatch = line.match(/\+(\d+)\s/);
+        if (additiveMatch) {
+            effects.push(...this.handleAdditiveEffect(line, parseInt(additiveMatch[1])));
+        }
         return effects;
     }
 
@@ -58,6 +62,17 @@ class SkillEffects {
                 effects.push({ ...effect, value: val });
             }
         });
+        return effects;
+    }
+
+     handleAdditiveEffect(line, value) {
+        const effects = [];
+        if (line.includes('population cap')) {
+            effects.push({ type: 'additive', stat: 'populationCap', value });
+        }
+        if (line.includes('building capacity')) {
+            effects.push({ type: 'additive', stat: 'buildingCapacity', value });
+        }
         return effects;
     }
 }
