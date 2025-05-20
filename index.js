@@ -103,8 +103,6 @@ app.get('/', (req, res) => {
 });
 
 
-// TODO - remove middleware function,
-// catch invalidCred and deal with it properly in `signUp.html`
 app.get('/signUp', (req, res) => {
     var errors = [];
 
@@ -130,7 +128,6 @@ app.get('/signUp', (req, res) => {
 });
 
 
-// TODO - remove middleware function
 app.get('/login', (req, res) => {
     var errors = [];
 
@@ -188,7 +185,6 @@ app.post('/submitUser', async (req, res) => {
         return;
     }
 
-    // TODO find a way to merge these two queries for efficiency
     var duplicateUsername = await userCollection.find({ username: username }).toArray();
     var duplicateEmail = await userCollection.find({ email: email }).toArray();
     
@@ -345,7 +341,7 @@ app.get('/main', validateSession, async (req, res) => {
     console.log(userStats);
 
     res.render("mainGame", {
-        title: "Main Game Page",
+        title: "Main - Our Tomorrow",
         css: ['styles/mainGame.css', "https://fonts.googleapis.com/icon?family=Material+Icons"],
         resources: userStats ? JSON.stringify(userStats.resources) : "{}",
         sectors: userStats ? JSON.stringify(userStats.sector) : "[]",
@@ -367,27 +363,11 @@ app.get('/weatherTest', (req, res) => {
     });
 });
 
-app.get('/main/techTree', validateSession, (req, res) => {
+app.get('/techTree', validateSession, (req, res) => {
     res.render("techTree", {
         title: "Custom Tech Tree",
-        // Since techTree is a subdirectory of main,
-        // we have to go one directory up to get
-        // the style sheets (and JS)
-        css: ["../styles/techTree.css"]
+        css: ["styles/techTree.css"]
     })
-});
-
-// TODO flagged for removal in next sprint
-app.get('/main/build', validateSession, (req, res) => {
-    res.send(`Unimplemented Page
-        <br>
-        <form action='/main' method='get'>
-            <button>Return to main</button>
-        </form>
-        <form action='/logout' method='get'>
-            <button>Log out</button>
-        </form>
-        `);
 });
 
 
