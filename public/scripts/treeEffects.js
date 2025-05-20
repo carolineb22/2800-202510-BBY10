@@ -93,6 +93,28 @@ class SkillEffects {
         });
         return effects;
     }
+
+    applySkillEffects(skillId) {
+        const skill = document.getElementById(skillId);
+        if (!skill) return;
+
+        this.parseEffectDescription(skill.dataset.description).forEach(effect => {
+            switch (effect.type) {
+                case 'resource':
+                    this.modifiers.resourceProduction[effect.resource] *= effect.value;
+                    break;
+                case 'additive':
+                    this.modifiers.additive[effect.stat] += effect.value;
+                    break;
+                case 'multiplier':
+                    this.modifiers.multipliers[effect.stat] *= effect.value;
+                    break;
+                case 'unlock':
+                    this.modifiers.unlocks[effect.feature] = true;
+                    break;
+            }
+        });
+    }
 }
 
 window.skillEffects = new SkillEffects();
