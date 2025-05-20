@@ -25,6 +25,19 @@ class SkillEffects {
             }
         };
     }
+
+    parseEffectDescription(description) {
+        const effectText = description.split('<b>Effect:</b>')[1] || '';
+        return effectText.split('</br>')
+            .filter(line => line.trim())
+            .flatMap(line => this.parseEffectLine(line.trim()));
+    }
+
+    parseEffectLine(line) {
+        const effects = [];
+        if (!line || line.includes('NO EFFECT')) return effects;
+        return effects;
+    }
 }
 
 window.skillEffects = new SkillEffects();
