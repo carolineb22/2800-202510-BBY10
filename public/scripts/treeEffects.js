@@ -115,6 +115,22 @@ class SkillEffects {
             }
         });
     }
+
+    getResourceMultiplier(resource) {
+        return this.modifiers.resourceProduction[resource] || 1.0;
+    }
+
+    getPopulationCapBonus() {
+        return this.modifiers.additive.populationCap;
+    }
+
+    getBuildSpeedMultiplier() {
+        return this.modifiers.multipliers.buildSpeed;
+    }
+
+    isUnlocked(feature) {
+        return this.modifiers.unlocks[feature] || false;
+    }
 }
 
 window.skillEffects = new SkillEffects();
