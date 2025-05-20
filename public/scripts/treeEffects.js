@@ -36,6 +36,28 @@ class SkillEffects {
     parseEffectLine(line) {
         const effects = [];
         if (!line || line.includes('NO EFFECT')) return effects;
+
+        const percentageMatch = line.match(/([+-]?\d+)%/);
+        if (percentageMatch) {
+            const value = parseFloat(percentageMatch[1]) / 100;
+            effects.push(...this.handlePercentageEffect(line, value));
+        }
+        return effects;
+    }
+
+    handlePercentageEffect(line, value) {
+        const effects = [];
+        const effectMap = [
+            { keywords: ['food yield'], effect: { type: 'resource', resource: 'Food' } },
+            // ... (other effect mappings)
+        ];
+
+        effectMap.forEach(({ keywords, effect }) => {
+            if (keywords.some(kw => line.includes(kw))) {
+                const val = effect.invert ? 1 - Math.abs(value) : 1 + value;
+                effects.push({ ...effect, value: val });
+            }
+        });
         return effects;
     }
 }
