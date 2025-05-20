@@ -341,7 +341,7 @@ app.get('/main', validateSession, async (req, res) => {
     console.log(userStats);
 
     res.render("mainGame", {
-        title: "Main Game Page",
+        title: "Main - Our Tomorrow",
         css: ['styles/mainGame.css', "https://fonts.googleapis.com/icon?family=Material+Icons"],
         resources: userStats ? JSON.stringify(userStats.resources) : "{}",
         sectors: userStats ? JSON.stringify(userStats.sector) : "[]",
@@ -363,13 +363,10 @@ app.get('/weatherTest', (req, res) => {
     });
 });
 
-app.get('/main/techTree', validateSession, (req, res) => {
+app.get('/techTree', validateSession, (req, res) => {
     res.render("techTree", {
         title: "Custom Tech Tree",
-        // Since techTree is a subdirectory of main,
-        // we have to go one directory up to get
-        // the style sheets (and JS)
-        css: ["../styles/techTree.css"]
+        css: ["styles/techTree.css"]
     })
 });
 
