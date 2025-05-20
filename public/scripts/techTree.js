@@ -287,3 +287,10 @@ window.addEventListener('load', () => {
   drawLines();
   updateSkillStates(); // Initialize skill enable/disable state
 });
+
+// Test function to send before unloading -
+// To be replaced with autosaving
+window.addEventListener("beforeunload", (e) => {
+    e.preventDefault();
+    window.alert("Test");
+});
