@@ -173,7 +173,11 @@ unlockBtn.addEventListener('click', () => {
   const parentId = currentSkill.dataset.parent;
   const requirements = currentSkill.dataset.requirements?.split(',').filter(Boolean) || [];
 
-  const unmetRequirements = requirements.filter(reqId => !document.getElementById(reqId)?.classList.contains('unlocked'));
+  // Check requirements
+  const unmetRequirements = requirements.filter(reqId => {
+    return !document.getElementById(reqId.trim())?.classList.contains('unlocked');
+  });
+
   const parentUnlocked = !parentId || document.getElementById(parentId)?.classList.contains('unlocked');
 
   if (!parentUnlocked) {
@@ -182,23 +186,20 @@ unlockBtn.addEventListener('click', () => {
   }
 
   if (unmetRequirements.length > 0) {
-    const reqNames = unmetRequirements.map(id => document.getElementById(id)?.dataset.name || id);
+    const reqNames = unmetRequirements.map(id => {
+      const el = document.getElementById(id.trim());
+      return el?.dataset.name || id;
+    });
     alert(`You must unlock the following first: ${reqNames.join(', ')}`);
-    return;
-  }
-
-
-  if (parentId && !document.getElementById(parentId).classList.contains('unlocked')) {
-    alert("You must unlock the parent skill first.");
     return;
   }
 
   if (skillPoints >= cost) {
     skillPoints -= cost;
     currentSkill.classList.add('unlocked');
-
-    // Update skill content to show "Purchased"
-    currentSkill.innerHTML = `${currentSkill.dataset.name}<br><span style="color: lime;">Unlocked</span>`;
+    
+    // Apply game effects 
+    window.skillEffects.applySkillEffects(currentSkill.id);
 
     updateSkillPointsDisplay();
     updateSkillStates();
@@ -308,3 +309,5 @@ document.addEventListener('click', (e) => {
     interactionLocked = false;
   }
 });
+
+
