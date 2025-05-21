@@ -1,52 +1,3 @@
-
-// VALUES DECLARE -----------------------------------------------------------
-
-// Load the saved data from the database
-const Resources = databaseResources;
-
-// Load the sectors from the database
-var tempSectors = [];
-databaseSectors.forEach((sector) => {
-    let tempGeographicalElements = [];
-    if(sector.geographicalElements) {
-        sector.geographicalElements.forEach(element => {
-            let tempBuildings = [];
-            if(element.buildings) {
-                element.buildings.forEach((b) => {
-                    tempBuildings.push(new Building(b.id,
-                                                    b.type,
-                                                    b.name,
-                                                    b.description,
-                                                    b.consumptionArray,
-                                                    b.productionArray,
-                                                    b.costArray,
-                                                    b.depletion,
-                                                    element.uuid))
-                });
-            }
-            tempGeographicalElements.push(new GeographicalElement(element.id,
-                                                                  element.name,
-                                                                  element.description,
-                                                                  element.passiveProduction,
-                                                                  element.situationalBuildings,
-                                                                  element.buildingBaseCapacity,
-                                                                  element.depletion,
-                                                                  element.depletesInto,
-                                                                  tempBuildings));
-    })};
-    tempSectors.push(new Sector(sector.id,
-                                sector.name,
-                                tempGeographicalElements));
-});
-
-const Sectors = tempSectors;
-console.log(Sectors)
-
-let activeSector = 0;
-let activeElement = null;
-let lastTimestampSaved = Date.now();
-
-
 // ENUMS --------------------------------------------------------------------
 
 // Some examples of building types.
@@ -67,7 +18,6 @@ const ResourceTypes = {
     Metamaterials: "Metamaterials"
 }
 // ENUMS --------------------------------------------------------------------
-
 
 // TEMPLATES -----------------------------------------------------------------
 
@@ -166,23 +116,43 @@ const BuildingTemplates = {
 // TEMPLATES -----------------------------------------------------------------
 
 
-// TEMP SINCE LOADING IS BUGGED
+// VALUES DECLARE -----------------------------------------------------------
 
+// Load the saved data from the database
+const Resources = databaseResources;
 
-// const Sectors = [
-//     new Sector("1", "Northwest Boglo", [
-//         new GeographicalElement(...GeographicalElementTemplates.element_forest),
-//         new GeographicalElement(...GeographicalElementTemplates.element_forest)
-//     ]),
-//     new Sector("2", "Flumpland", [
-//         new GeographicalElement(...GeographicalElementTemplates.element_forest),
-//         new GeographicalElement(...GeographicalElementTemplates.element_forest),
-//         new GeographicalElement(...GeographicalElementTemplates.element_forest)
-//     ])
-// ]
+// Load the sectors from the database
+const Sectors = [];
+databaseSectors.forEach((sector) => {
+    let tempGeographicalElements = [];
+    if(sector.geographicalElements) {
+        sector.geographicalElements.forEach(element => {
+            let newGeoElem = new GeographicalElement(element.id,
+                                                     element.name,
+                                                     element.description,
+                                                     element.passiveProduction,
+                                                     element.situationalBuildings,
+                                                     element.buildingBaseCapacity,
+                                                     element.depletion,
+                                                     element.depletesInto);
+            tempGeographicalElements.push(newGeoElem);
+            if(element.buildings) {
+                element.buildings.forEach((b) => {
+                    initBuilding(b.id, newGeoElem);
+                });
+            }
+    })};
+    Sectors.push(new Sector(sector.id,
+                            sector.name,
+                            tempGeographicalElements));
+});
 
+console.log(Sectors)
 
-// TEMP SINCE LOADING IS BUGGED
+let activeSector = 0;
+let activeElement = null;
+let lastTimestampSaved = Date.now();
+
 
 // OBJECTS -------------------------------------------------------------------
 
@@ -224,7 +194,7 @@ function Sector(id, name, geographicalElements) {
 //     buildingBaseCapacity,    -- The total buildings you can have built at a time on this GE
 //     "depletesInto"   -- The ID (Internal name) of the GE that this turns into upon resource depletion.
 // ]
-function GeographicalElement(id, name, description, passiveProduction, situationalBuildings, buildingBaseCapacity, baseDepletion, maxDepletion, depletesInto, buildings) {
+function GeographicalElement(id, name, description, passiveProduction, situationalBuildings, buildingBaseCapacity, baseDepletion, maxDepletion, depletesInto) {
     this.uuid = crypto.randomUUID(); //uuid of this element
     this.id = id; //id of this element, is seperate from uuid as multiple of the same element can inhabit a sector
     this.name = name; //display name of this element
@@ -235,11 +205,7 @@ function GeographicalElement(id, name, description, passiveProduction, situation
     this.depletion = baseDepletion; //abritrary value of how much this element can take before being depleted.
     this.maxDepletion = maxDepletion;
     this.depletesInto = depletesInto; //what element does this element turn into after being depleted? based on id
-    if (buildings) {
-        this.buildings = buildings;
-    } else {
-        this.buildings = [];
-    }
+    this.buildings = [];
     
 
     // Whenever this GeographicalElement is called to do a tick,
@@ -396,19 +362,24 @@ function displayBuildingSidebar() {
     }
 }
 
+// Builds a building post-initialization
 function buildBuilding(building_id, element_uuid) {
     Sectors.forEach(sector => {
         sector.geographicalElements.forEach(element => {
             if (element.uuid == element_uuid) {
-                let newBuilding = new Building(...BuildingTemplates[building_id], element.uuid)
-                element.buildings.push(newBuilding);
-                console.log(element);
-                console.log("made!");
+                initBuilding(building_id, element)
                 updateSectorDisplay();
             }
         })
     })
+}
 
+// Builds a building during initialization
+function initBuilding(building_id, element) {
+    let newBuilding = new Building(...BuildingTemplates[building_id], element.uuid)
+    element.buildings.push(newBuilding);
+    console.log(element);
+    console.log("made!");
 }
 
 function openBuildMenu(element_uuid) {
