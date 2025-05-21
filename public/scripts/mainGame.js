@@ -247,7 +247,7 @@ function GeographicalElement(id, name, description, passiveProduction, situation
     // and increment by some set value
     this.doTick = function() {
         this.passiveProduction.forEach(typeValueObject => {
-            Resources[typeValueObject.type] += typeValueObject.value * 1000
+            Resources[typeValueObject.type] += typeValueObject.value
         })
 
         this.buildings.forEach(building => {
