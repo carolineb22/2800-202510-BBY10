@@ -142,28 +142,34 @@ function showInfoBox(skill) {
 function updateSkillStates() {
   skills.forEach(skill => {
     const parentId = skill.dataset.parent;
-    const requirements = skill.dataset.requirements?.split(',').filter(Boolean) || [];
     const cost = parseInt(skill.dataset.cost);
+    const isUnlocked = skill.classList.contains('unlocked');
+    const parentUnlocked = !parentId || document.getElementById(parentId)?.classList.contains('unlocked');
     const canAfford = skillPoints >= cost;
 
-    const parentUnlocked = !parentId || document.getElementById(parentId)?.classList.contains('unlocked');
-    const requirementsMet = requirements.every(reqId => document.getElementById(reqId)?.classList.contains('unlocked'));
-
-    if (parentUnlocked) {
-      skill.classList.remove('disabled');
-
-      // Show unmet requirements as part of info box only
-      const requirementsMet = requirements.every(reqId => document.getElementById(reqId)?.classList.contains('unlocked'));
-
-      skill.innerHTML = `${skill.dataset.name}<br><span style="color: ${canAfford ? 'yellow' : 'white'};">Cost: ${cost}</span>`;
-    } else {
-      skill.classList.add('disabled');
-  
-      skill.innerHTML = `${skill.dataset.name}<br><span style="color: white;">Cost: ${cost}</span>`;
+    let prereqText = '';
+    const requirements = skill.dataset.requirements?.split(',').filter(Boolean) || [];
+    if (!isUnlocked && requirements.length > 0) {
+      const metCount = requirements.filter(id => document.getElementById(id)?.classList.contains('unlocked')).length;
+      const color = metCount === requirements.length ? 'limegreen' : 'red';
+      prereqText = `<br><span style="color:${color}; font-size: 1.0em;">Conditions: ${metCount}/${requirements.length}</span>`;
     }
 
+    if (isUnlocked) {
+      skill.innerHTML = `${skill.dataset.name}<br><span style="color: lime;">Unlocked</span>`;
+    } else if (parentUnlocked) {
+      skill.classList.remove('disabled');
+      const color = canAfford ? 'yellow' : 'red';
+      skill.innerHTML = `${skill.dataset.name}<br><span style="color: ${color};">Cost: ${cost}</span>${prereqText}`;
+    } else {
+      skill.classList.add('disabled');
+      skill.innerHTML = `${skill.dataset.name}<br><span style="color: white;">Cost: ${cost}</span>`;
+    }
   });
 }
+
+
+
 
 
 // Unlock button
@@ -174,7 +180,11 @@ unlockBtn.addEventListener('click', () => {
   const parentId = currentSkill.dataset.parent;
   const requirements = currentSkill.dataset.requirements?.split(',').filter(Boolean) || [];
 
-  const unmetRequirements = requirements.filter(reqId => !document.getElementById(reqId)?.classList.contains('unlocked'));
+  // Check requirements
+  const unmetRequirements = requirements.filter(reqId => {
+    return !document.getElementById(reqId.trim())?.classList.contains('unlocked');
+  });
+
   const parentUnlocked = !parentId || document.getElementById(parentId)?.classList.contains('unlocked');
 
   if (!parentUnlocked) {
@@ -183,23 +193,20 @@ unlockBtn.addEventListener('click', () => {
   }
 
   if (unmetRequirements.length > 0) {
-    const reqNames = unmetRequirements.map(id => document.getElementById(id)?.dataset.name || id);
+    const reqNames = unmetRequirements.map(id => {
+      const el = document.getElementById(id.trim());
+      return el?.dataset.name || id;
+    });
     alert(`You must unlock the following first: ${reqNames.join(', ')}`);
-    return;
-  }
-
-
-  if (parentId && !document.getElementById(parentId).classList.contains('unlocked')) {
-    alert("You must unlock the parent skill first.");
     return;
   }
 
   if (skillPoints >= cost) {
     skillPoints -= cost;
     currentSkill.classList.add('unlocked');
-
-    // Update skill content to show "Purchased"
-    currentSkill.innerHTML = `${currentSkill.dataset.name}<br><span style="color: lime;">Unlocked</span>`;
+    
+    // Apply game effects 
+    window.skillEffects.applySkillEffects(currentSkill.id);
 
     save();
     updateSkillPointsDisplay();
@@ -321,3 +328,20 @@ window.addEventListener('load', () => {
   drawLines();
   updateSkillStates(); // Initialize skill enable/disable state
 });
+
+
+// Close info box if clicking outside of it
+document.addEventListener('click', (e) => {
+  if (
+    interactionLocked &&
+    infoBox.style.display === 'block' &&
+    !infoBox.contains(e.target) &&
+    !e.target.classList.contains('skill')
+  ) {
+    infoBox.style.display = 'none';
+    currentSkill = null;
+    interactionLocked = false;
+  }
+});
+
+

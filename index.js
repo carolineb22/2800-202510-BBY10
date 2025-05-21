@@ -122,8 +122,6 @@ app.get('/', (req, res) => {
 });
 
 
-// TODO - remove middleware function,
-// catch invalidCred and deal with it properly in `signUp.html`
 app.get('/signUp', (req, res) => {
     var errors = [];
 
@@ -149,7 +147,6 @@ app.get('/signUp', (req, res) => {
 });
 
 
-// TODO - remove middleware function
 app.get('/login', (req, res) => {
     var errors = [];
 
@@ -207,7 +204,6 @@ app.post('/submitUser', async (req, res) => {
         return;
     }
 
-    // TODO find a way to merge these two queries for efficiency
     var duplicateUsername = await userCollection.find({ username: username }).toArray();
     var duplicateEmail = await userCollection.find({ email: email }).toArray();
     
@@ -230,7 +226,7 @@ app.post('/submitUser', async (req, res) => {
     req.session.username = username;
     req.session.cookie.maxAge = expireTime;
 
-    res.redirect('/main');
+    res.redirect('/main?newUser=1');
 });
 
 
@@ -406,8 +402,9 @@ app.get('/main', validateSession, validateUsername, async (req, res) => {
     console.log(userStats);
 
     res.render("mainGame", {
-        title: "Main Game Page",
+        title: "Main - Our Tomorrow",
         css: ['styles/mainGame.css', "https://fonts.googleapis.com/icon?family=Material+Icons"],
+		newUser: newUser,
         resources: userStats ? JSON.stringify(userStats.resources) : "{}",
         sectors: userStats ? JSON.stringify(userStats.sector) : "[]",
         apiKey: process.env.WEATHER_API_KEY
@@ -455,19 +452,6 @@ app.get('/main/techTree', validateSession, validateUsername, async (req, res) =>
         css: ["../styles/techTree.css"],
         unlocks: treeUnlocks ? JSON.stringify(treeUnlocks.unlocks) : "[\"root\"]"
     })
-});
-
-// TODO flagged for removal in next sprint
-app.get('/main/build', validateSession, (req, res) => {
-    res.send(`Unimplemented Page
-        <br>
-        <form action='/main' method='get'>
-            <button>Return to main</button>
-        </form>
-        <form action='/logout' method='get'>
-            <button>Log out</button>
-        </form>
-        `);
 });
 
 

@@ -34,7 +34,8 @@
             <div class="skill" id="PrimitiveShelters" 
                 data-name="Primitive Shelters" 
                 data-cost="1"
-                data-description="Small caves or shelters made from branches and leaves." 
+                data-description="Small caves or shelters made from branches and leaves.
+                                    </br></br><b>Effect:</b> +1 population cap</br>" 
                 data-parent="houseRoot"
                 data-requirements=""
                 style="top: 500px; left: 100px;">
@@ -43,7 +44,8 @@
             <div class="skill" id="MudDwellings" 
                 data-name="Mud Dwellings" 
                 data-cost="1"
-                data-description="Simple structures made from mud and straw." 
+                data-description="Simple structures made from mud and straw.
+                                    </br></br><b>Effect:</b> +2 population cap</br>" 
                 data-parent="PrimitiveShelters"
                 data-requirements=""
                 style="top: 500px; left: -100px;">
@@ -52,16 +54,18 @@
             <div class="skill" id="Brick&PlasterHomes" 
                 data-name="Brick & Plaster Homes" 
                 data-cost="1"
-                data-description="Durable, long-term housing with improved insulation and comfort." 
+                data-description="Durable, long-term housing with improved insulation and comfort.
+                                    </br></br><b>Effect:</b> +4 population cap</br>" 
                 data-parent="MudDwellings"
-                data-requirements=""
+                data-requirements="Metalworking"
                 style="top: 500px; left: -300px;">
             </div>
 
             <div class="skill" id="RegionalInfrastructure" 
                 data-name="Regional Infrastructure" 
                 data-cost="1"
-                data-description="Introduction of sewers and water lines in growing towns." 
+                data-description="Introduction of sewers and water lines in growing towns.
+                                    </br></br><b>Effect:</b> Unlocks new areas within regions</br>" 
                 data-parent="Brick&PlasterHomes"
                 data-requirements=""
                 style="top: 500px; left: -500px;">
@@ -70,27 +74,39 @@
             <div class="skill" id="Eco-CityRegulations" 
                 data-name="Eco-City Regulations" 
                 data-cost="1"
-                data-description="City laws and urban planning aimed at reducing emissions and environmental impact." 
+                data-description="City laws and urban planning aimed at reducing emissions and environmental impact.
+                                    </br></br><b>Effect:</b> –20% environmental strain</br>" 
                 data-parent="RegionalInfrastructure"
-                data-requirements=""
+                data-requirements="IrrigationSystems"
                 style="top: 500px; left: -700px;">
             </div>
 
             <div class="skill" id="PublicTransitNetworks" 
                 data-name="Public Transit Networks" 
                 data-cost="1"
-                data-description="Mass transportation systems are central to urban growth." 
+                data-description="Mass transportation systems are central to urban growth.
+                                    </br></br><b>Effect:</b> –15% transport pollution</br>" 
                 data-parent="Eco-CityRegulations"
-                data-requirements=""
+                data-requirements="Automobiles"
                 style="top: 300px; left: -900px;">
             </div>
 
             <div class="skill" id="UrbanRenewalProjects" 
                 data-name="Urban Renewal Projects" 
                 data-cost="1"
-                data-description="Retrofitting existing homes with green tech." 
+                data-description="Retrofitting existing homes with green tech.
+                                    </br></br><b>Effect:</b> –10% environmental strain</br>" 
                 data-parent="Eco-CityRegulations"
                 data-requirements=""
+                style="top: 700px; left: -900px;">
+            </div>
+            <div class="skill" id="Arcologies" 
+                data-name="Arcologies" 
+                data-cost="1"
+                data-description="Self-contained vertical cities with integrated services (hospitals, schools, parks, greenery).
+                                    </br></br><b>Effect:</b> –50% land use <br>–30% environmental strain</br>" 
+                data-parent="UrbanRenewalProjects"
+                data-requirements="Verticalfarming,WaterRecycling"
                 style="top: 700px; left: -900px;">
             </div>
 
@@ -100,14 +116,15 @@
                 data-cost="0"
                 data-description="This is the root skill for Agriculture." 
                 data-parent="root"
-                data-requirements="houseRoot,waterRoot"
+                data-requirements=""
                 style="top: 350px; left: 500px;">
             </div>
 
             <div class="skill" id="ForagingSocieties" 
                 data-name="Foraging Societies" 
                 data-cost="0"
-                data-description="People gather wild fruits, nuts, and roots from forests and plains." 
+                data-description="People gather wild fruits, nuts, and roots from forests and plains.
+                                    </br></br><b>Effect:</b> +5% food yield</br>" 
                 data-parent="agriRoot"
                 data-requirements=""
                 style="top: 200px; left: 500px;">
@@ -116,25 +133,28 @@
             <div class="skill" id="RiversideFarming" 
                 data-name="Riverside Farming" 
                 data-cost="0"
-                data-description="Villagers plant seeds along riverbanks, using natural floodwaters to nourish crops." 
+                data-description="Villagers plant seeds along riverbanks, using natural floodwaters to nourish crops.
+                                    </br></br><b>Effect:</b> +10% food yield</br>" 
                 data-parent="ForagingSocieties"
-                data-requirements=""
+                data-requirements="StoneTools"
                 style="top: 50px; left: 500px;">
             </div>
 
             <div class="skill" id="BasicFarming" 
                 data-name="Basic Farming" 
                 data-cost="0"
-                data-description="Adoption of tools (hoes, plows) to till and sow fields by hand." 
+                data-description="Adoption of tools (hoes, plows) to till and sow fields by hand.
+                                    </br></br><b>Effect:</b> +20% food yield</br>"  
                 data-parent="RiversideFarming"
-                data-requirements=""
+                data-requirements="IrrigationSystems"
                 style="top: -100px; left: 500px;">
             </div>
 
             <div class="skill" id="CropRotation" 
                 data-name="Crop Rotation" 
                 data-cost="0"
-                data-description="Rotating legume, grain, and root crops to restore soil nitrogen." 
+                data-description="Rotating legume, grain, and root crops to restore soil nitrogen.
+                                    </br></br><b>Effect:</b> +20% food yield</br>" 
                 data-parent="BasicFarming"
                 data-requirements=""
                 style="top: -250px; left: 600px;">
@@ -143,7 +163,8 @@
             <div class="skill" id="PollinatorManagement" 
                 data-name="Pollinator Management" 
                 data-cost="0"
-                data-description="Beekeeping and provision of nesting habitats to boost insect pollination." 
+                data-description="Beekeeping and provision of nesting habitats to boost insect pollination of fields and orchards.
+                                    </br></br><b>Effect:</b> +10% food yield</br>" 
                 data-parent="BasicFarming"
                 data-requirements=""
                 style="top: -250px; left: 400px;">
@@ -152,16 +173,18 @@
             <div class="skill" id="CropDiversity" 
                 data-name="Crop Diversity" 
                 data-cost="0"
-                data-description="Cultivation of multiple crop varieties to spread risk and adapt to pests/climate." 
+                data-description="Cultivation of multiple crop varieties to spread risk and adapt to pests/climate.
+                                    </br></br><b>Effect:</b> +10% food yield</br>" 
                 data-parent="PollinatorManagement"
-                data-requirements=""
+                data-requirements="CropRotation"
                 style="top: -400px; left: 400px;">
             </div>
 
             <div class="skill" id="MechanicalHarvesting" 
                 data-name="Mechanical Harvesting" 
                 data-cost="0"
-                data-description="Introduction of machines to speed harvesting." 
+                data-description="Introduction of machines to speed harvesting.
+                                    </br></br><b>Effect:</b> –50% labor</br>+30% harvest speed</br>" 
                 data-parent="CropDiversity"
                 data-requirements=""
                 style="top: -550px; left: 300px;">
@@ -170,16 +193,18 @@
             <div class="skill" id="Agrochemicals" 
                 data-name="Agrochemicals" 
                 data-cost="0"
-                data-description="Synthesis of synthetic fertilizers, herbicides, and pesticides." 
+                data-description="Synthesis of synthetic fertilizers, herbicides, and pesticides.
+                                    </br></br><b>Effect:</b> +25% food yield</br>–20% environment quality</br>" 
                 data-parent="CropDiversity"
-                data-requirements=""
+                data-requirements="Chemistry"
                 style="top: -550px; left: 500px;">
             </div>
 
             <div class="skill" id="GeneticEngineering" 
                 data-name="Genetic Engineering" 
                 data-cost="0"
-                data-description="Use of CRISPR to develop drought-tolerant, pest-resistant crops." 
+                data-description="Use of CRISPR to develop drought-tolerant, pest-resistant crops.
+                                    </br></br><b>Effect:</b> +10% food yield</br>" 
                 data-parent="MechanicalHarvesting"
                 data-requirements=""
                 style="top: -700px; left: 300px;">
@@ -188,16 +213,18 @@
             <div class="skill" id="PrecisionAgriculture" 
                 data-name="Precision Agriculture" 
                 data-cost="0"
-                data-description="GPS-guided equipment and IoT sensors to optimize planting." 
+                data-description="GPS-guided equipment and IoT sensors to optimize planting.
+                                    </br></br><b>Effect:</b> +20% food yield</br>" 
                 data-parent="GeneticEngineering"
-                data-requirements=""
+                data-requirements="Computers&Internet"
                 style="top: -850px; left: 300px;">
             </div>
 
             <div class="skill" id="VerticalFarming" 
                 data-name="Vertical Farming" 
                 data-cost="0"
-                data-description="Multi-story indoor farms using LED lighting and hydroponics." 
+                data-description="Multi-story indoor farms using LED lighting and hydroponics.
+                                    </br></br><b>Effect:</b> –75% land use</br> +50% food yield</br>" 
                 data-parent="PrecisionAgriculture"
                 data-requirements=""
                 style="top: -1000px; left: 300px;">
@@ -206,9 +233,10 @@
             <div class="skill" id="AutonomousAgriculture" 
                 data-name="Autonomous Agriculture" 
                 data-cost="0"
-                data-description="Fully automated farms with drones and robotic harvesters." 
+                data-description="Fully automated farms with drones and robotic harvesters.
+                                    </br></br><b>Effect:</b> –75% land use</br> -90% labor</br> +20% food yield</br>" 
                 data-parent="VerticalFarming"
-                data-requirements=""
+                data-requirements="Automation"
                 style="top: -1150px; left: 300px;">
             </div>
 
@@ -225,7 +253,8 @@
             <div class="skill" id="UntreatedWater" 
                 data-name="Untreated Water" 
                 data-cost="0"
-                data-description="Villagers draw directly from streams and rivers without treatment." 
+                data-description="Villagers draw directly from streams and rivers without treatment.
+                                    </br></br><b>Effect:</b> +25% disease rate</br>" 
                 data-parent="waterRoot"
                 data-requirements=""
                 style="top: 500px; left: 900px;">
@@ -234,7 +263,8 @@
             <div class="skill" id="GroundwaterWells" 
                 data-name="Groundwater Wells" 
                 data-cost="0"
-                data-description="Simple hand-dug wells lined with stone or wood." 
+                data-description="Simple hand-dug wells lined with stone or wood.
+                                    </br></br><b>Effect:</b> -5% disease rate</br>"
                 data-parent="UntreatedWater"
                 data-requirements=""
                 style="top: 350px; left: 1100px;">
@@ -243,7 +273,8 @@
             <div class="skill" id="BasicFiltration" 
                 data-name="Basic Filtration" 
                 data-cost="0"
-                data-description="Filtering water through cloth, sand, gravel layers." 
+                data-description="Filtering water through cloth, sand, gravel layers.
+                                    </br></br><b>Effect:</b> +1 population cap</br>–15% disease rate</br>" 
                 data-parent="UntreatedWater"
                 data-requirements=""
                 style="top: 650px; left: 1100px;">
@@ -252,7 +283,8 @@
             <div class="skill" id="BoilingWater" 
                 data-name="Boiling Water" 
                 data-cost="0"
-                data-description="Use of heat to purify water." 
+                data-description="Use of heat to purify water.
+                                    </br></br><b>Effect:</b> –15% disease rate</br>" 
                 data-parent="BasicFiltration"
                 data-requirements=""
                 style="top: 650px; left: 1300px;">
@@ -261,7 +293,8 @@
             <div class="skill" id="ActivatedCarbonFilter" 
                 data-name="Activated Carbon Filter" 
                 data-cost="0"
-                data-description="Use activated charcoal to clean water." 
+                data-description="Use activated charcoal to clean water.
+                                    </br></br><b>Effect:</b> NO EFFECT</br>" 
                 data-parent="BasicFiltration"
                 data-requirements=""
                 style="top: 500px; left: 1300px;">
@@ -270,45 +303,50 @@
             <div class="skill" id="Chlorination" 
                 data-name="Chlorination" 
                 data-cost="0"
-                data-description="Chemical treatment of water." 
+                data-description="Chemical treatment of water.
+                                    </br></br><b>Effect:</b> –20% environmental strain</br>" 
                 data-parent="BasicFiltration"
-                data-requirements=""
+                data-requirements="Chemistry"
                 style="top: 800px; left: 1300px;">
             </div>
 
             <div class="skill" id="WaterDistribution" 
                 data-name="Water Distribution" 
                 data-cost="0"
-                data-description="Piped water systems." 
+                data-description="Piped water systems.
+                                    </br></br><b>Effect:</b> –15% transport pollution</br>" 
                 data-parent="GroundwaterWells"
-                data-requirements=""
+                data-requirements="Metalworking"
                 style="top: 350px; left: 1300px;">
             </div>
 
             <div class="skill" id="WaterRecycling" 
                 data-name="Water Recycling" 
                 data-cost="0"
-                data-description="Treat and reuse wastewater." 
+                data-description="Treat and reuse wastewater.
+                                    </br></br><b>Effect:</b> –10% environmental strain</br>" 
                 data-parent="ActivatedCarbonFilter"
-                data-requirements=""
+                data-requirements="RenewableEnergy"
                 style="top: 500px; left: 1500px;">
             </div>
 
             <div class="skill" id="DesalinationPlant" 
                 data-name="Desalination Plant" 
                 data-cost="0"
-                data-description="Convert seawater to drinking water." 
+                data-description="Convert seawater to drinking water.
+                                    </br></br><b>Effect:</b> –50% land use </br>–30% environmental strain</br>" 
                 data-parent="WaterDistribution"
-                data-requirements=""
+                data-requirements="RenewableEnergy"
                 style="top: 350px; left: 1500px;">
             </div>
 
             <div class="skill" id="NanotechPurification" 
                 data-name="Nanotech Purification" 
                 data-cost="0"
-                data-description="Advanced nano-scale water filtration." 
+                data-description="Advanced nano-scale water filtration.
+                                    </br></br><b>Effect:</b> –20% environmental strain</br>" 
                 data-parent="DesalinationPlant"
-                data-requirements=""
+                data-requirements="Nanotechnology"
                 style="top: 350px; left: 1700px;">
             </div>
 
@@ -325,7 +363,8 @@
             <div class="skill" id="StoneTools" 
                 data-name="Stone Tools" 
                 data-cost="0"
-                data-description="Crafting of sharpened stone implements." 
+                data-description="Crafting of sharpened stone implements.
+                                    </br></br><b>Effect:</b> +10% build speed</br>"  
                 data-parent="techRoot"
                 data-requirements=""
                 style="top: 800px; left: 500px;">
@@ -334,7 +373,8 @@
             <div class="skill" id="Metalworking" 
                 data-name="Metalworking" 
                 data-cost="0"
-                data-description="Development of smelting and forging techniques." 
+                data-description="Development of smelting and forging techniques.
+                                    </br></br><b>Effect:</b> +20% build & gather speed</br>"  
                 data-parent="StoneTools"
                 data-requirements=""
                 style="top: 950px; left: 500px;">
@@ -343,16 +383,18 @@
             <div class="skill" id="IrrigationSystems" 
                 data-name="Irrigation Systems" 
                 data-cost="0"
-                data-description="Water management for agriculture." 
+                data-description="Water management for agriculture.
+                                    </br></br><b>Effect:</b> +25% crop yield</br>"  
                 data-parent="Metalworking"
-                data-requirements=""
+                data-requirements="RiversideFarming"
                 style="top: 1100px; left: 700px;">
             </div>
 
             <div class="skill" id="Sailing" 
                 data-name="Sailing" 
                 data-cost="0"
-                data-description="Shipbuilding and sail design for maritime trade." 
+                data-description="Shipbuilding and sail design for maritime trade.
+                                    </br></br><b>Effect:</b> Unlocks new regions</br>" 
                 data-parent="Metalworking"
                 data-requirements=""
                 style="top: 1100px; left: 300px;">
@@ -361,7 +403,8 @@
             <div class="skill" id="Chemistry" 
                 data-name="Chemistry" 
                 data-cost="0"
-                data-description="Systematic study of chemical reactions." 
+                data-description="Systematic study of chemical reactions.
+                                    </br></br><b>Effect:</b> +15% output for all chem‑based processes (water treatment, fuels, materials)</br>"  
                 data-parent="Metalworking"
                 data-requirements=""
                 style="top: 1100px; left: 500px;">
@@ -370,7 +413,8 @@
             <div class="skill" id="Windmills" 
                 data-name="Windmills" 
                 data-cost="0"
-                data-description="Wind driven mills for grinding grain and pumping water." 
+                data-description="Wind driven mills for grinding grain and pumping water.
+                                    </br></br><b>Effect:</b> +15% food & water output</br>"
                 data-parent="IrrigationSystems"
                 data-requirements=""
                 style="top: 1250px; left: 700px;">
@@ -379,100 +423,111 @@
             <div class="skill" id="SteamPower" 
                 data-name="Steam Power" 
                 data-cost="0"
-                data-description="Harnessing high-pressure steam engines." 
+                data-description="Harnessing high-pressure steam engines.
+                                    </br></br><b>Effect:</b> NO EFFECT</br>"  
                 data-parent="Windmills"
                 data-requirements=""
-                style="top: 1250px; left: 700px;">
+                style="top: 1400px; left: 700px;">
             </div>
 
             <div class="skill" id="RenewableEnergy" 
                 data-name="Renewable Energy" 
                 data-cost="0"
-                data-description="Large-scale wind farms and solar arrays." 
+                data-description="Large-scale wind farms and solar arrays.
+                                    </br></br><b>Effect:</b> +20% energy capacity</br>–25% environmental quality</br>"
                 data-parent="SteamPower"
                 data-requirements=""
-                style="top: 1400px; left: 500px;">
+                style="top: 1550px; left: 500px;">
             </div>
 
             <div class="skill" id="CombustionEngine" 
                 data-name="Combustion Engine" 
                 data-cost="0"
-                data-description="Internal combustion engines burning gasoline or diesel." 
+                data-description="Internal combustion engines burning gasoline or diesel.
+                                    </br></br><b>Effect:</b> –20% Environment quality</br>"
                 data-parent="SteamPower"
                 data-requirements=""
-                style="top: 1400px; left: 700px;">
+                style="top: 1550px; left: 700px;">
             </div>
 
             <div class="skill" id="ColdChainLogistics" 
                 data-name="Cold Chain Logistics" 
                 data-cost="0"
-                data-description="Refrigerated transport to reduce food spoilage." 
+                data-description="Refrigerated transport to reduce food spoilage.
+                                    </br></br><b>Effect:</b> –20% food spoilage</br>"
                 data-parent="SteamPower"
-                data-requirements=""
-                style="top: 1400px; left: 900px;">
+                data-requirements="VerticalFarming"
+                style="top: 1550px; left: 900px;">
             </div>
 
             <div class="skill" id="ElectricLight" 
                 data-name="Electric Light" 
                 data-cost="0"
-                data-description="Electrical generation and distribution networks." 
+                data-description="Electrical generation and distribution networks.
+                                    </br></br><b>Effect:</b> NO EFFECT</br>"
                 data-parent="CombustionEngine"
                 data-requirements=""
-                style="top: 1550px; left: 800px;">
+                style="top: 1700px; left: 800px;">
             </div>
 
             <div class="skill" id="Automobiles" 
                 data-name="Automobiles" 
                 data-cost="0"
-                data-description="Mass production of gasoline-powered cars." 
+                data-description="Mass production of gasoline-powered cars.
+                                    </br></br><b>Effect:</b> +100% Efficiency</br>"
                 data-parent="CombustionEngine"
-                data-requirements=""
-                style="top: 1550px; left: 600px;">
+                data-requirements="Brick&PlasterHomes"
+                style="top: 1700px; left: 600px;">
             </div>
 
             <div class="skill" id="Computers&Internet" 
                 data-name="Computers & Internet" 
                 data-cost="0"
-                data-description="Digital computing hardware and global data network." 
+                data-description="Digital computing hardware and global data network.
+                                    </br></br><b>Effect:</b> +50% research speed</br>"
                 data-parent="ElectricLight"
                 data-requirements=""
-                style="top: 1700px; left: 800px;">
+                style="top: 1850px; left: 800px;">
             </div>
 
             <div class="skill" id="Nanotechnology" 
                 data-name="Nanotechnology" 
                 data-cost="0"
-                data-description="Mastery of matter at the nanoscale." 
+                data-description="Mastery of matter at the nanoscale.
+                                    </br></br><b>Effect:</b> +15% material efficiency</br>"
                 data-parent="Computers&Internet"
                 data-requirements=""
-                style="top: 1850px; left: 900px;">
+                style="top: 2000px; left: 900px;">
             </div>
 
             <div class="skill" id="CRISPR" 
                 data-name="CRISPR" 
                 data-cost="0"
-                data-description="Gene-editing technology." 
+                data-description="Gene-editing technology.
+                                    </br></br><b>Effect:</b> +20% population growth</br>+15% food quality</br>"
                 data-parent="Computers&Internet"
                 data-requirements=""
-                style="top: 1850px; left: 700px;">
+                style="top: 2000px; left: 700px;">
             </div>
 
             <div class="skill" id="ArtificialIntelligence" 
                 data-name="Artificial Intelligence" 
                 data-cost="0"
-                data-description="Advanced algorithms and machine-learning systems." 
+                data-description="Advanced algorithms and machine-learning systems.
+                                    </br></br><b>Effect:</b> +100% research & production efficiency</br>" 
                 data-parent="CRISPR"
                 data-requirements=""
-                style="top: 2000px; left: 700px;">
+                style="top: 2150px; left: 700px;">
             </div>
 
             <div class="skill" id="Automation" 
                 data-name="Automation" 
                 data-cost="0"
-                data-description="Integration of programmable machines and robotic systems." 
+                data-description="Integration of programmable machines and robotic systems.
+                                    </br></br><b>Effect:</b> –50% worker requirements</br>+30% output for food production</br>"
                 data-parent="ArtificialIntelligence"
                 data-requirements=""
-                style="top: 2150px; left: 700px;">
+                style="top: 2300px; left: 700px;">
             </div>
 
             
@@ -494,5 +549,6 @@
     let stringifiedUnlocks = unHTMLedUnlocks.replace(/&#34;/g,'"');
     var databaseUnlocks = JSON.parse(stringifiedUnlocks) || [];
     </script>
-    <script src="../scripts/techTree.js"></script>
+    <script src="scripts/treeEffects.js"></script>
+    <script src="scripts/techTree.js"></script>
     <%- include("templates/footer") %>
