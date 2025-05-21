@@ -17,23 +17,25 @@
 
 /* Title */
 h1 {
-    font-size: 8vw; /* Responsive font size */
+    font-size: 10vw; /* Responsive font size */
     margin: 0;
     word-wrap: break-word;
     text-align: center;
     line-height: 1.2;
-    color: black;
+    color: rgb(255, 255, 255);
+    text-shadow: 1px 1px 2px black;
 }
 
 /* Subtitle */
 h2 {
-    font-size: 2vw;
+    font-size: 3.5vw;
     margin-top: 1rem;
     word-wrap: break-word;
     text-align: center;
     padding: 0 10%;
     line-height: 1.4;
-    color: black;
+    color: rgb(255, 255, 255);
+    text-shadow: 1px 1px 2px black;
 }
 
 /* MIDDLE SECTION */
@@ -150,8 +152,8 @@ h3{
     display: flex;
     justify-content: space-around;
     align-items: center;
-    color: black;
-    font-size: 0.8rem;
+    color: rgb(0, 0, 0);
+    font-size: 0.65rem;
     width: 90%;
     max-width: 500px;
     height: 100px;
@@ -161,10 +163,6 @@ h3{
 }
 
 /* GENERAL */
-
-.verticalLine {
-  border-left: thin solid #ff0000;
-}
 
 body {
     margin: 0;
@@ -188,7 +186,7 @@ section {
 
 hr {
     border: none;
-    border-top: 1px solid #ff0000;
+    border-top: 1px solid #000000;
     margin: 20px 0;
     height: 0;
 }
@@ -228,5 +226,12 @@ hr {
 @media screen and (min-width: 768px) and (max-width: 1299px) {
     .bottom-section .right-half p {
         font-size: 0.8rem;
+    }
+}
+
+@media screen and (min-width: 400px) and (max-width: 767px) {
+    .bottom-section .right-half p {
+        font-size: 0.7rem;
+        color:#000000
     }
 }
