@@ -283,7 +283,8 @@ function save() {
             'Content-Type': 'application/json',  // This header is crucial
         },
         body: JSON.stringify({  // Make sure to stringify
-            unlocks: UnlockedSkills
+            unlocks: UnlockedSkills,
+            modifiers: window.skillEffects.modifiers
         })
     })
     .then(response => {

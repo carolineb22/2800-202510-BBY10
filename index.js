@@ -55,6 +55,7 @@ var { database } = include('databaseConnection');
 const userCollection = database.db(mongodb_database).collection('users');
 const saveCollection = database.db(mongodb_database).collection('test_numbers');
 const treeCollection = database.db(mongodb_database).collection('techtrees');
+const modsCollection = database.db(mongodb_database).collection('modifiers');
 
 
 // Middleware authentication function
@@ -334,11 +335,11 @@ app.post('/saveTree', validateSession, async (req, res) => {
             return res.status(400).send("No data received");
         }
 
-        const { unlocks } = req.body;
+        const { unlocks, modifiers } = req.body;
         
         // Validate required fields
-        if (!unlocks) {
-            return res.status(400).send("Missing sectors or resources data");
+        if (!unlocks || !modifiers) {
+            return res.status(400).send("Missing unlocks or modifiers data");
         }
 
         // Rest of your existing code...
@@ -366,6 +367,17 @@ app.post('/saveTree', validateSession, async (req, res) => {
                 $set: {
                     user_id: user[0]._id,
                     unlocks: unlocks
+                }
+            },
+            { upsert: true }
+        );
+
+        await modsCollection.updateOne(
+            { username: username },
+            {
+                $set: {
+                    user_id: user[0]._id,
+                    modifiers: modifiers
                 }
             },
             { upsert: true }
@@ -400,15 +412,19 @@ app.get('/main', validateSession, validateUsername, async (req, res) => {
 
     let statsArray = await saveCollection.find({ user_id: user._id }).toArray();
     let userStats = statsArray[0];
-
     console.log(userStats);
+
+    let modsArray = await modsCollection.find({ user_id: user._id }).toArray();
+    let userMods = modsArray[0];
+    console.log(userMods);
 
     res.render("mainGame", {
         title: "Main - Our Tomorrow",
-        css: ['styles/mainGame.css', "https://fonts.googleapis.com/icon?family=Material+Icons"],
+        css: ['../styles/mainGame.css', "https://fonts.googleapis.com/icon?family=Material+Icons"],
 		newUser: newUser,
         resources: userStats ? JSON.stringify(userStats.resources) : "{}",
         sectors: userStats ? JSON.stringify(userStats.sector) : "[]",
+        modifiers: userMods ? JSON.stringify(userMods.modifiers) : "{}",
         apiKey: process.env.WEATHER_API_KEY
     });
 });
