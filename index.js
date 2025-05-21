@@ -461,6 +461,8 @@ app.get('/main/techTree', validateSession, validateUsername, async (req, res) =>
 
     let treeArray = await treeCollection.find({ user_id: user._id }).toArray();
     let treeUnlocks = treeArray[0];
+    let modsArray = await modsCollection.find({ user_id: user._id }).toArray();
+    let modifiers = modsArray[0];
 
     res.render("techTree", {
         title: "Custom Tech Tree",
@@ -468,7 +470,8 @@ app.get('/main/techTree', validateSession, validateUsername, async (req, res) =>
         // we have to go one directory up to get
         // the style sheets (and JS)
         css: ["../styles/techTree.css"],
-        unlocks: treeUnlocks ? JSON.stringify(treeUnlocks.unlocks) : "[\"root\"]"
+        unlocks: treeUnlocks ? JSON.stringify(treeUnlocks.unlocks) : "[\"root\"]",
+        modifiers: modifiers ? JSON.stringify(modifiers.modifiers) : "{}"
     })
 });
 

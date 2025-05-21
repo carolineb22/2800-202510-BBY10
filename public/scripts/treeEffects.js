@@ -1,6 +1,18 @@
 class SkillEffects {
     constructor() {
-        this.resetModifiers();
+        // Test if correct structure
+        if(databaseMods.additive &&
+           databaseMods.multipliers &&
+           databaseMods.unlocks)
+        {
+            this.modifiers = databaseMods;
+        }
+        // If incorrect structure,
+        // reset modifiers
+        else
+        {
+            this.resetModifiers();
+        }
     }
 
     resetModifiers() {

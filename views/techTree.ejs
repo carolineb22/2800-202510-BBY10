@@ -544,10 +544,13 @@
 
     <!-- Parse unlocks from EJS -->
     <script>
-        // Declare variables for mainGame.js
+        // Declare variables for techTree.js and treeEffects.js
     let unHTMLedUnlocks = JSON.parse("\"<%=unlocks%>\"");
     let stringifiedUnlocks = unHTMLedUnlocks.replace(/&#34;/g,'"');
     var databaseUnlocks = JSON.parse(stringifiedUnlocks) || [];
+    let unHTMLedMods = JSON.parse("\"<%=modifiers%>\"");
+    let stringifiedMods = unHTMLedMods.replace(/&#34;/g,'"');
+    var databaseMods = JSON.parse(stringifiedMods) || {};
     </script>
     <script src="../scripts/treeEffects.js"></script>
     <script src="../scripts/techTree.js"></script>
