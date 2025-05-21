@@ -331,6 +331,32 @@ body {
     box-shadow: 0 0 20px rgba(0, 229, 255, 0.5);
 }
 
+.sector_name {
+    font-family: 'Audiowide', sans-serif;
+    text-align: center;
+}
+
+.sector_details {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    text-align: center;
+}
+
+#gerge {
+    text-align: center;
+}
+
+.geoelement_header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.geoelement_build {
+    margin-left: 10px;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .tutorial-content {
@@ -344,5 +370,9 @@ body {
     
     .tutorial-text {
         font-size: 1rem;
+    }
+
+    .sector_details {
+        display: block;
     }
 }
