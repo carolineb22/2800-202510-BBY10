@@ -5,8 +5,8 @@
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
-    background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0) 80%, rgba(20, 20, 20, 1)), 
-    url('https://media.istockphoto.com/id/1457206081/photo/earth-planet-at-night-into-the-dark-cities-light-earth-in-deep-space-with-stars-planet-sphere.jpg?s=1024x1024&w=is&k=20&c=YoYVYeeLU9v8pULrgNTnxRx6vXxzgVxaXD9y1C-sMDc=');
+    background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0) 80%,#1a1a2e), 
+    url('../images/map.png');
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -22,22 +22,24 @@ h1 {
     word-wrap: break-word;
     text-align: center;
     line-height: 1.2;
+    color: black;
 }
 
 /* Subtitle */
 h2 {
-    font-size: 4vw;
+    font-size: 2vw;
     margin-top: 1rem;
     word-wrap: break-word;
     text-align: center;
     padding: 0 10%;
     line-height: 1.4;
+    color: black;
 }
 
 /* MIDDLE SECTION */
 
 .mid-section {
-    background-color: rgb(20, 20, 20);
+    background-color: #1a1a2e;
     display: flex;
     flex-direction: row;
     min-height: 100vh;
@@ -63,11 +65,45 @@ h2 {
     max-width: 90%;
     margin: 0;
 }
+  
+  .login-box {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(12px);
+    padding: 3rem 2.5rem;
+    border-radius: 20px;
+    box-shadow: 0 0 25px rgba(0, 255, 255, 0.2);
+    width: 100%;
+    max-width: 360px;
+    text-align: center;
+    animation: fadeIn 1.5s ease-out, float 6s ease-in-out infinite;
+  }
+
+  .login-box button {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: #00bcd4;
+    border: none;
+    border-radius: 12px;
+    color: white;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+  }
+  
+  .login-box button:hover {
+    background: #0097a7;
+    transform: translateY(-2px);
+  }
 
 /* BOTTOM SECTION */
 
+h3{
+    font-size: 4vw !important;
+    color: rgb(255, 255, 255);
+}
+
 .bottom-section {
-    background-color: rgb(20, 20, 20);
+    background-color: #1a1a2e;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
@@ -115,16 +151,20 @@ h2 {
     justify-content: space-around;
     align-items: center;
     color: black;
-    font-size: 1rem;
+    font-size: 0.8rem;
     width: 90%;
     max-width: 500px;
     height: 100px;
-    padding: 0 1rem;
+    padding: 0 7%;
     margin: 0 auto 10px auto;
     box-sizing: border-box;
 }
 
 /* GENERAL */
+
+.verticalLine {
+  border-left: thin solid #ff0000;
+}
 
 body {
     margin: 0;
@@ -155,7 +195,7 @@ hr {
 
 /* RESPONSIVE LAYOUTS */
 
-@media screen and (min-width: 768px) {
+@media screen and (min-width: 1300px) {
     .mid-section .left-half,
     .mid-section .right-half,
     .bottom-section .left-half,
@@ -176,7 +216,17 @@ hr {
         font-size: 1.1rem;
     }
 
+    .bottom-section .right-half p {
+        font-size: 0.8rem;
+    }
+
     .small-rounded-rectangle {
         font-size: 1.1rem;
+    }
+}
+
+@media screen and (min-width: 768px) and (max-width: 1299px) {
+    .bottom-section .right-half p {
+        font-size: 0.8rem;
     }
 }
