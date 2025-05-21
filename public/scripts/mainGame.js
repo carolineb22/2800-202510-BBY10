@@ -654,5 +654,6 @@ displayNewSector(Sectors[activeSector])
 // To be replaced with autosaving
 window.addEventListener("beforeunload", (e) => {
     e.preventDefault();
-    window.alert("Test");
+    save()
+    window.confirm();
 });

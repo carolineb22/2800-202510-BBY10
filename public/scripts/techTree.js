@@ -20,6 +20,13 @@ let scale = 1;
 let translate = { x: 0, y: 0 };
 let interactionLocked = false;
 
+// Load unlocked skills from the tree
+function loadUnlockedSkills() {
+    databaseUnlocks.forEach(unlock => {
+        document.getElementById(unlock).classList.add("unlocked");
+    });
+}
+
 // Update skill point display
 function updateSkillPointsDisplay() {
   skillPointsDisplay.textContent = `Skill Points: ${skillPoints}`;
@@ -194,6 +201,7 @@ unlockBtn.addEventListener('click', () => {
     // Update skill content to show "Purchased"
     currentSkill.innerHTML = `${currentSkill.dataset.name}<br><span style="color: lime;">Unlocked</span>`;
 
+    save();
     updateSkillPointsDisplay();
     updateSkillStates();
     drawLines();
@@ -256,6 +264,31 @@ treeWrapper.addEventListener('wheel', e => {
 let isDragging = false;
 let startX, startY;
 
+// Saving function
+function save() {
+    const UnlockedSkills = [];
+    Array.from(document.getElementsByClassName("skill unlocked")).forEach(skill => {
+        UnlockedSkills.push(skill.id);
+    });
+    fetch('/saveTree', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',  // This header is crucial
+        },
+        body: JSON.stringify({  // Make sure to stringify
+            unlocks: UnlockedSkills
+        })
+    })
+    .then(response => {
+        if (!response.ok) {
+            console.error('Save failed');
+        }
+        return response.text();
+    })
+    .then(text => console.log(text))
+    .catch(error => console.error('Error:', error));
+}
+
 treeWrapper.addEventListener('mousedown', (e) => {
   if (interactionLocked) return;
   isDragging = true;
@@ -284,13 +317,7 @@ document.addEventListener('mouseup', () => {
 
 window.addEventListener('load', () => {
   updateSkillPointsDisplay();
+  loadUnlockedSkills();
   drawLines();
   updateSkillStates(); // Initialize skill enable/disable state
-});
-
-// Test function to send before unloading -
-// To be replaced with autosaving
-window.addEventListener("beforeunload", (e) => {
-    e.preventDefault();
-    window.alert("Test");
 });
