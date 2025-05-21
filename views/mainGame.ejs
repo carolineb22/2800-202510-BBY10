@@ -127,6 +127,7 @@
                 <p class="geoelement_name"></p>
 			    <button class="hud-button geoelement_build">Build</button>
             </div>
+			<p class="building_capacity"></p>
             <br>
             <br>
 			<p class="depletion"></p>
@@ -177,10 +178,10 @@
 	</script>
 	<script src="../scripts/mainGame.js"></script>
 	<!-- Puter SDK -->
-	<script src="https://js.puter.com/v2/"></script>
+	<template src="https://js.puter.com/v2/"></template>
 
 	<!-- Weather + Puter Logic -->
-	<script>
+	<template>
 		navigator.geolocation.getCurrentPosition(success, error);
 
 		function success(position) {
@@ -264,7 +265,7 @@
 
 			return duration;
 		}
-	</script>
+	</template>
 
 	<script>
 		let newUser = '<%=newUser%>';
