@@ -371,8 +371,27 @@ body {
     .tutorial-text {
         font-size: 1rem;
     }
-
     .sector_details {
-        display: block;
-    }
+          display: block;
+      }
 }
+
+@keyframes red-flash {
+	0% {
+	  box-shadow: 0 0 0px rgba(255, 0, 0, 0);
+	  transform: scale(1);
+	}
+	50% {
+	  box-shadow: 0 0 15px 5px rgba(255, 0, 0, 0.7);
+	  transform: scale(1.03);
+	}
+	100% {
+	  box-shadow: 0 0 0px rgba(255, 0, 0, 0);
+	  transform: scale(1);
+	}
+  }
+  
+  .red-flash {
+	animation: red-flash 0.4s ease;
+  }
+

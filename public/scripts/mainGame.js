@@ -62,7 +62,8 @@ let lastTimestampSaved = Date.now();
 const BuildingTypes = {
     Housing: "Housing",
     Extraction: "Extraction",
-    Processing: "Processing"
+    Processing: "Processing",
+    Research: "Research"
 }
 
 // some example resources
@@ -114,10 +115,10 @@ const BuildingTemplates = {
         "A dedicated area in which trees are harvested for building materials.",
         [],
         [
-            new GenericTypeValue("BuildingMaterials", 10)
+            new GenericTypeValue("BuildingMaterials", 5)
         ],
         [
-            new GenericTypeValue("BuildingMaterials", 10000)
+            new GenericTypeValue("BuildingMaterials", 100)
         ],
         1
     ],
@@ -405,19 +406,24 @@ function displayBuildingSidebar() {
     }
 }
 
-function buildBuilding(building_id, element_uuid) {
-    Sectors.forEach(sector => {
-        sector.geographicalElements.forEach(element => {
-            if (element.uuid == element_uuid) {
-                let newBuilding = new Building(...BuildingTemplates[building_id], element.uuid)
-                element.buildings.push(newBuilding);
-                console.log(element);
-                console.log("made!");
-                updateSectorDisplay();
-            }
-        })
-    })
+function buildBuilding(building_id, element_uuid) { //as null is falsy, returns true when it cannot be built
+    for (let typeValueCost of BuildingTemplates[building_id][6]) {
+        if (Resources[typeValueCost.type] < typeValueCost.value) return true;
+    }
 
+    geoElem = getGeographicalElementById(element_uuid);
+
+    if (!geoElem) return true;
+    if (geoElem.buildingBaseCapacity <= geoElem.buildings.length) return true;
+
+
+    for (let typeValueCost of BuildingTemplates[building_id][6]) {
+        Resources[typeValueCost.type] -= typeValueCost.value
+    }
+
+    let newBuilding = new Building(...BuildingTemplates[building_id], element_uuid)
+    geoElem.buildings.push(newBuilding);
+    updateSectorDisplay();
 }
 
 function openBuildMenu(element_uuid) {
@@ -467,7 +473,11 @@ function switchBuildTab(tab_name, element_uuid) {
                 buildingInfo.classList = ["hud-button"];
                 buildingsNode.appendChild(buildingInfo);
                 buildingInfo.addEventListener('click', e => {
-                buildBuilding(buildingTemplate[0], element_uuid);
+                    if (buildBuilding(buildingTemplate[0], element_uuid)) {
+                        buildingInfo.classList.remove('red-flash'); 
+                        void buildingInfo.offsetWidth;              
+                        buildingInfo.classList.add('red-flash');
+                    }
             })
             })
 
@@ -481,7 +491,11 @@ function switchBuildTab(tab_name, element_uuid) {
                 buildingInfo.classList = ["hud-button"];
                 buildingsNode.appendChild(buildingInfo);
                 buildingInfo.addEventListener('click', e => {
-                    buildBuilding(buildingTemplate[0], element_uuid);
+                    if (buildBuilding(buildingTemplate[0], element_uuid)) {
+                        buildingInfo.classList.remove('red-flash'); 
+                        void buildingInfo.offsetWidth;              
+                        buildingInfo.classList.add('red-flash');
+                    }
                 })
             }
         }
