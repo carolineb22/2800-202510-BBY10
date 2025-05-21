@@ -5,7 +5,6 @@
 const Resources = databaseResources;
 
 // Load the sectors from the database
-/*
 var tempSectors = [];
 databaseSectors.forEach((sector) => {
     let tempGeographicalElements = [];
@@ -42,14 +41,6 @@ databaseSectors.forEach((sector) => {
 
 const Sectors = tempSectors;
 console.log(Sectors)
-*/
-
-
-
-
-
-
-
 
 let activeSector = 0;
 let activeElement = null;
@@ -178,17 +169,17 @@ const BuildingTemplates = {
 // TEMP SINCE LOADING IS BUGGED
 
 
-const Sectors = [
-    new Sector("1", "Northwest Boglo", [
-        new GeographicalElement(...GeographicalElementTemplates.element_forest),
-        new GeographicalElement(...GeographicalElementTemplates.element_forest)
-    ]),
-    new Sector("2", "Flumpland", [
-        new GeographicalElement(...GeographicalElementTemplates.element_forest),
-        new GeographicalElement(...GeographicalElementTemplates.element_forest),
-        new GeographicalElement(...GeographicalElementTemplates.element_forest)
-    ])
-]
+// const Sectors = [
+//     new Sector("1", "Northwest Boglo", [
+//         new GeographicalElement(...GeographicalElementTemplates.element_forest),
+//         new GeographicalElement(...GeographicalElementTemplates.element_forest)
+//     ]),
+//     new Sector("2", "Flumpland", [
+//         new GeographicalElement(...GeographicalElementTemplates.element_forest),
+//         new GeographicalElement(...GeographicalElementTemplates.element_forest),
+//         new GeographicalElement(...GeographicalElementTemplates.element_forest)
+//     ])
+// ]
 
 
 // TEMP SINCE LOADING IS BUGGED
@@ -256,7 +247,7 @@ function GeographicalElement(id, name, description, passiveProduction, situation
     // and increment by some set value
     this.doTick = function() {
         this.passiveProduction.forEach(typeValueObject => {
-            Resources[typeValueObject.type] += typeValueObject.value
+            Resources[typeValueObject.type] += typeValueObject.value * 1000
         })
 
         this.buildings.forEach(building => {
@@ -433,6 +424,10 @@ function openBuildMenu(element_uuid) {
     switchBuildTab("All", element_uuid);
 }
 
+function closeBuildMenu() {
+    document.getElementById("build_sidebar").innerHTML = "";
+}
+
 function makeBuildMenuTab(buildTabsNode, tab_name, element_uuid) {
     let buildTabNode = document.createElement('p');
     buildTabNode.classList = [`hud-button col-sm-6 text-sm-center ${tab_name}`];
@@ -524,7 +519,8 @@ function addGeoElemsToNode(elementArray, detailNode) {
         geoElementNode.querySelector('.depletion').innerHTML = `Depletion: ${element.depletion}/${element.maxDepletion}`
         geoElementNode.querySelector('.depletion').id = `depletion-${element.uuid}`;
         geoElementNode.querySelector('.geoelement_build').addEventListener("click", e => {
-            openBuildMenu(element.uuid)
+            e.stopPropagation();
+            openBuildMenu(element.uuid);
         })
 
         if (element.passiveProduction && element.passiveProduction.length != 0) {
@@ -748,4 +744,8 @@ window.addEventListener("beforeunload", e => {
     {
         e.preventDefault();
     }
+});
+
+document.body.addEventListener("click", () => {
+    closeBuildMenu();
 });
