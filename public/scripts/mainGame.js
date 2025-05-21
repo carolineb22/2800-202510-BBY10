@@ -440,7 +440,8 @@ function initBuilding(building_id, element) {
     let newBuilding = new Building(...BuildingTemplates[building_id], element.uuid)
     element.buildings.push(newBuilding);
     return newBuilding;
-  
+}
+
 function buildBuilding(building_id, element_uuid) { //as null is falsy, returns true when it cannot be built
     for (let typeValueCost of BuildingTemplates[building_id][6]) {
         if (Resources[typeValueCost.type] < typeValueCost.value) return true;
