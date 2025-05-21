@@ -7,33 +7,43 @@ body {
   color: white;
 }
 
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background: rgba(0, 0, 0, 0.3);
+  border-bottom: 1px solid #00e5ff;
+}
+
 h1 {
-  text-align: center;
   color: #00e5ff;
+  margin: 0;
+  font-size: 1.8em;
+  text-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
 }
 
 #skillPoints {
-  text-align: center;
   font-size: 1.2em;
   color: #a0d9f6;
+  padding: 5px 10px;
+  border-radius: 5px;
 }
 
-#addPointBtn {
-  display: block;
-  margin: 10px auto;
-  padding: 8px 16px;
-  font-size: 14px;
+#backButton {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid #00e5ff;
+  color: #a0d9f6;
+  padding: 8px 15px;
+  border-radius: 5px;
   cursor: pointer;
-  background: #00bcd4;
-  color: white;
-  border: none;
-  border-radius: 12px;
-  transition: background 0.3s ease, transform 0.2s ease;
+  transition: all 0.3s ease;
+  font-family: 'Audiowide', sans-serif;
 }
 
-#addPointBtn:hover {
-  background: #0097a7;
-  transform: translateY(-2px);
+#backButton:hover {
+  background: rgba(0, 188, 212, 0.2);
+  transform: translateY(-1px);
 }
 
 #treeWrapper {
@@ -93,7 +103,6 @@ h1 {
   filter: grayscale(100%);
   border-color: #666;
 }
-
 
 #infoBox {
   position: absolute;

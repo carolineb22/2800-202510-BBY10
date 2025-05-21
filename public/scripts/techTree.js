@@ -3,7 +3,6 @@ const svg = document.getElementById('connectorSVG');
 
 let skillPoints = 0;
 const skillPointsDisplay = document.getElementById('skillPoints');
-const addPointBtn = document.getElementById('addPointBtn');
 
 const infoBox = document.getElementById('infoBox');
 const infoTitle = document.getElementById('infoTitle');
@@ -226,14 +225,6 @@ cancelBtn.addEventListener('click', () => {
   currentSkill = null;
   interactionLocked = false;
 });
-
-// Add skill point button
-addPointBtn.addEventListener('click', () => {
-  skillPoints++;
-  updateSkillPointsDisplay();
-  updateSkillStates(); // <- add this line
-});
-
 
 // Set up each skill block
 skills.forEach(skill => {
