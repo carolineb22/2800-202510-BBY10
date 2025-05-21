@@ -100,8 +100,21 @@ const GeographicalElementTemplates = {
         ],
         2,
         0,
-        10000,
+        200,
         "element_grassland"
+    ],
+    element_grassland: [
+        "element_grassland",
+        "Grassland",
+        "A grassy plain with lots of arable land.",
+        [],
+        [
+            new GenericTypeValue("building_arable_farm", 3)
+        ],
+        3,
+        0,
+        500,
+        null
     ]
 }
 
@@ -120,6 +133,7 @@ const BuildingTemplates = {
         [
             new GenericTypeValue("BuildingMaterials", 100)
         ],
+        ["element_forest"],
         1
     ],
     building_wood_power_plant: [
@@ -132,6 +146,7 @@ const BuildingTemplates = {
         [
             new GenericTypeValue("BuildingMaterials", 30000)
         ],
+        ["element_forest"],
         3
     ],
     building_forest_cabins: [
@@ -144,6 +159,7 @@ const BuildingTemplates = {
         [
             new GenericTypeValue("BuildingMaterials", 20000)
         ],
+        ["element_forest"],
         null
     ],
     building_test: [
@@ -160,6 +176,7 @@ const BuildingTemplates = {
         [
             new GenericTypeValue("BuildingMaterials", 1000)
         ],
+        [],
         null
     ],
     building_impossible: [
@@ -167,6 +184,7 @@ const BuildingTemplates = {
         BuildingTypes.Extraction,
         "Impossible ahh building",
         "Bro",
+        [],
         [],
         [],
         [],
@@ -275,8 +293,14 @@ function GeographicalElement(id, name, description, passiveProduction, situation
         this.depletion += value;
 
         if (this.depletion >= this.maxDepletion && this.depletesInto) {
-            //BOGOS
+            convertGeoElementIntoNew(this.uuid, this.depletesInto)
         }
+    }
+
+    this.checkIfBuildingsCanDoWork = function() {
+        this.buildings.forEach(building => {
+            building.checkIfCanDoWork();
+        })
     }
 }
 
@@ -295,13 +319,16 @@ function GeographicalElement(id, name, description, passiveProduction, situation
 //     [                        -- costArray
 //         ["resource", cost]   -- resources and their cost needed to build this Building
 //     ],
+//     [
+//         "element_id" -- list of ids that this building works when on, empty or null means it works on all.
+//     ]
 //     depletion,   -- the amount of the parent GeographicalElement's resource that this Building
 //                  -- depletes per tick (depletion/tick). Can be null, but must be present.
 //     "needsType", -- the ID (internal name) of the GE that this building can be built on.
 //     builtOnElement   -- the UUID of the GE that this Building is built on.
 //                      -- This is left out of the JSON internally since UUIDs change each session.
 // ]
-function Building(id, type, name, description, consumptionArray, productionArray, costArray, depletion, builtOnElement) {
+function Building(id, type, name, description, consumptionArray, productionArray, costArray, doesWorkWhenOnIdArray, depletion, builtOnElement) {
     this.uuid = crypto.randomUUID(); //uuid of this element
     this.id = id; //id of this element, is seperate from uuid as multiple of the same building can inhabit an element
     this.type = type; //type of building, used for seperation into categories for build meny
@@ -310,7 +337,10 @@ function Building(id, type, name, description, consumptionArray, productionArray
     this.consumptionArray = consumptionArray; //array of arrays that contain a resource and amount to be used per tick
     this.productionArray = productionArray; //array of arrays that contain a resource and amount to produce per tick
     this.costArray = costArray; //array of arrays that contain what ResourceTypes to use and their amount
+    this.doesWorkWhenOnIdArray = doesWorkWhenOnIdArray; //what element id's does this building do work when its on?
     this.builtOnElement = builtOnElement; //which geographical element is this building built on?
+    this.active = true;
+    
 
     this.doesDeplete = false; //this building does not deplete the resource of what its built on
     if (depletion) {
@@ -319,15 +349,41 @@ function Building(id, type, name, description, consumptionArray, productionArray
     }
 
     this.doTick = function() {
-        this.productionArray.forEach(typeValueObject => {
-            Resources[typeValueObject.type] += typeValueObject.value
-        })
-        this.consumptionArray.forEach(typeValueObject => {
-            Resources[typeValueObject.type] -= typeValueObject.value
-        })
-        if (this.doesDeplete) {
-            getGeographicalElementById(this.builtOnElement).depleteBy(this.depletion);
+
+        if (this.active) {
+            this.productionArray.forEach(typeValueObject => {
+                Resources[typeValueObject.type] += typeValueObject.value
+            })
+            this.consumptionArray.forEach(typeValueObject => {
+                Resources[typeValueObject.type] -= typeValueObject.value
+            })
+            if (this.doesDeplete) {
+                getGeographicalElementById(this.builtOnElement).depleteBy(this.depletion);
+            }
         }
+    }
+
+    this.checkIfCanDoWork = function() {
+        if (!this.doesWorkWhenOnIdArray || this.doesWorkWhenOnIdArray.length == 0) {
+            console.log("No specified elements that this works on.")
+            this.active = true;
+            return;
+        }
+
+        let parent = getGeographicalElementById(this.builtOnElement);
+
+
+        
+
+
+        if (!parent || !this.doesWorkWhenOnIdArray.includes(parent.id)) {
+            console.log("Missing specified element.")
+            this.active = false;
+            return
+        }
+        
+        console.log("Is on correct element.")
+        this.active = true;
     }
 }
 
@@ -343,7 +399,7 @@ function GenericTypeValue(type, value) {
 // (only do if Resources or Sectors are empty)
 
 for (var key in ResourceTypes) {
-    if (!Resources[key]) Resources[key] = 0;
+    if (!Resources[key]) Resources[key] = 1000;
 }
 console.log("No resources loaded!")
 
@@ -384,26 +440,30 @@ function getGeographicalElementById(uuid) {
     return returnVal;
 }
 
+function convertGeoElementIntoNew(original_element_uuid, becomes_element_id) {
+    let newGeoElement = new GeographicalElement(...GeographicalElementTemplates[becomes_element_id])
+    let geoElement = getGeographicalElementById(original_element_uuid);
+    if (!geoElement) return;
 
-function displayBuildingSidebar() {
-    console.log("meowa");
-    if (activeElement) {
-        console.log("meowb");
-        let elem = getGeographicalElementById(activeElement);
-        if (elem) {
-            Object.values(BuildingTemplates).forEach(grah => {
-                if (!grah[7] || grah[7] == elem.id) {
-                    let newThing = document.createElement("p");
-                    newThing.innerHTML = `Build ${grah[2]}, Costs ${grah[5]}`
-                    newThing.classList = ["hud-button"];
-                    document.getElementById('gluh').appendChild(newThing);
-                    newThing.addEventListener('click', e => {
-                        buildBuilding(grah[0], elem.uuid);
-                    })
-                }
-            })
+    newGeoElement.buildings = geoElement.buildings;
+
+    newGeoElement.buildings.forEach(building => {
+        building.builtOnElement = newGeoElement.uuid;
+    })
+
+    for (let sector of Sectors) {
+        if (sector.geographicalElements.includes(geoElement)) {
+            console.log("Found!");
+            sector.geographicalElements.splice(sector.geographicalElements.indexOf(geoElement), 1);
+
+            sector.geographicalElements.push(newGeoElement);
         }
     }
+
+    delete geoElement;
+
+    newGeoElement.checkIfBuildingsCanDoWork();
+    updateSectorDisplay();
 }
 
 function buildBuilding(building_id, element_uuid) { //as null is falsy, returns true when it cannot be built
@@ -423,6 +483,8 @@ function buildBuilding(building_id, element_uuid) { //as null is falsy, returns 
 
     let newBuilding = new Building(...BuildingTemplates[building_id], element_uuid)
     geoElem.buildings.push(newBuilding);
+    newBuilding.checkIfCanDoWork();
+
     updateSectorDisplay();
 }
 
@@ -537,6 +599,8 @@ function addGeoElemsToNode(elementArray, detailNode) {
         geoElementNode.querySelector('.geoelement_name').innerHTML = `${element.name}`
         geoElementNode.querySelector('.depletion').innerHTML = `Depletion: ${element.depletion}/${element.maxDepletion}`
         geoElementNode.querySelector('.depletion').id = `depletion-${element.uuid}`;
+        geoElementNode.querySelector('.building_capacity').innerHTML = `Capacity: ${element.buildings.length}/${element.buildingBaseCapacity}`
+        
         geoElementNode.querySelector('.geoelement_build').addEventListener("click", e => {
             openBuildMenu(element.uuid)
         })
