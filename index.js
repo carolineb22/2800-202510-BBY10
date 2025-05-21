@@ -383,6 +383,8 @@ app.post('/saveTree', validateSession, async (req, res) => {
 app.get('/main', validateSession, validateUsername, async (req, res) => {
     let username = req.session.username;
 
+    let newUser = req.query.newUser || null;
+
     // Get the user profile from the session's username
     let userArray = await userCollection.find({ username: username }).toArray();
 
