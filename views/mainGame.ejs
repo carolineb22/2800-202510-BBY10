@@ -264,9 +264,21 @@
         }
 
         function loadTutorial() {
-            console.log("Add show and hide logic here.");
-            console.log("It's honestly just a bunch of ejs or simple html files that we can add to the tutorial div.");
-        }
+			const tutorial = document.getElementById('tutorial');
+			tutorial.style.display = 'flex';
+			
+			// Close button functionality
+			document.querySelector('.tutorial-close').addEventListener('click', () => {
+				tutorial.style.display = 'none';
+			});
+			
+			// Also close when clicking outside content
+			tutorial.addEventListener('click', (e) => {
+				if (e.target === tutorial) {
+					tutorial.style.display = 'none';
+				}
+			});
+		}
     </script>
     
 	<%- include("templates/footer")%>
