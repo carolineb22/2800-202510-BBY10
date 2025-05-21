@@ -542,6 +542,13 @@
         <button id="cancelBtn">Cancel</button>
     </div>
 
-    <script src="scripts/treeEffects.js"></script>
-    <script src="scripts/techTree.js"></script>
+    <!-- Parse unlocks from EJS -->
+    <script>
+        // Declare variables for mainGame.js
+    let unHTMLedUnlocks = JSON.parse("\"<%=unlocks%>\"");
+    let stringifiedUnlocks = unHTMLedUnlocks.replace(/&#34;/g,'"');
+    var databaseUnlocks = JSON.parse(stringifiedUnlocks) || [];
+    </script>
+    <script src="../scripts/treeEffects.js"></script>
+    <script src="../scripts/techTree.js"></script>
     <%- include("templates/footer") %>

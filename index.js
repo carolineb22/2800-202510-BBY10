@@ -54,6 +54,7 @@ var { database } = include('databaseConnection');
 // ensure database 'users' collection
 const userCollection = database.db(mongodb_database).collection('users');
 const saveCollection = database.db(mongodb_database).collection('test_numbers');
+const treeCollection = database.db(mongodb_database).collection('techtrees');
 
 
 // Middleware authentication function
@@ -65,6 +66,24 @@ function validateSession(req, res, next) {
         next();
     }
 };
+
+// Middleware username validation
+async function validateUsername(req, res, next) {
+    var username = req.session.username;
+
+    const schema = Joi.object({ username: Joi.string().alphanum().max(20).required() });
+
+    const validationResult = schema.validate({ username });
+
+    if (validationResult.error != null) {
+        res.redirect('/login?maliciousUsername=1');
+        return;
+    }
+    else
+    {
+        next();
+    }
+}
 
 // ensure database collection for sessions
 var mongoStore = MongoStore.create({
@@ -308,24 +327,66 @@ app.post('/save', validateSession, async (req, res) => {
 });
 
 
-app.get('/main', validateSession, async (req, res) => {
+app.post('/saveTree', validateSession, async (req, res) => {
+    try {
+        // Check if body exists
+        if (!req.body) {
+            return res.status(400).send("No data received");
+        }
+
+        const { unlocks } = req.body;
+        
+        // Validate required fields
+        if (!unlocks) {
+            return res.status(400).send("Missing sectors or resources data");
+        }
+
+        // Rest of your existing code...
+        const username = req.session.username;
+        
+        const schema = Joi.object({ username: Joi.string().alphanum().max(20).required() });
+        const validationResult = schema.validate({ username });
+
+        if (validationResult.error) {
+            return res.status(400).send("Invalid username");
+        }
+
+        // Get user
+        let user = await userCollection.find({ username: username })
+            .project({ _id: 1 })
+            .toArray();
+
+        if (!user.length) {
+            return res.status(401).send("User not found");
+        }
+
+        await treeCollection.updateOne(
+            { username: username },
+            {
+                $set: {
+                    user_id: user[0]._id,
+                    unlocks: unlocks
+                }
+            },
+            { upsert: true }
+        );
+
+        return res.sendStatus(200);
+        
+    } catch (e) {
+        console.error(e);
+        return res.status(500).send("Save error");
+    }
+});
+
+
+app.get('/main', validateSession, validateUsername, async (req, res) => {
     let username = req.session.username;
 
-	let newUser = req.query.newUser || null;
-
-    const schema = Joi.object({ username: Joi.string().alphanum().max(20).required() });
-
-    const validationResult = schema.validate({ username });
-
-    if (validationResult.error != null) {
-        res.redirect('/login?maliciousUsername=1');
-        return;
-    }
+    let newUser = req.query.newUser || null;
 
     // Get the user profile from the session's username
-    let userArray = await userCollection.find({ username: username })
-        .project({ _id: 1 })
-        .toArray();
+    let userArray = await userCollection.find({ username: username }).toArray();
 
     let user = userArray[0];
 
@@ -366,10 +427,32 @@ app.get('/weatherTest', (req, res) => {
     });
 });
 
-app.get('/techTree', validateSession, (req, res) => {
+app.get('/main/techTree', validateSession, validateUsername, async (req, res) => {
+    let username = req.session.username;
+
+    // Get the user profile from the session's username
+    let userArray = await userCollection.find({ username: username }).toArray();
+
+    let user = userArray[0];
+
+    console.log([user, user._id]);
+
+    if (!user) {
+        console.error(`Access to main with invalid username: ${username}`);
+        res.redirect("/login?invalidUsername=1");
+        return;
+    }
+
+    let treeArray = await treeCollection.find({ user_id: user._id }).toArray();
+    let treeUnlocks = treeArray[0];
+
     res.render("techTree", {
         title: "Custom Tech Tree",
-        css: ["styles/techTree.css"]
+        // Since techTree is a subdirectory of main,
+        // we have to go one directory up to get
+        // the style sheets (and JS)
+        css: ["../styles/techTree.css"],
+        unlocks: treeUnlocks ? JSON.stringify(treeUnlocks.unlocks) : "[\"root\"]"
     })
 });
 
