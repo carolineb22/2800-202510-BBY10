@@ -245,5 +245,18 @@
 			return duration;
 		}
 	</script>
+
+	<script>
+        let newUser = '<%=newUser%>';
+        if (newUser) {
+            console.log("New User Passed");
+            loadTutorial();
+        }
+
+        function loadTutorial() {
+            console.log("Add show and hide logic here.");
+            console.log("It's honestly just a bunch of ejs or simple html files that we can add to the tutorial div.");
+        }
+    </script>
     
 	<%- include("templates/footer")%>
