@@ -1,11 +1,11 @@
 
 // VALUES DECLARE -----------------------------------------------------------
-const BaseDepletion = 10000;
 
 // Load the saved data from the database
 const Resources = databaseResources;
 
 // Load the sectors from the database
+/*
 var tempSectors = [];
 databaseSectors.forEach((sector) => {
     let tempGeographicalElements = [];
@@ -17,6 +17,7 @@ databaseSectors.forEach((sector) => {
                     tempBuildings.push(new Building(b.id,
                                                     b.type,
                                                     b.name,
+                                                    b.description,
                                                     b.consumptionArray,
                                                     b.productionArray,
                                                     b.costArray,
@@ -24,9 +25,9 @@ databaseSectors.forEach((sector) => {
                                                     element.uuid))
                 });
             }
-            tempGeographicalElements.push(new GeographicalElement(element.uuid,
-                                                                  element.id,
+            tempGeographicalElements.push(new GeographicalElement(element.id,
                                                                   element.name,
+                                                                  element.description,
                                                                   element.passiveProduction,
                                                                   element.situationalBuildings,
                                                                   element.buildingBaseCapacity,
@@ -41,6 +42,14 @@ databaseSectors.forEach((sector) => {
 
 const Sectors = tempSectors;
 console.log(Sectors)
+*/
+
+
+
+
+
+
+
 
 let activeSector = 0;
 let activeElement = null;
@@ -75,23 +84,23 @@ const ResourceTypes = {
 // View GeographicalElement() for explanation on how to create new GeographicalElements.
 const GeographicalElementTemplates = {
     element_forest: [
-        crypto.randomUUID(),
         "element_forest",
         "Forest",
+        "A forested landscape rife with trees. A few clearings exist for buildings, but otherwise quite forested.",
         [
-            ["BuildingMaterials", 0.1]
+            new GenericTypeValue("BuildingMaterials", 0.1)
         ],
         [
             [
-                ["building_logging_site", 1],
-                ["building_wood_power_plant", 1]
+                new GenericTypeValue("building_logging_site", 1),
+                new GenericTypeValue("building_wood_power_plant", 1)
             ],
-            ["building_forest_cabins", 1]
+            new GenericTypeValue("building_forest_cabins", 1)
         ],
-        BaseDepletion,
         2,
-        "element_grassland",
-        []
+        0,
+        10000,
+        "element_grassland"
     ]
 }
 
@@ -102,12 +111,13 @@ const BuildingTemplates = {
         "building_logging_site",
         BuildingTypes.Extraction,
         "Logging Site",
+        "A dedicated area in which trees are harvested for building materials.",
         [],
         [
-            ["BuildingMaterials", 10]
+            new GenericTypeValue("BuildingMaterials", 10)
         ],
         [
-            ["BuildingMaterials", 10000]
+            new GenericTypeValue("BuildingMaterials", 10000)
         ],
         1
     ],
@@ -115,10 +125,11 @@ const BuildingTemplates = {
         "building_wood_power_plant",
         BuildingTypes.Extraction,
         "Wood Power Plant",
+        "A simplistic power plant that burns wood to turn a turbine, generating power.",
         [],
         [],
         [
-            ["BuildingMaterials", 30000]
+            new GenericTypeValue("BuildingMaterials", 30000)
         ],
         3
     ],
@@ -126,10 +137,11 @@ const BuildingTemplates = {
         "building_forest_cabins",
         BuildingTypes.Housing,
         "Forest Cabins",
+        "A forest cabin for a few lucky people.",
         [],
         [],
         [
-            ["BuildingMaterials", 20000]
+            new GenericTypeValue("BuildingMaterials", 20000)
         ],
         null
     ],
@@ -137,14 +149,15 @@ const BuildingTemplates = {
         "building_test",
         BuildingTypes.Extraction,
         "Test Building",
+        "A dev-only test building.",
         [
-            ["Water", 20]
+            new GenericTypeValue("Water", 20)
         ],
         [
-            ["Chemicals", 40]
+            new GenericTypeValue("Chemicals", 40)
         ],
         [
-            ["BuildingMaterials", 1000]
+            new GenericTypeValue("BuildingMaterials", 1000)
         ],
         null
     ],
@@ -152,6 +165,7 @@ const BuildingTemplates = {
         "building_impossible",
         BuildingTypes.Extraction,
         "Impossible ahh building",
+        "Bro",
         [],
         [],
         [],
@@ -161,110 +175,25 @@ const BuildingTemplates = {
 // TEMPLATES -----------------------------------------------------------------
 
 
+// TEMP SINCE LOADING IS BUGGED
+
+
+const Sectors = [
+    new Sector("1", "Northwest Boglo", [
+        new GeographicalElement(...GeographicalElementTemplates.element_forest),
+        new GeographicalElement(...GeographicalElementTemplates.element_forest)
+    ]),
+    new Sector("2", "Flumpland", [
+        new GeographicalElement(...GeographicalElementTemplates.element_forest),
+        new GeographicalElement(...GeographicalElementTemplates.element_forest),
+        new GeographicalElement(...GeographicalElementTemplates.element_forest)
+    ])
+]
+
+
+// TEMP SINCE LOADING IS BUGGED
+
 // OBJECTS -------------------------------------------------------------------
-
-// JSON template for creating a GeographicalElement:
-// [
-//     "id",    -- the internal name of this GE. (What the developer sees)
-//     "name",  -- the external name of this GE. (What the player sees)
-//     [                                    -- passiveProduction array of resources.
-//         ["Resource", productionAmount]   -- the resourcetype and it's production amount per tick. 
-//     ],
-//     [                                        -- situationalBuildings, array of arrays.
-//         [                                    -- The types of buildings that can be built on this GE.
-//             ["building_id_1", max_amount],   -- since these groups are mutually exclusive (XOR), in this example 
-//             ["building_id_2", max_amount]    -- if you built a building_id_3, you would be locked out of building any
-//         ],                                   -- of IDs, 1 or 2. The IDs in this case being the internal names of that 
-//         ["building_id_3", max_amount]        -- particular building. max_amount being the maximum amount of that building
-//     ],                                       -- you can build on this GE.
-//     buildingBaseCapacity,    -- The total buildings you can have built at a time on this GE
-//     "depletesInto"   -- The ID (Internal name) of the GE that this turns into upon resource depletion.
-// ]
-function GeographicalElement(uuid, id, name, passiveProduction, situationalBuildings, buildingBaseCapacity, depletion, depletesInto, buildings) {
-    this.uuid = uuid; //uuid of this element
-    this.id = id; //id of this element, is seperate from uuid as multiple of the same element can inhabit a sector
-    this.name = name; //display name of this element
-    this.passiveProduction = passiveProduction; //array of arrays that contain a resource and production amount per tick
-    this.situationalBuildings = situationalBuildings; //array of building ids that can be built. subarrays are mutually exclusive.
-    this.buildingBaseCapacity = buildingBaseCapacity; //total buildings that can be made on that element.
-    this.depletion = depletion; //abritrary value of how much this element can take before being depleted.
-    this.depletesInto = depletesInto; //what element does this element turn into after being depleted? based on id
-    this.buildings = buildings;
-
-    // Whenever this GeographicalElement is called to do a tick,
-    // run through every resource that this GE has in passiveProduction 
-    // and increment by some set value
-    this.doTick = function() {
-        this.passiveProduction.forEach(val => {
-            Resources[val[0]] += val[1]
-        })
-    }
-
-    this.depleteBy = function(value) {
-        this.depletion -= value;
-
-        if (this.depletion <= 0) {
-            //TODO: Logic for depletion
-        }
-    }
-}
-
-// JSON template for creating a Building:
-// [
-//     "id",    -- internal name of this Building (what the developer sees)
-//     BuildingTypes.Foo,   -- the type of production that this Building does.
-//     "name",  -- External name of this Building (what the player sees)
-//     [                                    -- consumptionArray
-//         ["resource", amount_per_tick]    -- resources used up per tick
-//     ],
-//     [                                    -- productionArray
-//         ["resource", amount_per_tick]    -- resources produced per tick
-//     ],
-//     [                        -- costArray
-//         ["resource", cost]   -- resources and their cost needed to build this Building
-//     ],
-//     depletion,   -- the amount of the parent GeographicalElement's resource that this Building
-//                  -- depletes per tick (depletion/tick). Can be null, but must be present.
-//     "needsType", -- the ID (internal name) of the GE that this building can be built on.
-//     builtOnElement   -- the UUID of the GE that this Building is built on.
-//                      -- This is left out of the JSON internally since UUIDs change each session.
-// ]
-function Building(id, type, name, consumptionArray, productionArray, costArray, depletion, builtOnElement) {
-    this.uuid = crypto.randomUUID(); //uuid of this element
-    this.id = id; //id of this element, is seperate from uuid as multiple of the same building can inhabit an element
-    this.type = type; //type of building, used for seperation into categories for build meny
-    this.name = name; //display name of this element
-    this.consumptionArray = consumptionArray; //array of arrays that contain a resource and amount to be used per tick
-    this.productionArray = productionArray; //array of arrays that contain a resource and amount to produce per tick
-    this.costArray = costArray; //array of arrays that contain what ResourceTypes to use and their amount
-    this.builtOnElement = builtOnElement; //which geographical element is this building built on?
-
-    this.doesDeplete = false; //this building does not deplete the resource of what its built on
-    if (depletion) {
-        this.doesDeplete = true; //nvm it does deplete 
-        this.depletion = depletion; //amount to deplete by
-    }
-
-    this.doTick = function() {
-        this.productionArray.forEach(val => {
-            Resources[val[0]] += val[1]
-        })
-        this.consumptionArray.forEach(val => {
-            Resources[val[0]] -= val[1]
-        })
-        if (this.doesDeplete) {
-            getGeographicalElementById(this.builtOnElement).depleteBy(this.depletion);
-        }
-    }
-
-    this.getFormattedString = function() {
-        return `${this.name}, ${this.type}
-        ${Array.isArray(this.consumptionArray) && this.consumptionArray.length ? `<br>  Consumes: ${this.consumptionArray.map(e => `<br>${ResourceTypes[e[0]]}, ${e[1]}/tick`).join()}` : ""}
-        ${Array.isArray(this.productionArray) && this.productionArray.length ? `<br>  Produces: ${this.productionArray.map(e => `<br>${ResourceTypes[e[0]]}, ${e[1]}/tick`).join()}` : ""}
-        `
-    }
-    
-}
 
 // JSON Template for creating a sector
 // [
@@ -280,22 +209,144 @@ function Sector(id, name, geographicalElements) {
     this.geographicalElements = geographicalElements;
 
     this.doTick = function() {
-        this.geographicalElements.forEach(element => {
-            element.doTick();
-            element.buildings.forEach(building => {
-                building.doTick();
-            })
+        this.geographicalElements.forEach(geoElement => {
+            geoElement.doTick();
         })
     }
+}
+
+// JSON template for creating a GeographicalElement:
+// [
+//     "id",    -- the internal name of this GE. (What the developer sees)
+//     "name",  -- the external name of this GE. (What the player sees)
+//     "description", --text blurb regarding the GE.
+//     [                                    -- passiveProduction array of resources.
+//         ["Resource", productionAmount]   -- the resourcetype and it's production amount per tick. 
+//     ],
+//     [                                        -- situationalBuildings, array of arrays.
+//         [                                    -- The types of buildings that can be built on this GE.
+//             ["building_id_1", max_amount],   -- since these groups are mutually exclusive (XOR), in this example 
+//             ["building_id_2", max_amount]    -- if you built a building_id_3, you would be locked out of building any
+//         ],                                   -- of IDs, 1 or 2. The IDs in this case being the internal names of that 
+//         ["building_id_3", max_amount]        -- particular building. max_amount being the maximum amount of that building
+//     ],                                       -- you can build on this GE.
+//     buildingBaseCapacity,    -- The total buildings you can have built at a time on this GE
+//     "depletesInto"   -- The ID (Internal name) of the GE that this turns into upon resource depletion.
+// ]
+function GeographicalElement(id, name, description, passiveProduction, situationalBuildings, buildingBaseCapacity, baseDepletion, maxDepletion, depletesInto, buildings) {
+    this.uuid = crypto.randomUUID(); //uuid of this element
+    this.id = id; //id of this element, is seperate from uuid as multiple of the same element can inhabit a sector
+    this.name = name; //display name of this element
+    this.description = description; //description of geoelement
+    this.passiveProduction = passiveProduction; //array of arrays that contain a resource and production amount per tick
+    this.situationalBuildings = situationalBuildings; //array of building ids that can be built. subarrays are mutually exclusive.
+    this.buildingBaseCapacity = buildingBaseCapacity; //total buildings that can be made on that element.
+    this.depletion = baseDepletion; //abritrary value of how much this element can take before being depleted.
+    this.maxDepletion = maxDepletion;
+    this.depletesInto = depletesInto; //what element does this element turn into after being depleted? based on id
+    if (buildings) {
+        this.buildings = buildings;
+    } else {
+        this.buildings = [];
+    }
+    
+
+    // Whenever this GeographicalElement is called to do a tick,
+    // run through every resource that this GE has in passiveProduction 
+    // and increment by some set value
+    this.doTick = function() {
+        this.passiveProduction.forEach(typeValueObject => {
+            Resources[typeValueObject.type] += typeValueObject.value
+        })
+
+        this.buildings.forEach(building => {
+            building.doTick();
+        })
+
+        let display = document.getElementById(`depletion-${this.uuid}`);
+        if (display) {
+            display.innerHTML = `Depletion: ${this.depletion}/${this.maxDepletion}`;
+        }
+
+    }
+
+    this.depleteBy = function(value) {
+        this.depletion += value;
+
+        if (this.depletion >= this.maxDepletion && this.depletesInto) {
+            //BOGOS
+        }
+    }
+}
+
+// JSON template for creating a Building:
+// [
+//     "id",    -- internal name of this Building (what the developer sees)
+//     BuildingTypes.Foo,   -- the type of production that this Building does.
+//     "name",  -- External name of this Building (what the player sees)
+//     "description", --Text blurb for building
+//     [                                    -- consumptionArray
+//         ["resource", amount_per_tick]    -- resources used up per tick
+//     ],
+//     [                                    -- productionArray
+//         ["resource", amount_per_tick]    -- resources produced per tick
+//     ],
+//     [                        -- costArray
+//         ["resource", cost]   -- resources and their cost needed to build this Building
+//     ],
+//     depletion,   -- the amount of the parent GeographicalElement's resource that this Building
+//                  -- depletes per tick (depletion/tick). Can be null, but must be present.
+//     "needsType", -- the ID (internal name) of the GE that this building can be built on.
+//     builtOnElement   -- the UUID of the GE that this Building is built on.
+//                      -- This is left out of the JSON internally since UUIDs change each session.
+// ]
+function Building(id, type, name, description, consumptionArray, productionArray, costArray, depletion, builtOnElement) {
+    this.uuid = crypto.randomUUID(); //uuid of this element
+    this.id = id; //id of this element, is seperate from uuid as multiple of the same building can inhabit an element
+    this.type = type; //type of building, used for seperation into categories for build meny
+    this.name = name; //display name of this element
+    this.description = description;
+    this.consumptionArray = consumptionArray; //array of arrays that contain a resource and amount to be used per tick
+    this.productionArray = productionArray; //array of arrays that contain a resource and amount to produce per tick
+    this.costArray = costArray; //array of arrays that contain what ResourceTypes to use and their amount
+    this.builtOnElement = builtOnElement; //which geographical element is this building built on?
+
+    this.doesDeplete = false; //this building does not deplete the resource of what its built on
+    if (depletion) {
+        this.doesDeplete = true; //nvm it does deplete 
+        this.depletion = depletion; //amount to deplete by
+    }
+
+    this.doTick = function() {
+        this.productionArray.forEach(typeValueObject => {
+            Resources[typeValueObject.type] += typeValueObject.value
+        })
+        this.consumptionArray.forEach(typeValueObject => {
+            Resources[typeValueObject.type] -= typeValueObject.value
+        })
+        if (this.doesDeplete) {
+            getGeographicalElementById(this.builtOnElement).depleteBy(this.depletion);
+        }
+    }
+}
+
+//Generic holder of a type and value to reduce subarrays.
+function GenericTypeValue(type, value) {
+    this.type = type;
+    this.value = value;
 }
 // OBJECTS -------------------------------------------------------------------
  
 
 // STORING ARRAYS INIT -------------------------------------------------------
 // (only do if Resources or Sectors are empty)
+
 for (var key in ResourceTypes) {
     if (!Resources[key]) Resources[key] = 0;
 }
+console.log("No resources loaded!")
+
+
 
 let gah = new GeographicalElement(...GeographicalElementTemplates.element_forest)
 gah.buildings = [
@@ -320,33 +371,18 @@ if(Sectors.length == 0)
 }
 
 // HELPER FUNCTIONS ----------------------------------------------------------
-function getGeographicalElementById(id) {
+function getGeographicalElementById(uuid) {
     let returnVal = null;
-    for (var sector of Sectors) {
-        // console.log(sector.geographicalElements)
-        for (var element of sector.geographicalElements) {
-            if (element.uuid == id) {
-                returnVal = element;
-                break;
+    Sectors.forEach(sector => {
+        sector.geographicalElements.forEach(geoElem => {
+            if (geoElem.uuid == uuid && !returnVal) {
+                returnVal = geoElem;
             }
-        }
-        if (returnVal) {
-            break
-        }
-    }
-
+        })
+    })
     return returnVal;
 }
 
-function updateResources() {
-    let formattedResources = "";
-    for (var key in Resources) {
-        let value = Resources[key];
-        formattedResources += `${ResourceTypes[key]}: ${value.toFixed(2)} <br>`;
-    }
-
-    document.getElementById("resources").innerHTML = formattedResources;
-}
 
 function displayBuildingSidebar() {
     console.log("meowa");
@@ -375,10 +411,13 @@ function buildBuilding(building_id, element_uuid) {
             if (element.uuid == element_uuid) {
                 let newBuilding = new Building(...BuildingTemplates[building_id], element.uuid)
                 element.buildings.push(newBuilding);
+                console.log(element);
                 console.log("made!");
+                updateSectorDisplay();
             }
         })
     })
+
 }
 
 function openBuildMenu(element_uuid) {
@@ -416,15 +455,15 @@ function switchBuildTab(tab_name, element_uuid) {
     buildingsNode.replaceChildren();
 
     geoElem.situationalBuildings.forEach(building => {
-        if (Array.isArray(building[0])) {//is a mutually exclusive group
+        if (Array.isArray(building)) {//is a mutually exclusive group
             buildingsNode.appendChild(document.createElement("hr"));
             let mutExGroupDisplay = document.createElement("p");
             mutExGroupDisplay.innerHTML = "Mutually Exclusive Group";
             buildingsNode.appendChild(mutExGroupDisplay);
             building.forEach(mutexBuilding => {
-                let buildingTemplate = BuildingTemplates[mutexBuilding[0]]
+                let buildingTemplate = BuildingTemplates[mutexBuilding.type]
                 let buildingInfo = document.createElement("p");
-                buildingInfo.innerHTML = `Build ${buildingTemplate[2]}, Costs ${buildingTemplate[5]}`
+                buildingInfo.innerHTML = `Build ${buildingTemplate[2]}, Costs ${prettyStringFromGenericTypeValueArray(buildingTemplate[6])}`
                 buildingInfo.classList = ["hud-button"];
                 buildingsNode.appendChild(buildingInfo);
                 buildingInfo.addEventListener('click', e => {
@@ -435,27 +474,32 @@ function switchBuildTab(tab_name, element_uuid) {
             buildingsNode.appendChild(document.createElement("hr"));
         } else {//is a normal group
             
-            
-            let buildingTemplate = BuildingTemplates[building[0]]
+            let buildingTemplate = BuildingTemplates[building.type]
             let buildingInfo = document.createElement("p");
             if(buildingTemplate[1] == tab_name || tab_name == "All") {
-                buildingInfo.innerHTML = `Build ${buildingTemplate[2]}, Costs ${buildingTemplate[5]}`
+                buildingInfo.innerHTML = `Build ${buildingTemplate[2]}, Costs ${prettyStringFromGenericTypeValueArray(buildingTemplate[6])}`
                 buildingInfo.classList = ["hud-button"];
                 buildingsNode.appendChild(buildingInfo);
                 buildingInfo.addEventListener('click', e => {
                     buildBuilding(buildingTemplate[0], element_uuid);
                 })
             }
-
-            
-    
-            
         }
+
+        
     })
     
 }
 
+function prettyStringFromGenericTypeValueArray(typeValueArray) {
+    let aggregator = "";
 
+    typeValueArray.forEach(genericTypeValue => {
+        aggregator += `${genericTypeValue.type}: ${genericTypeValue.value}`
+    })
+
+    return aggregator;
+}
 
 function wipeCurrentSector() {
     Array.prototype.map.call(document.getElementsByClassName("sector_display"), elem => {
@@ -466,7 +510,6 @@ function wipeCurrentSector() {
 function displayNewSector(sector) {
     let newSector = document.getElementById("sector").content.cloneNode(true);
     newSector.querySelector('.sector_name').innerHTML = `Overview of ${sector.name}`;
-    console.log(newSector)
     addGeoElemsToNode(sector.geographicalElements, newSector.querySelector('.sector_details'))
     
     document.getElementById('gerge').appendChild(newSector);
@@ -478,7 +521,8 @@ function addGeoElemsToNode(elementArray, detailNode) {
     elementArray.forEach(element => {
         let geoElementNode = document.getElementById("geoelement").content.cloneNode(true);
         geoElementNode.querySelector('.geoelement_name').innerHTML = `${element.name}`
-        geoElementNode.querySelector('.depletion').innerHTML = `Depletion: ${element.depletion}/${BaseDepletion}` //change to individual max depletion later.
+        geoElementNode.querySelector('.depletion').innerHTML = `Depletion: ${element.depletion}/${element.maxDepletion}`
+        geoElementNode.querySelector('.depletion').id = `depletion-${element.uuid}`;
         geoElementNode.querySelector('.geoelement_build').addEventListener("click", e => {
             openBuildMenu(element.uuid)
         })
@@ -487,9 +531,9 @@ function addGeoElemsToNode(elementArray, detailNode) {
             let passiveTextDisplay = document.createElement("p");
             passiveTextDisplay.innerHTML = "Passive production:";
             geoElementNode.querySelector('.passive_production').appendChild(passiveTextDisplay);
-            element.passiveProduction.forEach(passiveProductionArray => {
+            element.passiveProduction.forEach(passiveProductionObject => {
                 let passiveInfo = document.createElement("p");
-                passiveInfo.innerHTML = `${ResourceTypes[passiveProductionArray[0]]}: ${passiveProductionArray[1]}/tick`;
+                passiveInfo.innerHTML = `${ResourceTypes[passiveProductionObject.type]}: ${passiveProductionObject.value}/tick`;
                 geoElementNode.querySelector('.passive_production').appendChild(passiveInfo);
             })
  
@@ -511,9 +555,9 @@ function addGeoElemsToNode(elementArray, detailNode) {
 
 
 
-                    building.productionArray.forEach(production => {
+                    building.productionArray.forEach(productionObject => {
                         let productionInfo = document.createElement('p');
-                        productionInfo.innerHTML = `${ResourceTypes[production[0]]}: ${production[1]}/tick`;
+                        productionInfo.innerHTML = `${ResourceTypes[productionObject.type]}: ${productionObject.value}/tick`;
                         buildingNode.querySelector('.building_production').appendChild(productionInfo);
                     })
                 }
@@ -524,9 +568,9 @@ function addGeoElemsToNode(elementArray, detailNode) {
                     buildingNode.querySelector('.building_consumption').appendChild(consumptionTextDisplay);
 
 
-                    building.consumptionArray.forEach(consumption => {
+                    building.consumptionArray.forEach(consumptionObject => {
                         let consumptionInfo = document.createElement('p');
-                        consumptionInfo.innerHTML = `${ResourceTypes[consumption[0]]}: ${consumption[1]}/tick`;
+                        consumptionInfo.innerHTML = `${ResourceTypes[consumptionObject.type]}: ${consumptionObject.value}/tick`;
                         buildingNode.querySelector('.building_consumption').appendChild(consumptionInfo);
                     })
                 }
@@ -543,6 +587,44 @@ function addGeoElemsToNode(elementArray, detailNode) {
     })
 }
 
+function updateSectorDisplay() { //this is costly. no other way around it.
+    wipeCurrentSector();
+    displayNewSector(Sectors[activeSector]);
+}
+
+function wipeResourceDisplays() {
+    document.getElementById("resource_container").replaceChildren();
+}
+
+function createResourceDisplays() {
+    let container = document.getElementById("resource_container");
+
+    Object.entries(ResourceTypes).forEach(([id, resourceName]) => {
+        let newDisplayNode = document.createElement("p");
+        newDisplayNode.innerText = `${resourceName}: ${(Math.round(Resources[id] * 100) / 100).toFixed(2)}`
+        newDisplayNode.id = id;
+        container.appendChild(newDisplayNode);
+    })
+}
+
+function updateResourceDisplays() {
+    Object.entries(ResourceTypes).forEach(([id, resourceName]) => {
+        let node = document.getElementById(id);
+        if (!node) {
+            console.log("Resource type was missing!");
+            wipeResourceDisplays();
+            createResourceDisplays();
+            return;
+        }
+        document.getElementById(id).innerText = `${resourceName}: ${(Math.round(Resources[id] * 100) / 100).toFixed(2)}`;
+    });
+}
+
+function sectorsTick() {
+    Sectors.forEach(sector => {
+        sector.doTick(); 
+    })
+}
 // HELPER FUNCTIONS ----------------------------------------------------------
 
 
@@ -578,8 +660,10 @@ document.getElementById('play_state').addEventListener("click", e => {
 const fastForward = document.getElementById('fast_forward');
 fastForward.addEventListener("click", e => {
     fastMode = !fastMode;
-    pauseGame()
-    resumeGame()
+    if (gameInterval) {
+        pauseGame()
+        resumeGame()
+    }
 
     if (fastMode) {
         fastForward.style.backgroundColor = '#777';
@@ -594,15 +678,19 @@ fastForward.addEventListener("click", e => {
 
 // GAME LOOP -----------------------------------------------------------------
 function gameLoop() {
-    //updateResources();
-    //displayActiveSector();
-
-    Sectors.forEach(sector => {
-        sector.doTick();
-    })
+    sectorsTick();
 }
 // GAME LOOP -----------------------------------------------------------------
 
+
+// CONSTANT LOOP -------------------------------------------------------------
+
+setInterval(() => {
+    updateResourceDisplays();
+}, 25)
+
+
+// CONSTANT LOOP -------------------------------------------------------------
 
 // HTML EVENTS ---------------------------------------------------------------
 
@@ -649,10 +737,10 @@ function save() {
 
 // ON OPEN -------------------------------------------------------------------
 displayNewSector(Sectors[activeSector])
+createResourceDisplays();
 
 // Test function to send before unloading -
 // To be replaced with autosaving
 window.addEventListener("beforeunload", (e) => {
-    e.preventDefault();
     save();
 });

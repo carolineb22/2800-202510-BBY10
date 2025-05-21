@@ -16,9 +16,14 @@
 			<div class="weather-headline" id="puter-message">Generating advice based on weather...</div>
 		</div>
 
+		
+
 		<main class="map">
 
 			<div id="gerge" class="row">
+				<div id="resource_container">
+
+				</div>
 				<hr>
 				<button class="hud-button" id="cycle_sector">Cycle sector!</button>
 				<hr>
@@ -157,10 +162,10 @@
 	</script>
 	<script src="../scripts/mainGame.js"></script>
 	<!-- Puter SDK -->
-	<script src="https://js.puter.com/v2/"></script>
+	<template src="https://js.puter.com/v2/"></template>
 
 	<!-- Weather + Puter Logic -->
-	<script>
+	<template>
 		navigator.geolocation.getCurrentPosition(success, error);
 
 		function success(position) {
@@ -244,6 +249,6 @@
 
 			return duration;
 		}
-	</script>
+	</template>
     
 	<%- include("templates/footer")%>
