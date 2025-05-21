@@ -53,7 +53,7 @@ console.log(Sectors)
 
 let activeSector = 0;
 let activeElement = null;
-// VALUES DECLARE -----------------------------------------------------------
+let lastTimestampSaved = Date.now();
 
 
 // ENUMS --------------------------------------------------------------------
@@ -715,6 +715,8 @@ document.getElementById('update_elem').addEventListener("click", e => {
 // SAVING/LOADING ------------------------------------------------------------
 
 function save() {
+    lastTimestampSaved = Date.now();
+    console.log(lastTimestampSaved);
     fetch('/save', {
         method: 'POST',
         headers: {
@@ -739,8 +741,11 @@ function save() {
 displayNewSector(Sectors[activeSector])
 createResourceDisplays();
 
-// Test function to send before unloading -
-// To be replaced with autosaving
-window.addEventListener("beforeunload", (e) => {
-    save();
+window.addEventListener("beforeunload", e => {
+    console.log(Date.now() - lastTimestampSaved);
+    // If user hasn't saved in the last sixty seconds
+    if((Date.now() - lastTimestampSaved) / 1000 >= 60)
+    {
+        e.preventDefault();
+    }
 });

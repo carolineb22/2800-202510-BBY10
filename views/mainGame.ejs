@@ -50,7 +50,7 @@
 
 	<!-- Bottom Bar with Upgrades and Build Buttons -->
 	<div class="bottom-bar">
-		<button class="nav-button left" onclick="window.location.assign('/main/techTree')">Upgrades</button>
+		<button class="nav-button left" onclick="save();setTimeout(()=>window.location.assign('/main/techTree'), 100);">Upgrades</button>
 	</div>
 
 	<!-- Settings button in top-left -->
@@ -65,7 +65,23 @@
 		<button class="dropdown-item" onclick="loadTutorial()">Tutorial</button>
 	</div>
 
-	<div class="pop-up" id="tutorial"></div>
+	<div class="pop-up" id="tutorial" style="display: none;">
+		<div class="tutorial-content">
+			<h2>Welcome to Our Tommorow</h2>
+			<div class="tutorial-text">
+				<p>Welcome to Our Tomorrow!</p>
+				<p>This is an incremental game where your goal is to build a civilization from the ground up!</p>
+				<p>Create buildings, power plants, housing, whatever you need! Expand across the different Sectors of
+					your planet and prosper!</p>
+				<p>Manage your planet's resources and Advance your technology through the Tech Tree.</p>
+				<p>The Upgrades you unlock will help you take better care of your planet as you manage its resources.
+				</p>
+				<p>As you build this civilization, your upgrades will lead to greener and more renewable practices to
+					build with!</p>
+			</div>
+			<button class="hud-button tutorial-close">Got it!</button>
+		</div>
+	</div>
 
 	<!-- Top HUD with time display and buttons -->
 	<div class="top-hud">
@@ -162,10 +178,10 @@
 	</script>
 	<script src="../scripts/mainGame.js"></script>
 	<!-- Puter SDK -->
-	<template src="https://js.puter.com/v2/"></template>
+	<script src="https://js.puter.com/v2/"></script>
 
 	<!-- Weather + Puter Logic -->
-	<template>
+	<script>
 		navigator.geolocation.getCurrentPosition(success, error);
 
 		function success(position) {
@@ -249,6 +265,31 @@
 
 			return duration;
 		}
-	</template>
-    
+	</script>
+
+	<script>
+		let newUser = '<%=newUser%>';
+		if (newUser) {
+			console.log("New User Passed");
+			loadTutorial();
+		}
+
+		function loadTutorial() {
+			const tutorial = document.getElementById('tutorial');
+			tutorial.style.display = 'flex';
+
+			// Close button functionality
+			document.querySelector('.tutorial-close').addEventListener('click', () => {
+				tutorial.style.display = 'none';
+			});
+
+			// Also close when clicking outside content
+			tutorial.addEventListener('click', (e) => {
+				if (e.target === tutorial) {
+					tutorial.style.display = 'none';
+				}
+			});
+		}
+	</script>
+
 	<%- include("templates/footer")%>
