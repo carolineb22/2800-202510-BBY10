@@ -457,7 +457,7 @@ function buildBuilding(building_id, element_uuid) { //as null is falsy, returns 
         Resources[typeValueCost.type] -= typeValueCost.value
     }
 
-    let newBuilding = initBuilding(building_id, element);
+    let newBuilding = initBuilding(building_id, geoElem);
     newBuilding.checkIfCanDoWork();
 
     updateSectorDisplay();
