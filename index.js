@@ -207,7 +207,7 @@ app.post('/submitUser', async (req, res) => {
     req.session.username = username;
     req.session.cookie.maxAge = expireTime;
 
-    res.redirect('/main');
+    res.redirect('/main?newUser=1');
 });
 
 
@@ -309,7 +309,9 @@ app.post('/save', validateSession, async (req, res) => {
 
 
 app.get('/main', validateSession, async (req, res) => {
-    var username = req.session.username;
+    let username = req.session.username;
+
+	let newUser = req.query.newUser || null;
 
     const schema = Joi.object({ username: Joi.string().alphanum().max(20).required() });
 
@@ -343,6 +345,7 @@ app.get('/main', validateSession, async (req, res) => {
     res.render("mainGame", {
         title: "Main - Our Tomorrow",
         css: ['styles/mainGame.css', "https://fonts.googleapis.com/icon?family=Material+Icons"],
+		newUser: newUser,
         resources: userStats ? JSON.stringify(userStats.resources) : "{}",
         sectors: userStats ? JSON.stringify(userStats.sector) : "[]",
         apiKey: process.env.WEATHER_API_KEY

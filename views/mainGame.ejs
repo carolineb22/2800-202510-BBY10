@@ -59,8 +59,10 @@
 	<div class="dropdown-menu" id="settingsMenu">
 		<button class="dropdown-item" onclick="window.location.assign('/logout')">Log Out</button>
 		<button class="dropdown-item" onclick="save()">Save</button>
-		<button class="dropdown-item">Another Option</button>
+		<button class="dropdown-item" onclick="loadTutorial()">Tutorial</button>
 	</div>
+
+	<div class="pop-up" id="tutorial"></div>
 
 	<!-- Top HUD with time display and buttons -->
 	<div class="top-hud">
@@ -243,6 +245,20 @@
 			});
 
 			return duration;
+		}
+	</script>
+
+	<script src="scripts/tutorial.js"></script>
+	<script>
+		let newUser = <%=newUser%>;
+		if (newUser) {
+			console.log("New User Passed");
+			loadTutorial();
+		}
+
+		function loadTutorial() {
+			console.log("Add show and hide logic here.");
+			console.log("It's honestly just a bunch of ejs or simple html files that we can add to the tutorial div.");
 		}
 	</script>
 	<%- include("templates/footer")%>
