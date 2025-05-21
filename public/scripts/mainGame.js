@@ -811,3 +811,7 @@ window.addEventListener("beforeunload", e => {
 document.body.addEventListener("click", () => {
     closeBuildMenu();
 });
+
+document.getElementById("build_sidebar").addEventListener("click", (e) => {
+    e.stopPropagation();
+});
