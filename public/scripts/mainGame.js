@@ -226,23 +226,26 @@ if (Sectors.length == 0) {
 		gah,
 		new GeographicalElement(...GeographicalElementTemplates.element_forest),
 		new GeographicalElement(...GeographicalElementTemplates.element_forest),
-		new GeographicalElement(...GeographicalElementTemplates.element_forest)
+		new GeographicalElement(...GeographicalElementTemplates.element_grassland)
 	])
 	)
 	Sectors.push(new Sector("flumpland", "Flumpland", [
-		new GeographicalElement(...GeographicalElementTemplates.element_forest),
-		new GeographicalElement(...GeographicalElementTemplates.element_forest),
-		new GeographicalElement(...GeographicalElementTemplates.element_forest)
+		new GeographicalElement(...GeographicalElementTemplates.element_river),
+		new GeographicalElement(...GeographicalElementTemplates.element_river),
+		new GeographicalElement(...GeographicalElementTemplates.element_grassland)
 	])
 	)
 	Sectors.push(new Sector("gleenvale", "Gleenvale", [
-		//TODO FILL THIS ONCE YOU ADD THE GEs AND BUILDINGS
-		new GeographicalElement()
+		new GeographicalElement(...GeographicalElementTemplates.element_cracked_earth),
+        new GeographicalElement(...GeographicalElementTemplates.element_cracked_earth),
+		new GeographicalElement(...GeographicalElementTemplates.element_forest),
+		new GeographicalElement(...GeographicalElementTemplates.element_grassland)
 	])
 	)
 	Sectors.push(new Sector("east_blorvin", "East Blorvin", [
-		// TODO ADD THESE BEFORE MERGING
-		new GeographicalElement()
+		new GeographicalElement(...GeographicalElementTemplates.element_mountain_rich),
+		new GeographicalElement(...GeographicalElementTemplates.element_mountain_rich),
+		new GeographicalElement(...GeographicalElementTemplates.element_mountain)
 	])
 	)
 }

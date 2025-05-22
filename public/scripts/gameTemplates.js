@@ -32,12 +32,9 @@ const GeographicalElementTemplates = {
 			new GenericTypeValue("BuildingMaterials", 0.1)
 		],
 		[
-			[
-				// TODO redo these with the new buildings
-				new GenericTypeValue("building_logging_site", 1),
-				new GenericTypeValue("building_wood_power_plant", 1)
-			],
-			new GenericTypeValue("building_forest_cabins", 1)
+			[new GenericTypeValue("building_logging_site", 1),
+			 new GenericTypeValue("building_wood_power_plant", 1)],
+			[new GenericTypeValue("building_forest_cabins", 1)]
 		],
 		2,
 		0,
@@ -50,7 +47,9 @@ const GeographicalElementTemplates = {
 		"A grassy plain with lots of arable land.",
 		[],
 		[
-			new GenericTypeValue("building_arable_farm", 3)
+			new GenericTypeValue("building_farm", 3),
+            new GenericTypeValue("building_greenhouse", 2),
+            new GenericTypeValue("building_vertical_hydroponics", 2),
 		],
 		3,
 		0,
@@ -65,7 +64,8 @@ const GeographicalElementTemplates = {
 			new GenericTypeValue("BuildingMaterials", 0.1)
 		],
 		[
-			// TODO add buildings here
+			[new GenericTypeValue("building_iron_mine", 2)],
+            [new GenericTypeValue("building_deep_mine", 1)]
 		],
 		4,
 		0,
@@ -78,7 +78,7 @@ const GeographicalElementTemplates = {
 		"A mountain with no valueable resources to take advantage of. Just a beautiful sight.",
 		[],
 		[
-			// TODO add buildings here
+            new GenericTypeValue("building_logging_site", 2)
 		],
 		5,
 		0,
@@ -93,7 +93,11 @@ const GeographicalElementTemplates = {
 			new GenericTypeValue("Water", 0.3)
 		],
 		[
-			// TODO add buildings here
+			[new GenericTypeValue("building_logging_site", 1)],
+            [new GenericTypeValue("building_wood_power_plant", 1)],
+            [new GenericTypeValue("building_well", 3),
+			 new GenericTypeValue("building_groundwater_pump", 2)],
+			[new GenericTypeValue("building_desalinator", 1)]
 		],
 		10,
 		0,
@@ -106,7 +110,9 @@ const GeographicalElementTemplates = {
 		"With overuse of water, there's only a dry wasteland of sparce plants and animals left.",
 		[],
 		[
-			// TODO add buildings here
+			new GenericTypeValue("building_lumber_mill", 3),
+            new GenericTypeValue("building_chemical_plant", 2),
+            new GenericTypeValue("building_toxic_dump_miner", 2)
 		],
 		10,
 		0,
