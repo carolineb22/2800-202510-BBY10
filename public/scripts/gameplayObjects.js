@@ -137,7 +137,6 @@ function Building(id, type, name, description, consumptionArray, productionArray
 		if (this.active) {
 			this.productionArray.forEach(typeValueObject => {
 				if (typeValueObject.type == ResourceTypes.PopulationCapacity) {
-					console.log("Housing skipped.");
 					return;
 				}
 
