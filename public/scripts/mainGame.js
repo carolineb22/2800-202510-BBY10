@@ -112,17 +112,17 @@ function GeographicalElement(id, name, description, passiveProduction, situation
 
 	this.depleteBy = function (value) {
 		this.depletion += value;
+    }
 
-		if (this.depletion >= this.maxDepletion && this.depletesInto) {
-			convertGeoElementIntoNew(this.uuid, this.depletesInto)
-		}
-	}
+    this.checkIfBuildingsCanDoWork = function() {
+        this.buildings.forEach(building => {
+            building.checkIfCanDoWork();
+        })
+    }
 
-	this.checkIfBuildingsCanDoWork = function () {
-		this.buildings.forEach(building => {
-			building.checkIfCanDoWork();
-		})
-	}
+    this.getMutexGroups = function() {
+        return this.situationalBuildings.filter((group) => Array.isArray(group));
+    }
 }
 
 // JSON template for creating a Building:
@@ -289,35 +289,59 @@ function convertGeoElementIntoNew(original_element_uuid, becomes_element_id) {
 	updateSectorDisplay();
 }
 
-// Builds a building post-initialization
-function buildBuilding(building_id, element_uuid) {
-	Sectors.forEach(sector => {
-		sector.geographicalElements.forEach(element => {
-			if (element.uuid == element_uuid) {
-				initBuilding(building_id, element)
-				updateSectorDisplay();
-			}
-		})
-	})
+function isThisBuildingInvalidFromMutexGroup(geoElementUUID, building_id) {
+    let geoElem = getGeographicalElementById(geoElementUUID);
+    if (!geoElem) {
+        return true; //building isnt on a valid geoelem so its invalid anyways
+    }
+
+    let mutexGroup = geoElem.getMutexGroups().filter((mutexGroup) => mutexGroup.map((typeValuePair) => typeValuePair.type).includes(building_id))[0]
+    if (!mutexGroup) {
+        return false; //there is no mutexgroup for this building, its chilling
+    }
+
+    let mutexFlag = false;
+    mutexGroup.filter(typeValuePair => typeValuePair.type != building_id).forEach(typeValuePair => {
+        if(geoElem.buildings.map(building => building.id).includes(typeValuePair.type)) {
+            mutexFlag = true;
+        }
+    })
+    return mutexFlag
 }
 
-// Builds a building during initialization
+function isThisBuildingInvalidFromIndividualCap(geoElementUUID, building_id) {
+    let geoElem = getGeographicalElementById(geoElementUUID);
+    if (!geoElem) {
+        return true; //building isnt on a valid geoelem so its invalid anyways
+    }
+
+    let flag = false;
+    geoElem.situationalBuildings.flat().forEach(typeValuePair => {
+        if (typeValuePair.type == building_id && geoElem.buildings.filter(building => building.id == building_id).length >= typeValuePair.value) flag = true;
+    })
+
+    return flag;
+
+}
+//no idea why this exists ngl
 function initBuilding(building_id, element) {
-	let newBuilding = new Building(...BuildingTemplates[building_id], element.uuid)
-	element.buildings.push(newBuilding);
-	return newBuilding;
+    let newBuilding = new Building(...BuildingTemplates[building_id], element.uuid)
+    element.buildings.push(newBuilding);
+    return newBuilding;
+
 }
 
 function buildBuilding(building_id, element_uuid) { //as null is falsy, returns true when it cannot be built
-	for (let typeValueCost of BuildingTemplates[building_id][6]) {
-		if (Resources[typeValueCost.type] < typeValueCost.value) return true;
-	}
+    for (let typeValueCost of BuildingTemplates[building_id][6]) {
+        if (Resources[typeValueCost.type] < typeValueCost.value) return true;
+    } //check if has enough resources
 
 	geoElem = getGeographicalElementById(element_uuid);
 
-	if (!geoElem) return true;
-	if (geoElem.buildingBaseCapacity <= geoElem.buildings.length) return true;
-
+    if (!geoElem) return true; //check geoelem exists
+    if (geoElem.buildingBaseCapacity <= geoElem.buildings.length) return true; //check geoelem has capacity
+    if (isThisBuildingInvalidFromMutexGroup(element_uuid, building_id)) return true; //check if geoelem has a chosen mutexgroup for this
+    if (isThisBuildingInvalidFromIndividualCap(element_uuid, building_id)) return true; //check if building has reached cap for this geoelem
 
 	for (let typeValueCost of BuildingTemplates[building_id][6]) {
 		Resources[typeValueCost.type] -= typeValueCost.value
@@ -679,5 +703,3 @@ document.body.addEventListener("click", () => {
 document.getElementById("build_sidebar").addEventListener("click", (e) => {
 	e.stopPropagation();
 });
-
-// That's a lot of lines...

@@ -1,4 +1,8 @@
-/* The following code is all from lessons learned in 2537 */
+/* 
+ * The following code is all from lessons learned in 2537.
+ * Any additional code such as MongoDB database CRUD are taken
+ * from their respective documentation websites.
+ */
 
 require("./utils.js");
 require('dotenv').config();
@@ -126,10 +130,12 @@ app.get('/', (req, res) => {
 app.get('/signUp', (req, res) => {
     var errors = [];
 
+	// Take in any errors passed from /submitUser
     var invalidCred = req.query.invalidCred;
     var duplicateUsername = req.query.duplicateUsername;
     var duplicateEmail = req.query.duplicateEmail;
 
+	// If any errors, add its message to the ejs page
     if (invalidCred) {
         errors.push("Invalid account credentials");
     }
@@ -151,6 +157,7 @@ app.get('/signUp', (req, res) => {
 app.get('/login', (req, res) => {
     var errors = [];
 
+	// Take in any errors from /loggingin
     var noSession = req.query.noSession;
     var invalidEmail = req.query.invalidEmail;
     var noAccount = req.query.noAccount;
@@ -158,6 +165,7 @@ app.get('/login', (req, res) => {
     var maliciousUsername = req.query.maliciousUsername;
     var invalidUsername = req.query.invalidUsername;
 
+	// If any errors, add its message to the ejs page
     if (noSession) {
         errors.push("You are not logged in");
     }
@@ -190,6 +198,7 @@ app.post('/submitUser', async (req, res) => {
     var password = req.body.password;
     var email = req.body.email;
 
+	// Group vaidation for the above values
     const schema = Joi.object(
         {
             username: Joi.string().alphanum().max(20).required(),
@@ -199,15 +208,21 @@ app.post('/submitUser', async (req, res) => {
 
     const validationResult = schema.validate({ username, password, email });
 
+	// If there is any error in the validation above, redirect back to /signUp.
     if (validationResult.error != null) {
         console.log(validationResult.error);
-        res.redirect("/signUp?invalidCred=1");
+        
+		res.redirect("/signUp?invalidCred=1");
         return;
     }
 
+	// Next, check if there are any duplicate entries for the credentials we care about.
+	// As a note, it's unsafe to check the passwords for duplicates because that give information
+	// to attackers that a given password is in use. If paired with the knowledge of used emails, you create an attack vector.
     var duplicateUsername = await userCollection.find({ username: username }).toArray();
     var duplicateEmail = await userCollection.find({ email: email }).toArray();
     
+	// Redirect if username or email are duplicates.
     if (duplicateUsername.length != 0) {
         res.redirect('/signUp?duplicateUsername=1');
         return;
@@ -218,9 +233,11 @@ app.post('/submitUser', async (req, res) => {
         return;
     }
 
+	// Encrypt the password, insert the account into the database, and create the cookie.
     var hashedPassword = await bcrypt.hash(password, saltRounds);
 
     await userCollection.insertOne({ username: username, password: hashedPassword, email: email });
+
     console.log("Inserted user");
 
     req.session.authenticated = true;
@@ -235,27 +252,35 @@ app.post('/loggingin', async (req, res) => {
     var email = req.body.email;
     var password = req.body.password;
 
+	// Validation for the email.
     const schema = Joi.string().email({ minDomainSegments: 2, tlds: { allow: false } })
     const validationResult = schema.validate(email);
 
+	// If error, redirect and inform the user.
     if (validationResult.error != null) {
         console.log(validationResult.error);
+
         res.redirect("/login?invalidEmail=1");
         return;
     }
 
+	// Find the given account.
     const result = await userCollection.find({ email: email })
         .project({ email: 1, username: 1, password: 1, _id: 1 })
         .toArray();
 
     console.log(result);
 
+
+	// Redirect if user not found
     if (result.length != 1) {
         console.log("user not found");
+
         res.redirect("/login?noAccount=1");
         return;
     }
 
+	// If correct password create cookie and redirect to /main
     if (await bcrypt.compare(password, result[0].password)) {
         console.log("correct password");
 
@@ -268,6 +293,7 @@ app.post('/loggingin', async (req, res) => {
     }
     else {
         console.log("incorrect password");
+
         res.redirect("/login?invalidPassword=1");
         return;
     }
@@ -291,6 +317,7 @@ app.post('/save', validateSession, async (req, res) => {
         // Rest of your existing code...
         const username = req.session.username;
         
+		// Username validation
         const schema = Joi.object({ username: Joi.string().alphanum().max(20).required() });
         const validationResult = schema.validate({ username });
 
@@ -345,6 +372,7 @@ app.post('/saveTree', validateSession, async (req, res) => {
         // Rest of your existing code...
         const username = req.session.username;
         
+		// Username validation
         const schema = Joi.object({ username: Joi.string().alphanum().max(20).required() });
         const validationResult = schema.validate({ username });
 
@@ -395,6 +423,7 @@ app.post('/saveTree', validateSession, async (req, res) => {
 app.get('/main', validateSession, validateUsername, async (req, res) => {
     let username = req.session.username;
 
+	// Query flag for tutorial popup
     let newUser = req.query.newUser || null;
 
     // Get the user profile from the session's username
