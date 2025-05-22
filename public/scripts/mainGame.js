@@ -41,9 +41,11 @@ let lastTimestampSaved = Date.now();
 // STORING ARRAYS INIT -------------------------------------------------------
 // (only do if Resources or Sectors are empty)
 
+const ShortageTracker = []
 for (var key in ResourceTypes) {
 	if (!Resources[key]) Resources[key] = 0;
 	console.log("No resources loaded!")
+	ShortageTracker[key] = false;
 }
 
 if (Object.keys(Modifiers).length == 0) {
@@ -95,6 +97,11 @@ if (Sectors.length == 0) {
 	])
 	)
 }
+
+let populationMax = 100;
+let population = 1;
+
+
 
 // HELPER FUNCTIONS ----------------------------------------------------------
 function getGeographicalElementById(uuid) {
@@ -379,6 +386,8 @@ function addGeoElemsToNode(elementArray, detailNode) {
 
 
 					building.productionArray.forEach(productionObject => {
+						if (productionObject.type == ResourceTypes.PopulationCapacity) return;
+
 						let productionInfo = document.createElement('p');
 						productionInfo.innerHTML = `${ResourceTypes[productionObject.type]}: ${productionObject.value}/tick`;
 						buildingNode.querySelector('.building_production').appendChild(productionInfo);
@@ -421,6 +430,8 @@ function createResourceDisplays() {
 	let container = document.getElementById("resource_container");
 
 	Object.entries(ResourceTypes).forEach(([id, resourceName]) => {
+		if (resourceName == ResourceTypes.PopulationCapacity) return;
+
 		let newDisplayNode = document.createElement("p");
 		newDisplayNode.innerText = `${resourceName}: ${(Math.round(Resources[id] * 100) / 100).toFixed(2)}`
 		newDisplayNode.id = id;
@@ -430,6 +441,8 @@ function createResourceDisplays() {
 
 function updateResourceDisplays() {
 	Object.entries(ResourceTypes).forEach(([id, resourceName]) => {
+		if (resourceName == ResourceTypes.PopulationCapacity) return;
+
 		let node = document.getElementById(id);
 		if (!node) {
 			console.log("Resource type was missing!");
@@ -454,9 +467,9 @@ function calculateShortages() {
 	}
 }
 
-function doPopUpdate(delta) {
+function doPopUpdate() {
 	calculatePopMax();
-	popUpdate(delta);
+	popUpdate();
 }
 
 function calculatePopMax() {
@@ -475,21 +488,20 @@ function calculatePopMax() {
 			})
 		})
 	})
-
 	populationMax = maxPop;
 }
 
-function popUpdate(delta) {
+function popUpdate() {
 	if (ShortageTracker["Water"]) {
 		population *= 0.9
 	} else if (ShortageTracker["Food"]) {
 		population *= 0.85
 	} else {
-		population += (populationMax - population) * (0.01 + Math.max(Math.min(Math.log(Resources["Food"]),0.1), 0) + Math.max(Math.min(Math.log(Resources["Water"]),0.1), 0) )
+		population += (populationMax - population) * (0.01 + Math.max(Math.min(Math.log(Resources["Food"]) || 0,0.1), 0) + Math.max(Math.min(Math.log(Resources["Water"]) || 0,0.1), 0) )
 	}
 
-	Resources["Food"] -= population;
-	Resources["Water"] -= population;
+	Resources["Food"] -= population * 0.25;
+	Resources["Water"] -= population * 0.25;
 
 
 	if (population < 1) {
@@ -504,6 +516,7 @@ function updatePopDisplay() {
 	document.getElementById("popCount").innerHTML = `${Math.round(population)} thousand people.`;
 	document.getElementById("popCap").innerHTML = `${populationMax} thousand capacity.`;
 }
+
 // HELPER FUNCTIONS ----------------------------------------------------------
 
 
@@ -556,11 +569,14 @@ fastForward.addEventListener("click", e => {
 // GAME LOOP -----------------------------------------------------------------
 function gameLoop() {
 	sectorsTick();
+	calculateShortages();
+	doPopUpdate();
 }
 
 // CONSTANT LOOP -------------------------------------------------------------
 setInterval(() => {
 	updateResourceDisplays();
+	updatePopDisplay();
 }, 1000)
 
 // HTML EVENTS ---------------------------------------------------------------
