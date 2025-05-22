@@ -17,7 +17,7 @@ databaseSectors.forEach((sector) => {
 				element.situationalBuildings,
 				element.buildingBaseCapacity,
 				element.depletion,
-                element.maxDepletion,
+				element.maxDepletion,
 				element.depletesInto);
 			tempGeographicalElements.push(newGeoElem);
 			if (element.buildings) {
@@ -28,8 +28,8 @@ databaseSectors.forEach((sector) => {
 		})
 	};
 	Sectors.push(new Sector(sector.id,
-		                    sector.name,
-		                    tempGeographicalElements));
+		sector.name,
+		tempGeographicalElements));
 });
 
 console.log(Sectors)
@@ -42,9 +42,9 @@ let lastTimestampSaved = Date.now();
 // (only do if Resources or Sectors are empty)
 
 for (var key in ResourceTypes) {
-	if (!Resources[key]) Resources[key] = 1000;
+	if (!Resources[key]) Resources[key] = 0;
+	console.log("No resources loaded!")
 }
-console.log("No resources loaded!")
 
 let gah = new GeographicalElement(...GeographicalElementTemplates.element_forest)
 gah.buildings = [
@@ -67,7 +67,7 @@ if (Sectors.length == 0) {
 	)
 	Sectors.push(new Sector("gleenvale", "Gleenvale", [
 		new GeographicalElement(...GeographicalElementTemplates.element_cracked_earth),
-        new GeographicalElement(...GeographicalElementTemplates.element_cracked_earth),
+		new GeographicalElement(...GeographicalElementTemplates.element_cracked_earth),
 		new GeographicalElement(...GeographicalElementTemplates.element_forest),
 		new GeographicalElement(...GeographicalElementTemplates.element_grassland)
 	])
@@ -120,58 +120,58 @@ function convertGeoElementIntoNew(original_element_uuid, becomes_element_id) {
 }
 
 function isThisBuildingInvalidFromMutexGroup(geoElementUUID, building_id) {
-    let geoElem = getGeographicalElementById(geoElementUUID);
-    if (!geoElem) {
-        return true; //building isnt on a valid geoelem so its invalid anyways
-    }
+	let geoElem = getGeographicalElementById(geoElementUUID);
+	if (!geoElem) {
+		return true; //building isnt on a valid geoelem so its invalid anyways
+	}
 
-    let mutexGroup = geoElem.getMutexGroups().filter((mutexGroup) => mutexGroup.map((typeValuePair) => typeValuePair.type).includes(building_id))[0]
-    if (!mutexGroup) {
-        return false; //there is no mutexgroup for this building, its chilling
-    }
+	let mutexGroup = geoElem.getMutexGroups().filter((mutexGroup) => mutexGroup.map((typeValuePair) => typeValuePair.type).includes(building_id))[0]
+	if (!mutexGroup) {
+		return false; //there is no mutexgroup for this building, its chilling
+	}
 
-    let mutexFlag = false;
-    mutexGroup.filter(typeValuePair => typeValuePair.type != building_id).forEach(typeValuePair => {
-        if(geoElem.buildings.map(building => building.id).includes(typeValuePair.type)) {
-            mutexFlag = true;
-        }
-    })
-    return mutexFlag
+	let mutexFlag = false;
+	mutexGroup.filter(typeValuePair => typeValuePair.type != building_id).forEach(typeValuePair => {
+		if (geoElem.buildings.map(building => building.id).includes(typeValuePair.type)) {
+			mutexFlag = true;
+		}
+	})
+	return mutexFlag
 }
 
 function isThisBuildingInvalidFromIndividualCap(geoElementUUID, building_id) {
-    let geoElem = getGeographicalElementById(geoElementUUID);
-    if (!geoElem) {
-        return true; //building isnt on a valid geoelem so its invalid anyways
-    }
+	let geoElem = getGeographicalElementById(geoElementUUID);
+	if (!geoElem) {
+		return true; //building isnt on a valid geoelem so its invalid anyways
+	}
 
-    let flag = false;
-    geoElem.situationalBuildings.flat().forEach(typeValuePair => {
-        if (typeValuePair.type == building_id && geoElem.buildings.filter(building => building.id == building_id).length >= typeValuePair.value) flag = true;
-    })
+	let flag = false;
+	geoElem.situationalBuildings.flat().forEach(typeValuePair => {
+		if (typeValuePair.type == building_id && geoElem.buildings.filter(building => building.id == building_id).length >= typeValuePair.value) flag = true;
+	})
 
-    return flag;
+	return flag;
 
 }
 //no idea why this exists ngl
 function initBuilding(building_id, element) {
-    let newBuilding = new Building(...BuildingTemplates[building_id], element.uuid)
-    element.buildings.push(newBuilding);
-    return newBuilding;
+	let newBuilding = new Building(...BuildingTemplates[building_id], element.uuid)
+	element.buildings.push(newBuilding);
+	return newBuilding;
 
 }
 
 function buildBuilding(building_id, element_uuid) { //as null is falsy, returns true when it cannot be built
-    for (let typeValueCost of BuildingTemplates[building_id][6]) {
-        if (Resources[typeValueCost.type] < typeValueCost.value) return true;
-    } //check if has enough resources
+	for (let typeValueCost of BuildingTemplates[building_id][6]) {
+		if (Resources[typeValueCost.type] < typeValueCost.value) return true;
+	} //check if has enough resources
 
 	geoElem = getGeographicalElementById(element_uuid);
 
-    if (!geoElem) return true; //check geoelem exists
-    if (geoElem.buildingBaseCapacity <= geoElem.buildings.length) return true; //check geoelem has capacity
-    if (isThisBuildingInvalidFromMutexGroup(element_uuid, building_id)) return true; //check if geoelem has a chosen mutexgroup for this
-    if (isThisBuildingInvalidFromIndividualCap(element_uuid, building_id)) return true; //check if building has reached cap for this geoelem
+	if (!geoElem) return true; //check geoelem exists
+	if (geoElem.buildingBaseCapacity <= geoElem.buildings.length) return true; //check geoelem has capacity
+	if (isThisBuildingInvalidFromMutexGroup(element_uuid, building_id)) return true; //check if geoelem has a chosen mutexgroup for this
+	if (isThisBuildingInvalidFromIndividualCap(element_uuid, building_id)) return true; //check if building has reached cap for this geoelem
 
 	for (let typeValueCost of BuildingTemplates[building_id][6]) {
 		Resources[typeValueCost.type] -= typeValueCost.value
@@ -230,18 +230,18 @@ function switchBuildTab(tab_name, element_uuid) {
 			building.forEach(mutexBuilding => {
 				let buildingTemplate = BuildingTemplates[mutexBuilding.type]
 				let buildingInfo = document.createElement("p");
-                if (buildingTemplate[1] == tab_name || tab_name == "All") {
-                    buildingInfo.innerHTML = `Build ${buildingTemplate[2]}, Costs ${prettyStringFromGenericTypeValueArray(buildingTemplate[6])}`
-                    buildingInfo.classList = ["hud-button"];
-                    buildingsNode.appendChild(buildingInfo);
-                    buildingInfo.addEventListener('click', e => {
-                        if (buildBuilding(buildingTemplate[0], element_uuid)) {
-                            buildingInfo.classList.remove('red-flash');
-                            void buildingInfo.offsetWidth;
-                            buildingInfo.classList.add('red-flash');
-                        }
-                    })
-                }
+				if (buildingTemplate[1] == tab_name || tab_name == "All") {
+					buildingInfo.innerHTML = `Build ${buildingTemplate[2]}, Costs ${prettyStringFromGenericTypeValueArray(buildingTemplate[6])}`
+					buildingInfo.classList = ["hud-button"];
+					buildingsNode.appendChild(buildingInfo);
+					buildingInfo.addEventListener('click', e => {
+						if (buildBuilding(buildingTemplate[0], element_uuid)) {
+							buildingInfo.classList.remove('red-flash');
+							void buildingInfo.offsetWidth;
+							buildingInfo.classList.add('red-flash');
+						}
+					})
+				}
 			})
 
 			buildingsNode.appendChild(document.createElement("hr"));
@@ -283,17 +283,16 @@ function wipeCurrentSector() {
 
 function displayNewSector(sector) {
 	// If new regions are unlocked
-    // (or if the current sector is Northwest Boglo)
-    if((Modifiers.unlocks &&
-       Modifiers.unlocks.newRegions == true) ||
-       sector.name == "Northwest Boglo")
-    {
-        wipeCurrentSector();
-        let newSector = document.getElementById("sector").content.cloneNode(true);
-        newSector.querySelector('.sector_name').innerHTML = `Overview of ${sector.name}`;
-        addGeoElemsToNode(sector.geographicalElements, newSector.querySelector('.sector_details'))
-        document.getElementById('gerge').appendChild(newSector);
-    }
+	// (or if the current sector is Northwest Boglo)
+	if ((Modifiers.unlocks &&
+		Modifiers.unlocks.newRegions == true) ||
+		sector.name == "Northwest Boglo") {
+		wipeCurrentSector();
+		let newSector = document.getElementById("sector").content.cloneNode(true);
+		newSector.querySelector('.sector_name').innerHTML = `Overview of ${sector.name}`;
+		addGeoElemsToNode(sector.geographicalElements, newSector.querySelector('.sector_details'))
+		document.getElementById('gerge').appendChild(newSector);
+	}
 }
 
 function addGeoElemsToNode(elementArray, detailNode) {
@@ -516,3 +515,11 @@ document.body.addEventListener("click", () => {
 document.getElementById("build_sidebar").addEventListener("click", (e) => {
 	e.stopPropagation();
 });
+
+// CHEAT FUCNTION FOR DEVELOPMENT ------------------------------------------
+function cheat() {
+	for (var key in ResourceTypes) {
+		Resources[key] += 1000;
+	}
+	console.log("Nice going, cheater!");
+}
