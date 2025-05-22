@@ -415,6 +415,7 @@ function sectorsTick() {
 	})
 }
 
+
 function calculateShortages() {
 	for (let key in ResourceTypes) {
 		ShortageTracker[key] = Resources[key] < 0;
@@ -424,7 +425,6 @@ function calculateShortages() {
 function doPopUpdate(delta) {
 	calculatePopMax();
 	popUpdate(delta);
-	//updatePopDisplay();
 }
 
 function calculatePopMax() {
@@ -444,12 +444,34 @@ function calculatePopMax() {
 		})
 	})
 
+	console.log(populationMax);
 	populationMax = maxPop;
 }
 
 function popUpdate(delta) {
-	
+	if (ShortageTracker["Water"]) {
+		population *= 0.9
+	} else if (ShortageTracker["Food"]) {
+		population *= 0.85
+	} else {
+		population += (populationMax - population) * (0.01 + Math.max(Math.min(Math.log(Resources["Food"]),0.1), 0) + Math.max(Math.min(Math.log(Resources["Water"]),0.1), 0) )
+	}
 
+	Resources["Food"] -= population;
+	Resources["Water"] -= population;
+
+
+	if (population < 1) {
+		population = 1;
+	}
+	if (population > populationMax) {
+		population = populationMax;
+	}
+}
+
+function updatePopDisplay() {
+	document.getElementById("popCount").innerHTML = `${Math.round(population)} thousand people.`;
+	document.getElementById("popCap").innerHTML = `${populationMax} thousand capacity.`;
 }
 // HELPER FUNCTIONS ----------------------------------------------------------
 
@@ -510,6 +532,7 @@ function gameLoop() {
 // CONSTANT LOOP -------------------------------------------------------------
 setInterval(() => {
 	updateResourceDisplays();
+	updatePopDisplay();
 }, 100)
 
 // HTML EVENTS ---------------------------------------------------------------
