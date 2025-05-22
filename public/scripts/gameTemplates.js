@@ -250,7 +250,7 @@ const BuildingTemplates = {
 		[],
 		[new GenericTypeValue("Water", 25)],
 		[new GenericTypeValue("BuildingMaterials", 100)],
-		[],
+		["element_river"],
 		null
 	],
 	building_groundwater_pump: [
@@ -261,7 +261,7 @@ const BuildingTemplates = {
 		[],
 		[new GenericTypeValue("Water", 50)],
 		[new GenericTypeValue("BuildingMaterials", 250)],
-		[],
+		["element_river", "element_grassland"],
 		null
 	],
 	building_desalinator: [
@@ -272,7 +272,7 @@ const BuildingTemplates = {
 		[],
 		[new GenericTypeValue("Water", 100)],
 		[new GenericTypeValue("BuildingMaterials", 500)],
-		[],
+		["element_river"],
 		5
 	],
 	// Buildings to do with Food
