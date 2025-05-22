@@ -1,7 +1,7 @@
 const skills = document.querySelectorAll('.skill');
 const svg = document.getElementById('connectorSVG');
 
-let skillPoints = 0;
+let skillPoints = points;
 const skillPointsDisplay = document.getElementById('skillPoints');
 
 const infoBox = document.getElementById('infoBox');
@@ -275,7 +275,8 @@ function save() {
         },
         body: JSON.stringify({  // Make sure to stringify
             unlocks: UnlockedSkills,
-            modifiers: window.skillEffects.modifiers
+            modifiers: window.skillEffects.modifiers,
+            points: skillPoints
         })
     })
     .then(response => {

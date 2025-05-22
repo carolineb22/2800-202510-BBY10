@@ -2,6 +2,7 @@
 
 // Load the saved data from the database
 const Resources = databaseResources;
+const Modifiers = databaseMods;
 
 // Load the sectors from the database
 const Sectors = [];
@@ -44,8 +45,6 @@ for (var key in ResourceTypes) {
 	if (!Resources[key]) Resources[key] = 1000;
 }
 console.log("No resources loaded!")
-
-
 
 let gah = new GeographicalElement(...GeographicalElementTemplates.element_forest)
 gah.buildings = [
@@ -231,16 +230,18 @@ function switchBuildTab(tab_name, element_uuid) {
 			building.forEach(mutexBuilding => {
 				let buildingTemplate = BuildingTemplates[mutexBuilding.type]
 				let buildingInfo = document.createElement("p");
-				buildingInfo.innerHTML = `Build ${buildingTemplate[2]}, Costs ${prettyStringFromGenericTypeValueArray(buildingTemplate[6])}`
-				buildingInfo.classList = ["hud-button"];
-				buildingsNode.appendChild(buildingInfo);
-				buildingInfo.addEventListener('click', e => {
-					if (buildBuilding(buildingTemplate[0], element_uuid)) {
-						buildingInfo.classList.remove('red-flash');
-						void buildingInfo.offsetWidth;
-						buildingInfo.classList.add('red-flash');
-					}
-				})
+                if (buildingTemplate[1] == tab_name || tab_name == "All") {
+                    buildingInfo.innerHTML = `Build ${buildingTemplate[2]}, Costs ${prettyStringFromGenericTypeValueArray(buildingTemplate[6])}`
+                    buildingInfo.classList = ["hud-button"];
+                    buildingsNode.appendChild(buildingInfo);
+                    buildingInfo.addEventListener('click', e => {
+                        if (buildBuilding(buildingTemplate[0], element_uuid)) {
+                            buildingInfo.classList.remove('red-flash');
+                            void buildingInfo.offsetWidth;
+                            buildingInfo.classList.add('red-flash');
+                        }
+                    })
+                }
 			})
 
 			buildingsNode.appendChild(document.createElement("hr"));
@@ -261,10 +262,7 @@ function switchBuildTab(tab_name, element_uuid) {
 				})
 			}
 		}
-
-
 	})
-
 }
 
 function prettyStringFromGenericTypeValueArray(typeValueArray) {
@@ -284,13 +282,19 @@ function wipeCurrentSector() {
 }
 
 function displayNewSector(sector) {
-	let newSector = document.getElementById("sector").content.cloneNode(true);
-	newSector.querySelector('.sector_name').innerHTML = `Overview of ${sector.name}`;
-	addGeoElemsToNode(sector.geographicalElements, newSector.querySelector('.sector_details'))
-
-	document.getElementById('gerge').appendChild(newSector);
+	// If new regions are unlocked
+    // (or if the current sector is Northwest Boglo)
+    if((Modifiers.unlocks &&
+       Modifiers.unlocks.newRegions == true) ||
+       sector.name == "Northwest Boglo")
+    {
+        wipeCurrentSector();
+        let newSector = document.getElementById("sector").content.cloneNode(true);
+        newSector.querySelector('.sector_name').innerHTML = `Overview of ${sector.name}`;
+        addGeoElemsToNode(sector.geographicalElements, newSector.querySelector('.sector_details'))
+        document.getElementById('gerge').appendChild(newSector);
+    }
 }
-
 
 function addGeoElemsToNode(elementArray, detailNode) {
 	elementArray.forEach(element => {
@@ -365,7 +369,6 @@ function addGeoElemsToNode(elementArray, detailNode) {
 }
 
 function updateSectorDisplay() { //this is costly. no other way around it.
-	wipeCurrentSector();
 	displayNewSector(Sectors[activeSector]);
 }
 
@@ -450,47 +453,27 @@ fastForward.addEventListener("click", e => {
 	}
 
 })
-// TICK CONTROL --------------------------------------------------------------
-
 
 // GAME LOOP -----------------------------------------------------------------
 function gameLoop() {
 	sectorsTick();
 }
-// GAME LOOP -----------------------------------------------------------------
-
 
 // CONSTANT LOOP -------------------------------------------------------------
-
 setInterval(() => {
 	updateResourceDisplays();
 }, 1000)
 
-
-// CONSTANT LOOP -------------------------------------------------------------
-
 // HTML EVENTS ---------------------------------------------------------------
-
 document.getElementById('cycle_sector').addEventListener("click", e => {
 	activeSector += 1;
 	if (activeSector >= Sectors.length) {
 		activeSector = 0;
 	}
-	wipeCurrentSector();
 	displayNewSector(Sectors[activeSector])
 })
 
-/*
-document.getElementById('update_elem').addEventListener("click", e => {
-	activeElement = document.getElementById('elementInput').value;
-	displayBuildingSidebar();
-})
-*/
-// HTML EVENTS ---------------------------------------------------------------
-
-
 // SAVING/LOADING ------------------------------------------------------------
-
 function save() {
 	lastTimestampSaved = Date.now();
 	console.log(lastTimestampSaved);

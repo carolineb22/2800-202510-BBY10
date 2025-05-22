@@ -67,7 +67,7 @@ const GeographicalElementTemplates = {
 	element_mountain_rich: [
 		"element_mountain_rich",
 		"Mineral Rich Mountain",
-		"A mountian with vast resources to mine. Also take advantage of the nearby trees!",
+		"A mountain with vast resources to mine. Also take advantage of the nearby trees!",
 		[
 			new GenericTypeValue("BuildingMaterials", 0.1)
 		],
@@ -355,11 +355,11 @@ const BuildingTemplates = {
 		"building_alchemist_lab",
 		BuildingTypes.Processing,
 		"Alchemist Lab",
-		"Creates rare but useful compounds using research and Advanced Goods.",
+		"Creates rare but useful compounds using research and advanced goods.",
 		[new GenericTypeValue("Water", 500),
 		new GenericTypeValue("Metal", 300),
 		new GenericTypeValue("Chemicals", 200),
-		new GenericTypeValue("AdvancedGoods", 100)],
+		new GenericTypeValue("ResearchPoints", 100)],
 		[new GenericTypeValue("Chemicals", 100)],
 		[new GenericTypeValue("BuildingMaterials", 5000),
 		new GenericTypeValue("Metal", 1000)],
