@@ -136,12 +136,18 @@ function Building(id, type, name, description, consumptionArray, productionArray
 
 		if (this.active) {
 			this.productionArray.forEach(typeValueObject => {
+				if (typeValueObject.type == ResourceTypes.PopulationCapacity) {
+					console.log("Housing skipped.");
+					return;
+				}
+
+
                 let value = typeValueObject.value
                 switch(typeValueObject.type)
                 {
                     case "Food": value *= Modifiers.multipliers.foodYield; break;
                     case "Water": value *= Modifiers.multipliers.waterOutput; break;
-                    case "ResearchPoints": value *= Modifiers.multipliers.researchSpeed; break;
+                    case "ResearchPoints": value *= Modifiers.multipliers.waterOutput; break;
                 }
 				Resources[typeValueObject.type] += typeValueObject.value
 			})
