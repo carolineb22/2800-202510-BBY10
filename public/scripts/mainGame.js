@@ -406,8 +406,8 @@ function sectorsTick() {
 
 
 // TICK CONTROL --------------------------------------------------------------
-const tickInterval = 100; //in milliseconds
-const fastInterval = 50; //in milliseconds
+const tickInterval = 1000; //in milliseconds
+const fastInterval = 500; //in milliseconds
 let fastMode = false;
 let gameInterval;
 
@@ -464,7 +464,7 @@ function gameLoop() {
 
 setInterval(() => {
 	updateResourceDisplays();
-}, 25)
+}, 1000)
 
 
 // CONSTANT LOOP -------------------------------------------------------------
