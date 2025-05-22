@@ -105,15 +105,13 @@ function GeographicalElement(id, name, description, passiveProduction, situation
 //     [                        -- costArray
 //         ["resource", cost]   -- resources and their cost needed to build this Building
 //     ],
-//     [
-//         "element_id" -- list of ids that this building works when on, empty or null means it works on all.
+//     [				-- doesWorkWhenOnIdArray
+//         "element_id" -- list of ids that this building works when on, empty array means it works on all elements.
 //     ]
 //     depletion,   -- the amount of the parent GeographicalElement's resource that this Building
 //                  -- depletes per tick (depletion/tick). Can be null, but must be present.
-//     "needsType", -- the ID (internal name) of the GE that this building can be built on.
-//     builtOnElement   -- the UUID of the GE that this Building is built on.
-//                      -- This is left out of the JSON internally since UUIDs change each session.
 // ]
+// builtOnElement is left out of the JSON template since it uses GUIDs that are generated at runtime.
 function Building(id, type, name, description, consumptionArray, productionArray, costArray, doesWorkWhenOnIdArray, depletion, builtOnElement) {
 	this.uuid = crypto.randomUUID(); //uuid of this element
 	this.id = id; //id of this element, is seperate from uuid as multiple of the same building can inhabit an element
