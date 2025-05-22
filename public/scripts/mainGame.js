@@ -255,18 +255,18 @@ function switchBuildTab(tab_name, element_uuid) {
 			building.forEach(mutexBuilding => {
 				let buildingTemplate = BuildingTemplates[mutexBuilding.type]
 				let buildingInfo = document.createElement("p");
-				if (buildingTemplate[1] == tab_name || tab_name == "All") {
-					buildingInfo.innerHTML = `Build ${buildingTemplate[2]}, Costs ${prettyStringFromGenericTypeValueArray(buildingTemplate[6])}`
-					buildingInfo.classList = ["hud-button"];
-					buildingsNode.appendChild(buildingInfo);
-					buildingInfo.addEventListener('click', e => {
-						if (buildBuilding(buildingTemplate[0], element_uuid)) {
-							buildingInfo.classList.remove('red-flash');
-							void buildingInfo.offsetWidth;
-							buildingInfo.classList.add('red-flash');
-						}
-					})
-				}
+                if (buildingTemplate[1] == tab_name || tab_name == "All") {
+                    buildingInfo.innerHTML = `Build ${buildingTemplate[2]} (Max ${mutexBuilding.value}), Costs ${prettyStringFromGenericTypeValueArray(buildingTemplate[6])} `
+                    buildingInfo.classList = ["hud-button"];
+                    buildingsNode.appendChild(buildingInfo);
+                    buildingInfo.addEventListener('click', e => {
+                        if (buildBuilding(buildingTemplate[0], element_uuid)) {
+                            buildingInfo.classList.remove('red-flash');
+                            void buildingInfo.offsetWidth;
+                            buildingInfo.classList.add('red-flash');
+                        }
+                    })
+                }
 			})
 
 			buildingsNode.appendChild(document.createElement("hr"));
@@ -275,7 +275,7 @@ function switchBuildTab(tab_name, element_uuid) {
 			let buildingTemplate = BuildingTemplates[building.type]
 			let buildingInfo = document.createElement("p");
 			if (buildingTemplate[1] == tab_name || tab_name == "All") {
-				buildingInfo.innerHTML = `Build ${buildingTemplate[2]}, Costs ${prettyStringFromGenericTypeValueArray(buildingTemplate[6])}`
+				buildingInfo.innerHTML = `Build ${buildingTemplate[2]} (Max ${building.value}), Costs ${prettyStringFromGenericTypeValueArray(buildingTemplate[6])}`
 				buildingInfo.classList = ["hud-button"];
 				buildingsNode.appendChild(buildingInfo);
 				buildingInfo.addEventListener('click', e => {
@@ -429,6 +429,64 @@ function sectorsTick() {
 	Sectors.forEach(sector => {
 		sector.doTick();
 	})
+}
+
+
+function calculateShortages() {
+	for (let key in ResourceTypes) {
+		ShortageTracker[key] = Resources[key] < 0;
+	}
+}
+
+function doPopUpdate(delta) {
+	calculatePopMax();
+	popUpdate(delta);
+}
+
+function calculatePopMax() {
+	let maxPop = 100;
+
+	Sectors.forEach(sector => {
+		sector.geographicalElements.forEach(geoElem => {
+			geoElem.buildings.forEach(building => {
+				if (building.type == BuildingTypes.Housing) {
+					building.productionArray.forEach(typeValuePair => {
+						if (typeValuePair.type == ResourceTypes.PopulationCapacity) {
+							maxPop += typeValuePair.value;
+						}
+					})
+				}
+			})
+		})
+	})
+
+	populationMax = maxPop;
+}
+
+function popUpdate(delta) {
+	if (ShortageTracker["Water"]) {
+		population *= 0.9
+	} else if (ShortageTracker["Food"]) {
+		population *= 0.85
+	} else {
+		population += (populationMax - population) * (0.01 + Math.max(Math.min(Math.log(Resources["Food"]),0.1), 0) + Math.max(Math.min(Math.log(Resources["Water"]),0.1), 0) )
+	}
+
+	Resources["Food"] -= population;
+	Resources["Water"] -= population;
+
+
+	if (population < 1) {
+		population = 1;
+	}
+	if (population > populationMax) {
+		population = populationMax;
+	}
+}
+
+function updatePopDisplay() {
+	document.getElementById("popCount").innerHTML = `${Math.round(population)} thousand people.`;
+	document.getElementById("popCap").innerHTML = `${populationMax} thousand capacity.`;
 }
 // HELPER FUNCTIONS ----------------------------------------------------------
 
