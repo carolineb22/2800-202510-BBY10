@@ -72,9 +72,7 @@ const ResourceTypes = {
     Food: "Food",
     BuildingMaterials: "Building Materials",
     Metal: "Metal",
-    Chemicals: "Chemicals",
-    AdvancedGoods: "Advanced Goods",
-    Metamaterials: "Metamaterials"
+    Chemicals: "Chemicals"
 }
 // ENUMS --------------------------------------------------------------------
 
@@ -93,12 +91,12 @@ const GeographicalElementTemplates = {
         ],
         [
             [
-                new GenericTypeValue("building_logging_site", 1),
+                new GenericTypeValue("building_logging_site", 2),
                 new GenericTypeValue("building_wood_power_plant", 1)
             ],
-            new GenericTypeValue("building_forest_cabins", 1)
+            new GenericTypeValue("building_forest_cabins", 3)
         ],
-        2,
+        3,
         0,
         200,
         "element_grassland"
@@ -111,7 +109,7 @@ const GeographicalElementTemplates = {
         [
             new GenericTypeValue("building_arable_farm", 3)
         ],
-        3,
+        4,
         0,
         500,
         null
@@ -144,7 +142,7 @@ const BuildingTemplates = {
         [],
         [],
         [
-            new GenericTypeValue("BuildingMaterials", 30000)
+            new GenericTypeValue("BuildingMaterials", 100)
         ],
         ["element_forest"],
         3
@@ -157,7 +155,7 @@ const BuildingTemplates = {
         [],
         [],
         [
-            new GenericTypeValue("BuildingMaterials", 20000)
+            new GenericTypeValue("BuildingMaterials", 100)
         ],
         ["element_forest"],
         null
@@ -301,6 +299,10 @@ function GeographicalElement(id, name, description, passiveProduction, situation
         this.buildings.forEach(building => {
             building.checkIfCanDoWork();
         })
+    }
+
+    this.getMutexGroups = function() {
+        return this.situationalBuildings.filter((group) => Array.isArray(group));
     }
 }
 
@@ -466,15 +468,52 @@ function convertGeoElementIntoNew(original_element_uuid, becomes_element_id) {
     updateSectorDisplay();
 }
 
+function isThisBuildingInvalidFromMutexGroup(geoElementUUID, building_id) {
+    let geoElem = getGeographicalElementById(geoElementUUID);
+    if (!geoElem) {
+        return true; //building isnt on a valid geoelem so its invalid anyways
+    }
+
+    let mutexGroup = geoElem.getMutexGroups().filter((mutexGroup) => mutexGroup.map((typeValuePair) => typeValuePair.type).includes(building_id))[0]
+    if (!mutexGroup) {
+        return false; //there is no mutexgroup for this building, its chilling
+    }
+
+    let mutexFlag = false;
+    mutexGroup.filter(typeValuePair => typeValuePair.type != building_id).forEach(typeValuePair => {
+        if(geoElem.buildings.map(building => building.id).includes(typeValuePair.type)) {
+            mutexFlag = true;
+        }
+    })
+    return mutexFlag
+}
+
+function isThisBuildingInvalidFromIndividualCap(geoElementUUID, building_id) {
+    let geoElem = getGeographicalElementById(geoElementUUID);
+    if (!geoElem) {
+        return true; //building isnt on a valid geoelem so its invalid anyways
+    }
+
+    let flag = false;
+    geoElem.situationalBuildings.flat().forEach(typeValuePair => {
+        if (typeValuePair.type == building_id && geoElem.buildings.filter(building => building.id == building_id).length >= typeValuePair.value) flag = true;
+    })
+
+    return flag;
+}
+
 function buildBuilding(building_id, element_uuid) { //as null is falsy, returns true when it cannot be built
     for (let typeValueCost of BuildingTemplates[building_id][6]) {
         if (Resources[typeValueCost.type] < typeValueCost.value) return true;
-    }
+    } //check if has enough resources
 
     geoElem = getGeographicalElementById(element_uuid);
 
-    if (!geoElem) return true;
-    if (geoElem.buildingBaseCapacity <= geoElem.buildings.length) return true;
+    if (!geoElem) return true; //check geoelem exists
+    if (geoElem.buildingBaseCapacity <= geoElem.buildings.length) return true; //check geoelem has capacity
+    if (isThisBuildingInvalidFromMutexGroup(element_uuid, building_id)) return true; //check if geoelem has a chosen mutexgroup for this
+    if (isThisBuildingInvalidFromIndividualCap(element_uuid, building_id)) return true; //check if building has reached cap for this geoelem
+    
 
 
     for (let typeValueCost of BuildingTemplates[building_id][6]) {
@@ -765,6 +804,8 @@ function gameLoop() {
 
 setInterval(() => {
     updateResourceDisplays();
+
+    
 }, 25)
 
 
