@@ -54,21 +54,21 @@ gah.buildings = [
 if (Sectors.length == 0) {
 	Sectors.push(new Sector("northwest_boglo", "Northwest Boglo", [
 		gah,
-		new GeographicalElement(...GeographicalElementTemplates.element_forest),
-		new GeographicalElement(...GeographicalElementTemplates.element_forest),
+		new GeographicalElement(...GeographicalElementTemplates.element_river),
+		new GeographicalElement(...GeographicalElementTemplates.element_mountain_rich),
 		new GeographicalElement(...GeographicalElementTemplates.element_grassland)
 	])
 	)
 	Sectors.push(new Sector("flumpland", "Flumpland", [
 		new GeographicalElement(...GeographicalElementTemplates.element_river),
 		new GeographicalElement(...GeographicalElementTemplates.element_river),
-		new GeographicalElement(...GeographicalElementTemplates.element_grassland)
+		new GeographicalElement(...GeographicalElementTemplates.element_forest)
 	])
 	)
 	Sectors.push(new Sector("gleenvale", "Gleenvale", [
 		new GeographicalElement(...GeographicalElementTemplates.element_cracked_earth),
 		new GeographicalElement(...GeographicalElementTemplates.element_cracked_earth),
-		new GeographicalElement(...GeographicalElementTemplates.element_forest),
+		new GeographicalElement(...GeographicalElementTemplates.element_grassland),
 		new GeographicalElement(...GeographicalElementTemplates.element_grassland)
 	])
 	)
@@ -307,6 +307,7 @@ function wipeCurrentSector() {
 }
 
 function displayNewSector(sector) {
+    console.log("clicked", s)
 	// If new regions are unlocked
 	// (or if the current sector is Northwest Boglo)
 	if ((Modifiers.unlocks &&
