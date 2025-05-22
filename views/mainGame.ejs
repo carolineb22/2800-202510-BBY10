@@ -172,11 +172,13 @@
 		var databaseResources = JSON.parse(stringifiedResources) || {};
 		let unHTMLedSectors = JSON.parse("\"<%=sectors%>\"");
 		let stringifiedSectors = unHTMLedSectors.replace(/&#34;/g, '"');
-		var databaseSectors = JSON.parse(stringifiedSectors);
-		console.log(databaseResources);
-		console.log(databaseSectors);
+		var databaseSectors = JSON.parse(stringifiedSectors) || [];
+        let unHTMLedMods = JSON.parse("\"<%=modifiers%>\"");
+		let stringifiedMods = unHTMLedMods.replace(/&#34;/g, '"');
+		var databaseMods = JSON.parse(stringifiedMods) || [];
 	</script>
     <script src="../scripts/gameTemplates.js"></script>
+    <script src="../scripts/gameplayObjects.js"></script>
 	<script src="../scripts/mainGame.js"></script>
 	<!-- Puter SDK -->
 	<script src="https://js.puter.com/v2/"></script>
