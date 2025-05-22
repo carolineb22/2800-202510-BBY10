@@ -56,6 +56,11 @@ function GeographicalElement(id, name, description, passiveProduction, situation
 	// run through every resource that this GE has in passiveProduction 
 	// and increment by some set value
 	this.doTick = function () {
+		this.depletion -= 0.5
+		if (this.depletion < 0) {
+			this.depletion = 0;
+		}
+
 		this.passiveProduction.forEach(typeValueObject => {
 			Resources[typeValueObject.type] += typeValueObject.value
 		})
