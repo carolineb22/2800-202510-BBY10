@@ -82,7 +82,9 @@ const GeographicalElementTemplates = {
 			new GenericTypeValue("building_farm", 3),
 			new GenericTypeValue("building_greenhouse", 2),
 			new GenericTypeValue("building_vertical_hydroponics", 2),
-			new GenericTypeValue("building_research_lab", 2)
+			new GenericTypeValue("building_research_lab", 2),
+			new GenericTypeValue("building_apartments", 1),
+			new GenericTypeValue("building_skyscraper", 1)
 		],
 		3,
 		0,
@@ -207,6 +209,36 @@ const BuildingTemplates = {
 			new GenericTypeValue("BuildingMaterials", 100)
 		],
 		["element_forest"],
+		null
+	],
+	building_apartments: [
+		"building_apartments",
+		BuildingTypes.Housing,
+		"Apartment Building",
+		"Wide Buildings to house many people.",
+		[],
+		[
+			new GenericTypeValue("PopulationCapacity", 100)
+		],
+		[
+			new GenericTypeValue("BuildingMaterials", 200)
+		],
+		["element_grassland"],
+		null
+	],
+	building_skyscraper: [
+		"building_skyscraper",
+		BuildingTypes.Housing,
+		"Skyscraper",
+		"Tall buildings for housing many, many people.",
+		[],
+		[
+			new GenericTypeValue("PopulationCapacity", 250)
+		],
+		[
+			new GenericTypeValue("BuildingMaterials", 1000)
+		],
+		["element_grassland"],
 		null
 	],
 	// Buildings to do with Water
