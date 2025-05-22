@@ -307,12 +307,11 @@ function wipeCurrentSector() {
 }
 
 function displayNewSector(sector) {
-    console.log("clicked", s)
 	// If new regions are unlocked
 	// (or if the current sector is Northwest Boglo)
 	if ((Modifiers.unlocks &&
 		Modifiers.unlocks.newRegions == true) ||
-		sector.name == "Northwest Boglo") {
+		sector.id == "northwest_boglo") {
 		wipeCurrentSector();
 		let newSector = document.getElementById("sector").content.cloneNode(true);
 		newSector.querySelector('.sector_name').innerHTML = `Overview of ${sector.name}`;
