@@ -332,15 +332,13 @@ function wipeCurrentSector() {
 function displayNewSector(sector) {
 	// If new regions are unlocked
 	// (or if the current sector is Northwest Boglo)
-	if ((Modifiers.unlocks &&
-		Modifiers.unlocks.newRegions == true) ||
-		sector.id == "northwest_boglo") {
+
 		wipeCurrentSector();
 		let newSector = document.getElementById("sector").content.cloneNode(true);
 		newSector.querySelector('.sector_name').innerHTML = `Overview of ${sector.name}`;
 		addGeoElemsToNode(sector.geographicalElements, newSector.querySelector('.sector_details'))
 		document.getElementById('gerge').appendChild(newSector);
-	}
+
 }
 
 function addGeoElemsToNode(elementArray, detailNode) {
@@ -581,11 +579,15 @@ setInterval(() => {
 
 // HTML EVENTS ---------------------------------------------------------------
 document.getElementById('cycle_sector').addEventListener("click", e => {
+
+	if ((Modifiers.unlocks &&
+		Modifiers.unlocks.newRegions == true)) {
+
 	activeSector += 1;
 	if (activeSector >= Sectors.length) {
 		activeSector = 0;
 	}
-	displayNewSector(Sectors[activeSector])
+	displayNewSector(Sectors[activeSector])}
 })
 
 // SAVING/LOADING ------------------------------------------------------------

@@ -135,9 +135,11 @@ const GeographicalElementTemplates = {
 				new GenericTypeValue("building_logging_site", 1),
 				new GenericTypeValue("building_wood_power_plant", 1)
 			],
-			new GenericTypeValue("building_well", 3),
-			new GenericTypeValue("building_groundwater_pump", 2),
-			new GenericTypeValue("building_desalinator", 1)
+			[
+				new GenericTypeValue("building_well", 3),
+				new GenericTypeValue("building_groundwater_pump", 2),
+				new GenericTypeValue("building_desalinator", 1)
+			]
 		],
 		10,
 		0,
