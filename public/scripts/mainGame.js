@@ -43,8 +43,8 @@ let lastTimestampSaved = Date.now();
 
 for (var key in ResourceTypes) {
 	if (!Resources[key]) Resources[key] = 0;
+	console.log("No resources loaded!")
 }
-console.log("No resources loaded!")
 
 let gah = new GeographicalElement(...GeographicalElementTemplates.element_forest)
 gah.buildings = [
@@ -515,3 +515,11 @@ document.body.addEventListener("click", () => {
 document.getElementById("build_sidebar").addEventListener("click", (e) => {
 	e.stopPropagation();
 });
+
+// CHEAT FUCNTION FOR DEVELOPMENT ------------------------------------------
+function cheat() {
+	for (var key in ResourceTypes) {
+		Resources[key] += 1000;
+	}
+	console.log("Nice going, cheater!");
+}
