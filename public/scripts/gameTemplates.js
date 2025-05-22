@@ -1,6 +1,7 @@
 // ENUMS --------------------------------------------------------------------
 
-// Some examples of building types.
+// Building Types used in the game.
+// Housing is unused as of now.
 const BuildingTypes = {
 	Housing: "Housing",
 	Extraction: "Extraction",
@@ -8,7 +9,7 @@ const BuildingTypes = {
 	Research: "Research"
 }
 
-// some example resources
+// Resources that buildings use as types of currency in the game.
 const ResourceTypes = {
 	Water: "Water",
 	Food: "Food",
@@ -21,6 +22,7 @@ const ResourceTypes = {
 
 
 // GAMEPLAY ELEMENT TEMPLATES -----------------------------------------------
+// For information on how to create more of these objects, visit gameplayObjects.js for the relevant templates.
 
 // Geographical Element JSON Templates
 const GeographicalElementTemplates = {
@@ -130,6 +132,7 @@ const GeographicalElementTemplates = {
 
 // Building JSON Templates
 const BuildingTemplates = {
+	// Testing buildings
 	building_logging_site: [
 		"building_logging_site",
 		BuildingTypes.Extraction,
@@ -171,6 +174,7 @@ const BuildingTemplates = {
 		["element_forest"],
 		null
 	],
+	// Buildings to do with Water
 	building_well: [
 		"building_well",
 		BuildingTypes.Extraction,
@@ -204,6 +208,7 @@ const BuildingTemplates = {
 		[],
 		5
 	],
+	// Buildings to do with Food
 	building_farm: [
 		"building_farm",
 		BuildingTypes.Extraction,
@@ -237,6 +242,7 @@ const BuildingTemplates = {
 		[],
 		null
 	],
+	// Buildings to do with Building Materials
 	building_lumber_mill: [
 		"building_lumber_mill",
 		BuildingTypes.Extraction,
@@ -278,6 +284,7 @@ const BuildingTemplates = {
 		[],
 		null
 	],
+	// Buildings to do with Metal
 	building_iron_mine: [
 		"building_iron_mine",
 		BuildingTypes.Extraction,
@@ -314,6 +321,7 @@ const BuildingTemplates = {
 		[],
 		null
 	],
+	// Buildings to do with Chemicals
 	building_chemical_plant: [
 		"building_chemical_plant",
 		BuildingTypes.Processing,
@@ -358,6 +366,7 @@ const BuildingTemplates = {
 		[],
 		null
 	],
+	// Buildings to do with Research
 	building_library: [
 		"building_library",
 		BuildingTypes.Research,
@@ -397,6 +406,7 @@ const BuildingTemplates = {
 		[],
 		null
 	],
+	// The following are kept for testing.
 	building_test: [
 		"building_test",
 		BuildingTypes.Extraction,
