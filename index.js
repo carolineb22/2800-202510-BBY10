@@ -362,7 +362,7 @@ app.post('/saveTree', validateSession, async (req, res) => {
             return res.status(400).send("No data received");
         }
 
-        const { unlocks, modifiers } = req.body;
+        const { unlocks, modifiers, points } = req.body;
         
         // Validate required fields
         if (!unlocks || !modifiers) {
@@ -388,6 +388,17 @@ app.post('/saveTree', validateSession, async (req, res) => {
         if (!user.length) {
             return res.status(401).send("User not found");
         }
+
+        await saveCollection.updateOne(
+            { username: username },
+            {
+                $set: {
+                    user_id: user[0]._id,
+                    "resources.ResearchPoints": points
+                }
+            },
+            { upsert: true }
+        );
 
         await treeCollection.updateOne(
             { username: username },
@@ -488,6 +499,10 @@ app.get('/main/techTree', validateSession, validateUsername, async (req, res) =>
         return;
     }
 
+    let resourcesArray = await saveCollection.find({ user_id: user._id }).project({resources: 1}).toArray();
+    let researchPoints = resourcesArray[0].resources.ResearchPoints;
+    console.log(resourcesArray)
+    console.log(researchPoints);
     let treeArray = await treeCollection.find({ user_id: user._id }).toArray();
     let treeUnlocks = treeArray[0];
     let modsArray = await modsCollection.find({ user_id: user._id }).toArray();
@@ -500,7 +515,8 @@ app.get('/main/techTree', validateSession, validateUsername, async (req, res) =>
         // the style sheets (and JS)
         css: ["../styles/techTree.css"],
         unlocks: treeUnlocks ? JSON.stringify(treeUnlocks.unlocks) : "[\"root\"]",
-        modifiers: modifiers ? JSON.stringify(modifiers.modifiers) : "{}"
+        modifiers: modifiers ? JSON.stringify(modifiers.modifiers) : "{}",
+        points: researchPoints
     })
 });
 

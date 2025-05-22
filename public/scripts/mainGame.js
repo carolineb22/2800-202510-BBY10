@@ -230,16 +230,18 @@ function switchBuildTab(tab_name, element_uuid) {
 			building.forEach(mutexBuilding => {
 				let buildingTemplate = BuildingTemplates[mutexBuilding.type]
 				let buildingInfo = document.createElement("p");
-				buildingInfo.innerHTML = `Build ${buildingTemplate[2]}, Costs ${prettyStringFromGenericTypeValueArray(buildingTemplate[6])}`
-				buildingInfo.classList = ["hud-button"];
-				buildingsNode.appendChild(buildingInfo);
-				buildingInfo.addEventListener('click', e => {
-					if (buildBuilding(buildingTemplate[0], element_uuid)) {
-						buildingInfo.classList.remove('red-flash');
-						void buildingInfo.offsetWidth;
-						buildingInfo.classList.add('red-flash');
-					}
-				})
+                if (buildingTemplate[1] == tab_name || tab_name == "All") {
+                    buildingInfo.innerHTML = `Build ${buildingTemplate[2]}, Costs ${prettyStringFromGenericTypeValueArray(buildingTemplate[6])}`
+                    buildingInfo.classList = ["hud-button"];
+                    buildingsNode.appendChild(buildingInfo);
+                    buildingInfo.addEventListener('click', e => {
+                        if (buildBuilding(buildingTemplate[0], element_uuid)) {
+                            buildingInfo.classList.remove('red-flash');
+                            void buildingInfo.offsetWidth;
+                            buildingInfo.classList.add('red-flash');
+                        }
+                    })
+                }
 			})
 
 			buildingsNode.appendChild(document.createElement("hr"));
