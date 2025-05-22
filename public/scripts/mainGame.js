@@ -46,7 +46,7 @@ for (var key in ResourceTypes) {
 	console.log("No resources loaded!")
 }
 
-if (!Modifiers.length) {
+if (Object.keys(Modifiers).length == 0) {
     Modifiers.additive = {};
     for (var key in ModifierTypes.additive) {
         Modifiers.additive[key] = 0;
@@ -59,7 +59,7 @@ if (!Modifiers.length) {
     for (var key in ModifierTypes.unlocks) {
         Modifiers.unlocks[key] = false;
     }
-    console.log("No modifiers loaded!")
+    console.log("No modifiers loaded!", Modifiers)
 }
 
 let gah = new GeographicalElement(...GeographicalElementTemplates.element_forest)
@@ -583,7 +583,8 @@ function save() {
 		},
 		body: JSON.stringify({  // Make sure to stringify
 			sectors: Sectors,
-			resources: Resources
+			resources: Resources,
+            modifiers: Modifiers
 		})
 	})
 		.then(response => {
