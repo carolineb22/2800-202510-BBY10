@@ -183,6 +183,31 @@ function buildBuilding(building_id, element_uuid) { //as null is falsy, returns 
 	updateSectorDisplay();
 }
 
+function deleteBuilding(building_id, element_uuid) {
+    geoElem = getGeographicalElementById(element_uuid);
+
+    if (!geoElem) return true; //check geoelem exists
+    if (!geoElem.buildings) return true; //check it has buildings
+
+    for(let building of geoElem.buildings) {
+        if(building.id == building_id)
+        {
+            let buildingIndex = geoElem.buildings.indexOf(building);
+            if(buildingIndex > -1)
+            {
+                geoElem.buildings.splice(buildingIndex, 1);
+            }
+            break;
+        }
+    }
+
+	for (let typeValueCost of BuildingTemplates[building_id][6]) {
+		Resources[typeValueCost.type] += typeValueCost.value * 0.5
+	}
+
+	updateSectorDisplay();
+}
+
 function openBuildMenu(element_uuid) {
 	let buildMenuNode = document.getElementById('build_menu').content.cloneNode(true);
 	let buildTabsNode = buildMenuNode.querySelector('.build_tabs');
@@ -328,6 +353,7 @@ function addGeoElemsToNode(elementArray, detailNode) {
 			geoElementNode.querySelector('.buildings').appendChild(buildingTextDisplay);
 			element.buildings.forEach(building => {
 				let buildingNode = document.getElementById("building").content.cloneNode(true);
+                buildingNode.querySelector('.delete_button').addEventListener("click", () => deleteBuilding(building.id, building.builtOnElement));
 				buildingNode.querySelector('.building_name').innerHTML = `${building.name} | ${BuildingTypes[building.type]}`;
 
 				if (building.productionArray && building.productionArray.length != 0) {

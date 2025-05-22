@@ -141,7 +141,7 @@ function Building(id, type, name, description, consumptionArray, productionArray
                 {
                     case "Food": value *= Modifiers.multipliers.foodYield; break;
                     case "Water": value *= Modifiers.multipliers.waterOutput; break;
-                    case "ResearchPoints": value *= Modifiers.multipliers.waterOutput; break;
+                    case "ResearchPoints": value *= Modifiers.multipliers.researchSpeed; break;
                 }
 				Resources[typeValueObject.type] += typeValueObject.value
 			})
