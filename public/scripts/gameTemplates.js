@@ -34,12 +34,10 @@ const GeographicalElementTemplates = {
 			new GenericTypeValue("BuildingMaterials", 0.1)
 		],
 		[
-			[
-				new GenericTypeValue("building_logging_site", 1),
-				new GenericTypeValue("building_wood_power_plant", 1),
-				new GenericTypeValue("building_library", 1)
-			],
-			[new GenericTypeValue("building_forest_cabins", 1)]
+			new GenericTypeValue("building_logging_site", 1),
+			new GenericTypeValue("building_wood_power_plant", 1),
+			new GenericTypeValue("building_library", 1),
+			new GenericTypeValue("building_forest_cabins", 1)
 		],
 		2,
 		0,
@@ -52,12 +50,10 @@ const GeographicalElementTemplates = {
 		"A grassy plain with lots of arable land.",
 		[],
 		[
-			[
-				new GenericTypeValue("building_farm", 3),
-				new GenericTypeValue("building_greenhouse", 2),
-				new GenericTypeValue("building_vertical_hydroponics", 2),
-			],
-			[new GenericTypeValue("building_research_lab", 2)]
+			new GenericTypeValue("building_farm", 3),
+			new GenericTypeValue("building_greenhouse", 2),
+			new GenericTypeValue("building_vertical_hydroponics", 2),
+			new GenericTypeValue("building_research_lab", 2)
 		],
 		3,
 		0,
@@ -72,8 +68,8 @@ const GeographicalElementTemplates = {
 			new GenericTypeValue("BuildingMaterials", 0.1)
 		],
 		[
-			[new GenericTypeValue("building_iron_mine", 2)],
-			[new GenericTypeValue("building_deep_mine", 1)]
+			new GenericTypeValue("building_iron_mine", 2),
+			new GenericTypeValue("building_deep_mine", 1)
 		],
 		4,
 		0,
@@ -86,8 +82,10 @@ const GeographicalElementTemplates = {
 		"A mountain with no valueable resources to take advantage of. Just a beautiful sight.",
 		[],
 		[
-			[new GenericTypeValue("building_logging_site", 2)],
-			[new GenericTypeValue("building_observatory", 1)]
+			[
+				new GenericTypeValue("building_logging_site", 2),
+				new GenericTypeValue("building_observatory", 1)
+			]
 		],
 		5,
 		0,
@@ -102,11 +100,13 @@ const GeographicalElementTemplates = {
 			new GenericTypeValue("Water", 0.3)
 		],
 		[
-			[new GenericTypeValue("building_logging_site", 1)],
-			[new GenericTypeValue("building_wood_power_plant", 1)],
-			[new GenericTypeValue("building_well", 3),
-			new GenericTypeValue("building_groundwater_pump", 2)],
-			[new GenericTypeValue("building_desalinator", 1)]
+			[
+				new GenericTypeValue("building_logging_site", 1),
+				new GenericTypeValue("building_wood_power_plant", 1)
+			],
+			new GenericTypeValue("building_well", 3),
+			new GenericTypeValue("building_groundwater_pump", 2),
+			new GenericTypeValue("building_desalinator", 1)
 		],
 		10,
 		0,
@@ -121,7 +121,11 @@ const GeographicalElementTemplates = {
 		[
 			new GenericTypeValue("building_lumber_mill", 3),
 			new GenericTypeValue("building_chemical_plant", 2),
-			new GenericTypeValue("building_toxic_dump_miner", 2)
+			new GenericTypeValue("building_toxic_dump_miner", 2),
+			[
+				new GenericTypeValue("building_modular_factory", 2),
+				new GenericTypeValue("building_nano_assembler", 2)
+			]
 		],
 		10,
 		0,
@@ -268,7 +272,7 @@ const BuildingTemplates = {
 		[
 			new GenericTypeValue("BuildingMaterials", 5000)
 		],
-		[],
+		["element_cracked_earth"],
 		3
 	],
 	building_nano_assembler: [
@@ -281,7 +285,7 @@ const BuildingTemplates = {
 		[
 			new GenericTypeValue("BuildingMaterials", 10000)
 		],
-		[],
+		["element_cracked_earth"],
 		null
 	],
 	// Buildings to do with Metal
@@ -348,7 +352,7 @@ const BuildingTemplates = {
 		[new GenericTypeValue("Chemicals", 100)],
 		[new GenericTypeValue("BuildingMaterials", 5000),
 		new GenericTypeValue("Metal", 1000)],
-		[],
+		["element_cracked_earth"],
 		null
 	],
 	building_alchemist_lab: [
