@@ -33,6 +33,7 @@ const GeographicalElementTemplates = {
 		],
 		[
 			[
+				// TODO redo these with the new buildings
 				new GenericTypeValue("building_logging_site", 1),
 				new GenericTypeValue("building_wood_power_plant", 1)
 			],
@@ -117,10 +118,117 @@ const GeographicalElementTemplates = {
 // Building JSON Templates
 const BuildingTemplates = {
 	building_logging_site: [
-		"building_logging_site",
+        "building_logging_site",
+        BuildingTypes.Extraction,
+        "Logging Site",
+        "A dedicated area in which trees are harvested for building materials.",
+        [],
+        [
+            new GenericTypeValue("BuildingMaterials", 5)
+        ],
+        [
+            new GenericTypeValue("BuildingMaterials", 100)
+        ],
+        ["element_forest"],
+        1
+    ],
+    building_wood_power_plant: [
+        "building_wood_power_plant",
+        BuildingTypes.Extraction,
+        "Wood Power Plant",
+        "A simplistic power plant that burns wood to turn a turbine, generating power.",
+        [],
+        [],
+        [
+            new GenericTypeValue("BuildingMaterials", 100)
+        ],
+        ["element_forest"],
+        3
+    ],
+    building_forest_cabins: [
+        "building_forest_cabins",
+        BuildingTypes.Housing,
+        "Forest Cabins",
+        "A forest cabin for a few lucky people.",
+        [],
+        [],
+        [
+            new GenericTypeValue("BuildingMaterials", 100)
+        ],
+        ["element_forest"],
+        null
+    ],
+	building_well: [
+		"building_well",
 		BuildingTypes.Extraction,
-		"Logging Site",
-		"A dedicated area in which trees are harvested for building materials.",
+		"Well",
+		"Simple ground water well",
+		[],
+		[],
+		[],
+		[],
+		null
+	],
+	building_groundwater_pump: [
+		"building_groundwater_pump",
+		BuildingTypes.Extraction,
+		"Groundwater Pump",
+		"Extracts groundwater using a powered pump system. More efficient than traditional wells, but limited by aquifer depth.",
+		[],
+		[],
+		[],
+		[],
+		null
+	],
+	building_desalinator: [
+		"building_desalinator",
+		BuildingTypes.Processing,
+		"Desalinator",
+		"Extracts fresh water from seawater",
+		[],
+		[],
+		[],
+		[],
+		null
+	],
+	building_farm: [
+		"building_farm",
+		BuildingTypes.Extraction,
+		"Farm",
+		"Produces food from crops.",
+		[],
+		[],
+		[],
+		[],
+		null
+	],
+	building_greenhouse: [
+		"building_greenhouse",
+		BuildingTypes.Extraction,
+		"Greenhouse",
+		"Produces food in a controlled environment.",
+		[],
+		[],
+		[],
+		[],
+		null
+	],
+	building_vertical_hydroponics: [
+		"building_vertical_hydroponics",
+		BuildingTypes.Extraction,
+		"Vertical Hydroponics",
+		"Instead of growing food sideways, we grow it up now!",
+		[],
+		[],
+		[],
+		[],
+		null
+	],
+	building_lumber_mill: [
+		"building_lumber_mill",
+		BuildingTypes.Extraction,
+		"Lumber Mill",
+		"Processes wood from forests.",
 		[],
 		[
 			new GenericTypeValue("BuildingMaterials", 5)
@@ -131,11 +239,11 @@ const BuildingTemplates = {
 		["element_forest"],
 		1
 	],
-	building_wood_power_plant: [
-		"building_wood_power_plant",
-		BuildingTypes.Extraction,
-		"Wood Power Plant",
-		"A simplistic power plant that burns wood to turn a turbine, generating power.",
+	building_modular_factory: [
+		"building_modular_factory",
+		BuildingTypes.Processing,
+		"Modular Construction Factory",
+		"Produces pre-fabricated building materials using advanced techniques.",
 		[],
 		[],
 		[
@@ -144,17 +252,116 @@ const BuildingTemplates = {
 		["element_forest"],
 		3
 	],
-	building_forest_cabins: [
-		"building_forest_cabins",
-		BuildingTypes.Housing,
-		"Forest Cabins",
-		"A forest cabin for a few lucky people.",
+	building_nano_assembler: [
+		"building_nano_assembler",
+		BuildingTypes.Processing,
+		"Nano Assembler Plant",
+		"Uses nanotechnology to construct ultra-light, high-strength building materials atom by atom.",
 		[],
 		[],
 		[
 			new GenericTypeValue("BuildingMaterials", 20000)
 		],
 		["element_forest"],
+		null
+	],
+	building_iron_mine: [
+		"building_iron_mine",
+		BuildingTypes.Extraction,
+		"Iron Mine",
+		"Extracts iron ore from underground",
+		[],
+		[],
+		[],
+		[],
+		null
+	],
+	building_deep_mine: [
+		"building_deep_mine",
+		BuildingTypes.Extraction,
+		"Deep Mine",
+		"Better mining techniques allow for access to deeper ore veins.",
+		[],
+		[],
+		[],
+		[],
+		null
+	],
+	building_recycler: [
+		"building_recycler",
+		BuildingTypes.Processing,
+		"Recycler",
+		"Reclaims metal from scrap materials.",
+		[],
+		[],
+		[],
+		[],
+		null
+	],
+	building_chemical_plant: [
+		"building_chemical_plant",
+		BuildingTypes.Processing,
+		"Chemical Plant",
+		"Synthesizes basic industrial chemicals.",
+		[],
+		[],
+		[],
+		[],
+		null
+	],
+	building_toxic_dump_miner: [
+		"building_toxic_dump_miner",
+		BuildingTypes.Extraction,
+		"Toxic Dump Miner",
+		"Harvest useful chemicals from old waste sites.",
+		[],
+		[],
+		[],
+		[],
+		null
+	],
+	building_alchemist_lab: [
+		"building_alchemist_lab",
+		BuildingTypes.Processing,
+		"Alchemist Lab",
+		"Creates rare but useful compounds using research and Advanced Goods.",
+		[],
+		[],
+		[],
+		[],
+		null
+	],
+	building_library: [
+		"building_library",
+		BuildingTypes.Research,
+		"Library",
+		"Provide scholars a place to gather their knowledge. Generates Research Points slowly.",
+		[],
+		[],
+		[],
+		[],
+		null
+	],
+	building_research_lab: [
+		"building_research_lab",
+		BuildingTypes.Research,
+		"Research Lab",
+		"A nice place to devote your time for scientific advancement! Generates Research Points moderately.",
+		[],
+		[],
+		[],
+		[],
+		null
+	],
+	building_observatory: [
+		"building_observatory",
+		BuildingTypes.Research,
+		"Observatory",
+		"Study the skies and other planets for scientific insight. Generates Research Points quickly.",
+		[],
+		[],
+		[],
+		[],
 		null
 	],
 	building_test: [
@@ -184,7 +391,7 @@ const BuildingTemplates = {
 		[],
 		[],
 		null
-	]
+	],
 }
 // TEMPLATES -----------------------------------------------------------------
 
@@ -878,3 +1085,5 @@ document.body.addEventListener("click", () => {
 document.getElementById("build_sidebar").addEventListener("click", (e) => {
 	e.stopPropagation();
 });
+
+// That's a lot of lines...
