@@ -323,6 +323,7 @@ function displayNewSector(sector) {
 function addGeoElemsToNode(elementArray, detailNode) {
 	elementArray.forEach(element => {
 		let geoElementNode = document.getElementById("geoelement").content.cloneNode(true);
+		geoElementNode.querySelector('.geoelement_display').setAttribute('title', `${element.description}`)
 		geoElementNode.querySelector('.geoelement_name').innerHTML = `${element.name}`
 		geoElementNode.querySelector('.depletion').innerHTML = `Depletion: ${element.depletion}/${element.maxDepletion}`
 		geoElementNode.querySelector('.depletion').id = `depletion-${element.uuid}`;
