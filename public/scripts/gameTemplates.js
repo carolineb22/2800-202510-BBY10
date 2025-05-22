@@ -15,7 +15,7 @@ const ResourceTypes = {
 	BuildingMaterials: "Building Materials",
 	Metal: "Metal",
 	Chemicals: "Chemicals",
-	AdvancedGoods: "Advanced Goods"
+	ResearchPoints: "Research Points"
 }
 // ENUMS --------------------------------------------------------------------
 
@@ -32,8 +32,11 @@ const GeographicalElementTemplates = {
 			new GenericTypeValue("BuildingMaterials", 0.1)
 		],
 		[
-			[new GenericTypeValue("building_logging_site", 1),
-			 new GenericTypeValue("building_wood_power_plant", 1)],
+			[
+				new GenericTypeValue("building_logging_site", 1),
+				new GenericTypeValue("building_wood_power_plant", 1),
+				new GenericTypeValue("building_library", 1)
+			],
 			[new GenericTypeValue("building_forest_cabins", 1)]
 		],
 		2,
@@ -47,9 +50,12 @@ const GeographicalElementTemplates = {
 		"A grassy plain with lots of arable land.",
 		[],
 		[
-			new GenericTypeValue("building_farm", 3),
-            new GenericTypeValue("building_greenhouse", 2),
-            new GenericTypeValue("building_vertical_hydroponics", 2),
+			[
+				new GenericTypeValue("building_farm", 3),
+				new GenericTypeValue("building_greenhouse", 2),
+				new GenericTypeValue("building_vertical_hydroponics", 2),
+			],
+			[new GenericTypeValue("building_research_lab", 2)]
 		],
 		3,
 		0,
@@ -65,7 +71,7 @@ const GeographicalElementTemplates = {
 		],
 		[
 			[new GenericTypeValue("building_iron_mine", 2)],
-            [new GenericTypeValue("building_deep_mine", 1)]
+			[new GenericTypeValue("building_deep_mine", 1)]
 		],
 		4,
 		0,
@@ -78,7 +84,8 @@ const GeographicalElementTemplates = {
 		"A mountain with no valueable resources to take advantage of. Just a beautiful sight.",
 		[],
 		[
-            new GenericTypeValue("building_logging_site", 2)
+			[new GenericTypeValue("building_logging_site", 2)],
+			[new GenericTypeValue("building_observatory", 1)]
 		],
 		5,
 		0,
@@ -94,9 +101,9 @@ const GeographicalElementTemplates = {
 		],
 		[
 			[new GenericTypeValue("building_logging_site", 1)],
-            [new GenericTypeValue("building_wood_power_plant", 1)],
-            [new GenericTypeValue("building_well", 3),
-			 new GenericTypeValue("building_groundwater_pump", 2)],
+			[new GenericTypeValue("building_wood_power_plant", 1)],
+			[new GenericTypeValue("building_well", 3),
+			new GenericTypeValue("building_groundwater_pump", 2)],
 			[new GenericTypeValue("building_desalinator", 1)]
 		],
 		10,
@@ -111,8 +118,8 @@ const GeographicalElementTemplates = {
 		[],
 		[
 			new GenericTypeValue("building_lumber_mill", 3),
-            new GenericTypeValue("building_chemical_plant", 2),
-            new GenericTypeValue("building_toxic_dump_miner", 2)
+			new GenericTypeValue("building_chemical_plant", 2),
+			new GenericTypeValue("building_toxic_dump_miner", 2)
 		],
 		10,
 		0,
@@ -124,46 +131,46 @@ const GeographicalElementTemplates = {
 // Building JSON Templates
 const BuildingTemplates = {
 	building_logging_site: [
-        "building_logging_site",
-        BuildingTypes.Extraction,
-        "Logging Site",
-        "A dedicated area in which trees are harvested for building materials.",
-        [],
-        [
-            new GenericTypeValue("BuildingMaterials", 5)
-        ],
-        [
-            new GenericTypeValue("BuildingMaterials", 100)
-        ],
-        ["element_forest"],
-        1
-    ],
-    building_wood_power_plant: [
-        "building_wood_power_plant",
-        BuildingTypes.Extraction,
-        "Wood Power Plant",
-        "A simplistic power plant that burns wood to turn a turbine, generating power.",
-        [],
-        [],
-        [
-            new GenericTypeValue("BuildingMaterials", 100)
-        ],
-        ["element_forest"],
-        3
-    ],
-    building_forest_cabins: [
-        "building_forest_cabins",
-        BuildingTypes.Housing,
-        "Forest Cabins",
-        "A forest cabin for a few lucky people.",
-        [],
-        [],
-        [
-            new GenericTypeValue("BuildingMaterials", 100)
-        ],
-        ["element_forest"],
-        null
-    ],
+		"building_logging_site",
+		BuildingTypes.Extraction,
+		"Logging Site",
+		"A dedicated area in which trees are harvested for building materials.",
+		[],
+		[
+			new GenericTypeValue("BuildingMaterials", 5)
+		],
+		[
+			new GenericTypeValue("BuildingMaterials", 100)
+		],
+		["element_forest"],
+		1
+	],
+	building_wood_power_plant: [
+		"building_wood_power_plant",
+		BuildingTypes.Extraction,
+		"Wood Power Plant",
+		"A simplistic power plant that burns wood to turn a turbine, generating power.",
+		[],
+		[],
+		[
+			new GenericTypeValue("BuildingMaterials", 100)
+		],
+		["element_forest"],
+		3
+	],
+	building_forest_cabins: [
+		"building_forest_cabins",
+		BuildingTypes.Housing,
+		"Forest Cabins",
+		"A forest cabin for a few lucky people.",
+		[],
+		[],
+		[
+			new GenericTypeValue("BuildingMaterials", 100)
+		],
+		["element_forest"],
+		null
+	],
 	building_well: [
 		"building_well",
 		BuildingTypes.Extraction,
@@ -277,7 +284,7 @@ const BuildingTemplates = {
 		"Iron Mine",
 		"Extracts iron ore from underground.",
 		[new GenericTypeValue("BuildingMaterials", 3),
-         new GenericTypeValue("Water", 5)],
+		new GenericTypeValue("Water", 5)],
 		[new GenericTypeValue("Metal", 50)],
 		[new GenericTypeValue("BuildingMaterials", 300)],
 		["element_mountain_rich"],
@@ -289,7 +296,7 @@ const BuildingTemplates = {
 		"Deep Mine",
 		"Better mining techniques allow for access to deeper ore veins.",
 		[new GenericTypeValue("BuildingMaterials", 30),
-         new GenericTypeValue("Water", 15)],
+		new GenericTypeValue("Water", 15)],
 		[new GenericTypeValue("Metal", 100)],
 		[new GenericTypeValue("BuildingMaterials", 1000)],
 		["element_mountain_rich"],
@@ -301,7 +308,7 @@ const BuildingTemplates = {
 		"Recycler",
 		"Reclaims metal from scrap materials.",
 		[new GenericTypeValue("Metal", 5),
-         new GenericTypeValue("BuildingMaterials", 20)],
+		new GenericTypeValue("BuildingMaterials", 20)],
 		[new GenericTypeValue("Metal", 200)],
 		[new GenericTypeValue("BuildingMaterials", 2000)],
 		[],
@@ -313,11 +320,11 @@ const BuildingTemplates = {
 		"Chemical Plant",
 		"Synthesizes basic industrial chemicals.",
 		[new GenericTypeValue("Water", 100),
-         new GenericTypeValue("Metal", 50),
-         new GenericTypeValue("BuildingMaterials", 50)],
+		new GenericTypeValue("Metal", 50),
+		new GenericTypeValue("BuildingMaterials", 50)],
 		[new GenericTypeValue("Chemicals", 50)],
 		[new GenericTypeValue("BuildingMaterials", 5000),
-         new GenericTypeValue("Metal", 1000)],
+		new GenericTypeValue("Metal", 1000)],
 		["element_grasslands"],
 		3
 	],
@@ -327,12 +334,12 @@ const BuildingTemplates = {
 		"Toxic Dump Miner",
 		"Harvest useful chemicals from old waste sites.",
 		[new GenericTypeValue("Water", 250),
-         new GenericTypeValue("Metal", 100),
-         new GenericTypeValue("Chemicals", 50),
-         new GenericTypeValue("BuildingMaterials", 100)],
+		new GenericTypeValue("Metal", 100),
+		new GenericTypeValue("Chemicals", 50),
+		new GenericTypeValue("BuildingMaterials", 100)],
 		[new GenericTypeValue("Chemicals", 100)],
 		[new GenericTypeValue("BuildingMaterials", 5000),
-         new GenericTypeValue("Metal", 1000)],
+		new GenericTypeValue("Metal", 1000)],
 		[],
 		null
 	],
@@ -342,12 +349,12 @@ const BuildingTemplates = {
 		"Alchemist Lab",
 		"Creates rare but useful compounds using research and Advanced Goods.",
 		[new GenericTypeValue("Water", 500),
-         new GenericTypeValue("Metal", 300),
-         new GenericTypeValue("Chemicals", 200),
-         new GenericTypeValue("AdvancedGoods", 100)],
+		new GenericTypeValue("Metal", 300),
+		new GenericTypeValue("Chemicals", 200),
+		new GenericTypeValue("AdvancedGoods", 100)],
 		[new GenericTypeValue("Chemicals", 100)],
 		[new GenericTypeValue("BuildingMaterials", 5000),
-         new GenericTypeValue("Metal", 1000)],
+		new GenericTypeValue("Metal", 1000)],
 		[],
 		null
 	],
@@ -357,7 +364,7 @@ const BuildingTemplates = {
 		"Library",
 		"Provide scholars a place to gather their knowledge. Generates Research Points slowly.",
 		[new GenericTypeValue("Food", 100),
-         new GenericTypeValue("Water", 100)],
+		new GenericTypeValue("Water", 100)],
 		[new GenericTypeValue("ResearchPoints", 10)],
 		[new GenericTypeValue("BuildingMaterials", 1000)],
 		[],
@@ -369,8 +376,8 @@ const BuildingTemplates = {
 		"Research Lab",
 		"A nice place to devote your time for scientific advancement! Generates Research Points moderately.",
 		[new GenericTypeValue("Food", 250),
-         new GenericTypeValue("Water", 250),
-         new GenericTypeValue("Chemicals", 50)],
+		new GenericTypeValue("Water", 250),
+		new GenericTypeValue("Chemicals", 50)],
 		[new GenericTypeValue("ResearchPoints", 50)],
 		[new GenericTypeValue("BuildingMaterials", 5000)],
 		[],
@@ -382,11 +389,11 @@ const BuildingTemplates = {
 		"Observatory",
 		"Study the skies and other planets for scientific insight. Generates Research Points quickly.",
 		[new GenericTypeValue("Food", 250),
-         new GenericTypeValue("Water", 250),
-         new GenericTypeValue("Metal", 100)],
+		new GenericTypeValue("Water", 250),
+		new GenericTypeValue("Metal", 100)],
 		[new GenericTypeValue("ResearchPoints", 250)],
 		[new GenericTypeValue("BuildingMaterials", 10000),
-         new GenericTypeValue("Metal", 5000)],
+		new GenericTypeValue("Metal", 5000)],
 		[],
 		null
 	],
