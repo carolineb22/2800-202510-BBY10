@@ -235,7 +235,7 @@ function switchBuildTab(tab_name, element_uuid) {
 				let buildingTemplate = BuildingTemplates[mutexBuilding.type]
 				let buildingInfo = document.createElement("p");
                 if (buildingTemplate[1] == tab_name || tab_name == "All") {
-                    buildingInfo.innerHTML = `Build ${buildingTemplate[2]}, Costs ${prettyStringFromGenericTypeValueArray(buildingTemplate[6])}`
+                    buildingInfo.innerHTML = `Build ${buildingTemplate[2]} (Max ${mutexBuilding.value}), Costs ${prettyStringFromGenericTypeValueArray(buildingTemplate[6])} `
                     buildingInfo.classList = ["hud-button"];
                     buildingsNode.appendChild(buildingInfo);
                     buildingInfo.addEventListener('click', e => {
@@ -254,7 +254,7 @@ function switchBuildTab(tab_name, element_uuid) {
 			let buildingTemplate = BuildingTemplates[building.type]
 			let buildingInfo = document.createElement("p");
 			if (buildingTemplate[1] == tab_name || tab_name == "All") {
-				buildingInfo.innerHTML = `Build ${buildingTemplate[2]}, Costs ${prettyStringFromGenericTypeValueArray(buildingTemplate[6])}`
+				buildingInfo.innerHTML = `Build ${buildingTemplate[2]} (Max ${building.value}), Costs ${prettyStringFromGenericTypeValueArray(buildingTemplate[6])}`
 				buildingInfo.classList = ["hud-button"];
 				buildingsNode.appendChild(buildingInfo);
 				buildingInfo.addEventListener('click', e => {
@@ -444,7 +444,6 @@ function calculatePopMax() {
 		})
 	})
 
-	console.log(populationMax);
 	populationMax = maxPop;
 }
 
