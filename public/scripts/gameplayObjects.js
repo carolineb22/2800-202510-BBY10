@@ -144,9 +144,9 @@ function Building(id, type, name, description, consumptionArray, productionArray
                 let value = typeValueObject.value
                 switch(typeValueObject.type)
                 {
-                    case "Food": value *= Modifiers.multipliers.foodYield || 1; break;
-                    case "Water": value *= Modifiers.multipliers.waterOutput || 1; break;
-                    case "ResearchPoints": value *= Modifiers.multipliers.researchSpeed || 1; break;
+                    case "Food": value *= Modifiers.multiplicative.foodYield || 1; break;
+                    case "Water": value *= Modifiers.multiplicative.waterOutput || 1; break;
+                    case "ResearchPoints": value *= Modifiers.multiplicative.researchSpeed || 1; break;
                 }
 				Resources[typeValueObject.type] += typeValueObject.value
 			})
