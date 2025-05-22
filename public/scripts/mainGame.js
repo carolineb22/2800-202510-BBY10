@@ -46,6 +46,22 @@ for (var key in ResourceTypes) {
 	console.log("No resources loaded!")
 }
 
+if (!Modifiers.length) {
+    Modifiers.additive = {};
+    for (var key in ModifierTypes.additive) {
+        Modifiers.additive[key] = 0;
+    }
+    Modifiers.multiplicative = {};
+    for (var key in ModifierTypes.multiplicative) {
+        Modifiers.multiplicative[key] = 1;
+    }
+    Modifiers.unlocks = {};
+    for (var key in ModifierTypes.unlocks) {
+        Modifiers.unlocks[key] = false;
+    }
+    console.log("No modifiers loaded!")
+}
+
 let gah = new GeographicalElement(...GeographicalElementTemplates.element_forest)
 gah.buildings = [
 	new Building(...BuildingTemplates.building_logging_site, gah.uuid)

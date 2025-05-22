@@ -193,7 +193,7 @@
 			databaseSectors = await JSON.parse(stringifiedSectors) || [];
 			unHTMLedMods = await JSON.parse("\"<%=modifiers%>\"");
 			stringifiedMods = await unHTMLedMods.replace(/&#34;/g, '"');
-			databaseMods = await JSON.parse(stringifiedMods) || [];
+			databaseMods = await JSON.parse(stringifiedMods) || {};
 		}
 
 		initializeVariables();

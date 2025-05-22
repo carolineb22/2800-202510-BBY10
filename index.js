@@ -307,7 +307,7 @@ app.post('/save', validateSession, async (req, res) => {
             return res.status(400).send("No data received");
         }
 
-        const { sectors, resources } = req.body;
+        const { sectors, resources, modifiers } = req.body;
         
         // Validate required fields
         if (!sectors || !resources) {
@@ -341,6 +341,17 @@ app.post('/save', validateSession, async (req, res) => {
                     user_id: user[0]._id,
                     sector: sectors,
                     resources: resources
+                }
+            },
+            { upsert: true }
+        );
+
+        await modsCollection.updateOne(
+            { username: username },
+            {
+                $set: {
+                    user_id: user[0]._id,
+                    modifiers: modifiers
                 }
             },
             { upsert: true }
