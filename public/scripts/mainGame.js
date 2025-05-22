@@ -48,6 +48,22 @@ for (var key in ResourceTypes) {
 	ShortageTracker[key] = false;
 }
 
+if (Object.keys(Modifiers).length == 0) {
+    Modifiers.additive = {};
+    for (var key in ModifierTypes.additive) {
+        Modifiers.additive[key] = 0;
+    }
+    Modifiers.multiplicative = {};
+    for (var key in ModifierTypes.multiplicative) {
+        Modifiers.multiplicative[key] = 1;
+    }
+    Modifiers.unlocks = {};
+    for (var key in ModifierTypes.unlocks) {
+        Modifiers.unlocks[key] = false;
+    }
+    console.log("No modifiers loaded!", Modifiers)
+}
+
 let gah = new GeographicalElement(...GeographicalElementTemplates.element_forest)
 gah.buildings = [
 	new Building(...BuildingTemplates.building_logging_site, gah.uuid)
@@ -583,7 +599,8 @@ function save() {
 		},
 		body: JSON.stringify({  // Make sure to stringify
 			sectors: Sectors,
-			resources: Resources
+			resources: Resources,
+            modifiers: Modifiers
 		})
 	})
 		.then(response => {

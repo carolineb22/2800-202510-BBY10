@@ -19,6 +19,34 @@ const ResourceTypes = {
 	ResearchPoints: "Research Points",
 	PopulationCapacity: "PopulationCapacity"
 }
+
+// Resources that buildings use as types of currency in the game.
+const ModifierTypes = {
+	additive: {
+        populationCap: "populationCap"
+    },
+    multiplicative: {
+        buildSpeed: "buildSpeed",
+        researchSpeed: "researchSpeed",
+        productionEfficiency: "productionEfficiency",
+        diseaseRate: "diseaseRate",
+        environmentalStrain: "environmentalStrain",
+        transportPollution: "transportPollution",
+        laborRequirements: "laborRequirements",
+        landUse: "landUse",
+        harvestSpeed: "harvestSpeed",
+        foodQuality: "foodQuality",
+        materialEfficiency: "materialEfficiency",
+        energyCapacity: "energyCapacity",
+        foodSpoilage: "foodSpoilage",
+        foodYield: "foodYield",
+        waterOutput: "waterOutput",
+    },
+    unlocks: {
+        newRegions: "newRegions",
+        newAreas: "newAreas"
+    }
+}
 // ENUMS --------------------------------------------------------------------
 
 
