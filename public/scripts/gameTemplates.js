@@ -16,7 +16,8 @@ const ResourceTypes = {
 	BuildingMaterials: "Building Materials",
 	Metal: "Metal",
 	Chemicals: "Chemicals",
-	ResearchPoints: "Research Points"
+	ResearchPoints: "Research Points",
+	PopulationCapacity: "PopulationCapacity"
 }
 // ENUMS --------------------------------------------------------------------
 
@@ -171,7 +172,9 @@ const BuildingTemplates = {
 		"Forest Cabins",
 		"A forest cabin for a few lucky people.",
 		[],
-		[],
+		[
+			new GenericTypeValue("PopulationCapacity", 50)
+		],
 		[
 			new GenericTypeValue("BuildingMaterials", 100)
 		],
