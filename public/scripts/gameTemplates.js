@@ -59,7 +59,7 @@ const GeographicalElementTemplates = {
 	element_mountain_rich: [
 		"element_mountain_rich",
 		"Mineral Rich Mountain",
-		"A mountian with vast resources to mine. Also take advantage of the nearby trees!",
+		"A mountain with vast resources to mine. Also take advantage of the nearby trees!",
 		[
 			new GenericTypeValue("BuildingMaterials", 0.1)
 		],
