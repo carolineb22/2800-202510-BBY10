@@ -18,17 +18,13 @@
 
 		
 
-		<main class="map">
+		<main id="map">
 
 			<div id="gerge" class="row">
-				<div id="resource_container">
-
-				</div>
+				<div id="resource_container"></div>
 				<hr>
 				<button class="hud-button" id="cycle_sector">Cycle sector!</button>
 				<hr>
-				<br><br><br>
-
 			</div>
 
 
@@ -182,10 +178,10 @@
 	</script>
 	<script src="../scripts/mainGame.js"></script>
 	<!-- Puter SDK -->
-	<template src="https://js.puter.com/v2/"></template>
+	<script src="https://js.puter.com/v2/"></script>
 
 	<!-- Weather + Puter Logic -->
-	<template>
+	<script>
 		navigator.geolocation.getCurrentPosition(success, error);
 
 		function success(position) {
@@ -269,7 +265,7 @@
 
 			return duration;
 		}
-	</template>
+	</script>
 
 	<script>
 		let newUser = '<%=newUser%>';
