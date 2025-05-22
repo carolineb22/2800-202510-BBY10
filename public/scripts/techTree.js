@@ -28,7 +28,7 @@ function loadUnlockedSkills() {
 
 // Update skill point display
 function updateSkillPointsDisplay() {
-  skillPointsDisplay.textContent = `Skill Points: ${skillPoints}`;
+  skillPointsDisplay.textContent = `Research Points: ${skillPoints}`;
 }
 
 // Draw skill connectors using SVG
