@@ -19,6 +19,13 @@ Team Members:
 - Express
 - MongoDB
 
+### APIs
+
+- [OpenWeatherMap](https://openweathermap.org/api)
+  - We feed the user's geolocation taken from the html page into this API to get local weather.
+- [Puter AI](https://developer.puter.com/tutorials/free-unlimited-openai-api/)
+  - We use their free, API-key-less service to use models like GPT-4o to generate small weather blurbs based on the weather data gathered from the above API.
+
 ## Installing the project
 
 Any capable Web Development capable IDE can be used in development, it's up to developer preference.
