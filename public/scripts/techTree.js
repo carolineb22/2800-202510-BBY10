@@ -1,9 +1,8 @@
 const skills = document.querySelectorAll('.skill');
 const svg = document.getElementById('connectorSVG');
 
-let skillPoints = 0;
+let skillPoints = points;
 const skillPointsDisplay = document.getElementById('skillPoints');
-const addPointBtn = document.getElementById('addPointBtn');
 
 const infoBox = document.getElementById('infoBox');
 const infoTitle = document.getElementById('infoTitle');
@@ -20,9 +19,16 @@ let scale = 1;
 let translate = { x: 0, y: 0 };
 let interactionLocked = false;
 
+// Load unlocked skills from the tree
+function loadUnlockedSkills() {
+    databaseUnlocks.forEach(unlock => {
+        document.getElementById(unlock).classList.add("unlocked");
+    });
+}
+
 // Update skill point display
 function updateSkillPointsDisplay() {
-  skillPointsDisplay.textContent = `Skill Points: ${skillPoints}`;
+  skillPointsDisplay.textContent = `Research Points: ${skillPoints}`;
 }
 
 // Draw skill connectors using SVG
@@ -101,37 +107,69 @@ function getCenter(elem) {
 // Show info box
 function showInfoBox(skill) {
   interactionLocked = true;
-  infoTitle.textContent = skill.dataset.name;
-  infoCost.textContent = `Cost: ${skill.dataset.cost} Skill Points`;
-   infoDescription.innerHTML = skill.dataset.description;
+  currentSkill = skill;
+
+  const isUnlocked = skill.classList.contains('unlocked');
+  const { name, description, cost, requirements = '' } = skill.dataset;
+
+  infoTitle.textContent = name;
+  infoDescription.innerHTML = description;
+  infoCost.style.display = isUnlocked ? 'none' : 'block';
+  unlockBtn.style.display = isUnlocked ? 'none' : 'inline-block';
+  infoCost.textContent = `Cost: ${cost} Skill Points`;
+
+  if (!isUnlocked && requirements) {
+    const reqHTML = requirements.split(',').map(id => {
+      const req = document.getElementById(id.trim());
+      const met = req?.classList.contains('unlocked');
+      const color = met ? 'limegreen' : 'red';
+      const reqName = req?.dataset.name || id;
+      return `<span style="color: ${color};">${reqName}</span>`;
+    }).join(', ');
+    infoDescription.innerHTML += `<br><strong>Requires:</strong> ${reqHTML}`;
+  }
+
+  const { x, y } = getCenter(skill);
+  infoBox.style.left = `${x * scale + translate.x - infoBox.offsetWidth / 2}px`;
+  infoBox.style.top = `${y * scale + translate.y + 20}px`;
   infoBox.style.display = 'block';
-
-  const center = getCenter(skill);
-  const x = center.x * scale + translate.x;
-  const y = center.y * scale + translate.y;
-
-  infoBox.style.left = `${x - infoBox.offsetWidth / 2}px`;
-  infoBox.style.top = `${y + 20}px`;
 }
+
+
 
 // Update which skills are enabled/disabled based on their parent
 function updateSkillStates() {
   skills.forEach(skill => {
     const parentId = skill.dataset.parent;
+    const cost = parseInt(skill.dataset.cost);
+    const isUnlocked = skill.classList.contains('unlocked');
+    const parentUnlocked = !parentId || document.getElementById(parentId)?.classList.contains('unlocked');
+    const canAfford = skillPoints >= cost;
 
-    if (!parentId) {
-      skill.classList.remove('disabled');
-      return;
+    let prereqText = '';
+    const requirements = skill.dataset.requirements?.split(',').filter(Boolean) || [];
+    if (!isUnlocked && requirements.length > 0) {
+      const metCount = requirements.filter(id => document.getElementById(id)?.classList.contains('unlocked')).length;
+      const color = metCount === requirements.length ? 'limegreen' : 'red';
+      prereqText = `<br><span style="color:${color}; font-size: 1.0em;">Conditions: ${metCount}/${requirements.length}</span>`;
     }
 
-    const parent = document.getElementById(parentId);
-    if (parent && parent.classList.contains('unlocked')) {
+    if (isUnlocked) {
+      skill.innerHTML = `${skill.dataset.name}<br><span style="color: lime;">Unlocked</span>`;
+    } else if (parentUnlocked) {
       skill.classList.remove('disabled');
+      const color = canAfford ? 'yellow' : 'red';
+      skill.innerHTML = `${skill.dataset.name}<br><span style="color: ${color};">Cost: ${cost}</span>${prereqText}`;
     } else {
       skill.classList.add('disabled');
+      skill.innerHTML = `${skill.dataset.name}<br><span style="color: white;">Cost: ${cost}</span>`;
     }
   });
 }
+
+
+
+
 
 // Unlock button
 unlockBtn.addEventListener('click', () => {
@@ -139,15 +177,37 @@ unlockBtn.addEventListener('click', () => {
 
   const cost = parseInt(currentSkill.dataset.cost);
   const parentId = currentSkill.dataset.parent;
+  const requirements = currentSkill.dataset.requirements?.split(',').filter(Boolean) || [];
 
-  if (parentId && !document.getElementById(parentId).classList.contains('unlocked')) {
+  // Check requirements
+  const unmetRequirements = requirements.filter(reqId => {
+    return !document.getElementById(reqId.trim())?.classList.contains('unlocked');
+  });
+
+  const parentUnlocked = !parentId || document.getElementById(parentId)?.classList.contains('unlocked');
+
+  if (!parentUnlocked) {
     alert("You must unlock the parent skill first.");
+    return;
+  }
+
+  if (unmetRequirements.length > 0) {
+    const reqNames = unmetRequirements.map(id => {
+      const el = document.getElementById(id.trim());
+      return el?.dataset.name || id;
+    });
+    alert(`You must unlock the following first: ${reqNames.join(', ')}`);
     return;
   }
 
   if (skillPoints >= cost) {
     skillPoints -= cost;
     currentSkill.classList.add('unlocked');
+    
+    // Apply game effects 
+    window.skillEffects.applySkillEffects(currentSkill.id);
+
+    save();
     updateSkillPointsDisplay();
     updateSkillStates();
     drawLines();
@@ -158,17 +218,12 @@ unlockBtn.addEventListener('click', () => {
   }
 });
 
+
 // Cancel button
 cancelBtn.addEventListener('click', () => {
   infoBox.style.display = 'none';
   currentSkill = null;
   interactionLocked = false;
-});
-
-// Add skill point button
-addPointBtn.addEventListener('click', () => {
-  skillPoints++;
-  updateSkillPointsDisplay();
 });
 
 // Set up each skill block
@@ -207,6 +262,33 @@ treeWrapper.addEventListener('wheel', e => {
 let isDragging = false;
 let startX, startY;
 
+// Saving function
+function save() {
+    const UnlockedSkills = [];
+    Array.from(document.getElementsByClassName("skill unlocked")).forEach(skill => {
+        UnlockedSkills.push(skill.id);
+    });
+    fetch('/saveTree', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',  // This header is crucial
+        },
+        body: JSON.stringify({  // Make sure to stringify
+            unlocks: UnlockedSkills,
+            modifiers: window.skillEffects.modifiers,
+            points: skillPoints
+        })
+    })
+    .then(response => {
+        if (!response.ok) {
+            console.error('Save failed');
+        }
+        return response.text();
+    })
+    .then(text => console.log(text))
+    .catch(error => console.error('Error:', error));
+}
+
 treeWrapper.addEventListener('mousedown', (e) => {
   if (interactionLocked) return;
   isDragging = true;
@@ -235,6 +317,24 @@ document.addEventListener('mouseup', () => {
 
 window.addEventListener('load', () => {
   updateSkillPointsDisplay();
+  loadUnlockedSkills();
   drawLines();
   updateSkillStates(); // Initialize skill enable/disable state
 });
+
+
+// Close info box if clicking outside of it
+document.addEventListener('click', (e) => {
+  if (
+    interactionLocked &&
+    infoBox.style.display === 'block' &&
+    !infoBox.contains(e.target) &&
+    !e.target.classList.contains('skill')
+  ) {
+    infoBox.style.display = 'none';
+    currentSkill = null;
+    interactionLocked = false;
+  }
+});
+
+

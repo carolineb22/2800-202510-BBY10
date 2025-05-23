@@ -1,251 +1,320 @@
 <%- include("templates/header") %>
-<div class="container">
-    <!-- Left Sidebar with centered text -->
-    <aside class="sidebar left">
-        <p class="sidebar-text">Kepler 22-b</p>
-        <div id="global-resources">
-            <!-- <p>Global Resources</p> -->
-        </div>
-        <div id="sector-resources">
-            <!-- <p>Sector Resources</p> -->
-        </div>
-        <!-- <button id="incrementer">Incrementer</button> -->
-    </aside>
+	<div class="container">
+		<!-- Left Sidebar with centered text -->
+		<aside class="sidebar left">
+			<p class="sidebar-text">Kepler 22-b</p>
+			<div id="global-resources">
+				<!-- <p>Global Resources</p> -->
+			</div>
+			<div id="sector-resources">
+				<!-- <p>Sector Resources</p> -->
+			</div>
+			<!-- <button id="incrementer">Incrementer</button> -->
+		</aside>
 
-    <div class="weather-ticker">
-    <div class="weather-headline" id="puter-message">Generating advice based on weather...</div>
-  </div>
+		<div class="weather-ticker">
+			<div class="weather-headline" id="puter-message">Generating advice based on weather...</div>
+		</div>
 
-    <main class="map">
-        
-        <div id="gerge" class="row">
-            <hr>
-            <button class="hud-button" id="cycle_sector">Cycle sector!</button>
-            <hr>
-            <br><br><br>
-            
-        </div>
-    
 
-    </main>
 
-    
+		<main id="map">
 
-    <!-- Right Sidebar with centered text -->
-    <aside class="sidebar right vstack">
-        
-        <hr>
-        <br>
-        <div id="build_sidebar">
-            
-        </div>
-        
-    </aside>
-</div>
+			<div id="gerge" class="row">
+				<h3>Population</h3>
+				<p id="popCount"></p>
+				<p id="popCap"></p>
 
-<!-- Bottom Bar with Upgrades and Build Buttons -->
-<div class="bottom-bar">
-    <form action='/main/techTree' method='get'>
-        <button class="nav-button left">Upgrades</button>
-    </form>
-    <form action='/main/build' method='get'>
-        <button class="nav-button right">Build</button>
-    </form>
-</div>
+				<hr>
+				<div id="resource_container"></div>
+				<hr>
+				<button class="hud-button" id="cycle_sector">Cycle sector!</button>
+				<hr>
+			</div>
 
-<!-- Settings button in top-left -->
-<div class="settings-button">
-    <i class="material-icons">settings</i>
-</div>
 
-<!-- Dropdown Menu -->
-<div class="dropdown-menu" id="settingsMenu">
-    <button class="dropdown-item" onclick="window.location.assign('/logout')">Log Out</button>
-    <button class="dropdown-item" onclick="save()">Save</button>
-    <button class="dropdown-item">Another Option</button>
-</div>
+		</main>
 
-<!-- Top HUD with time display and buttons -->
-<div class="top-hud">
-    <span class="time-display">12:34</span>
-    <div class="hud-controls">
-        <!-- Play/Pause Button -->
-        <input type="checkbox" class="toggle-play" id="toggle-play" />
-        <label class="hud-button" for="toggle-play" id="play_state">
-            <i class="material-icons play">play_arrow</i> <!-- Play icon -->
-            <i class="material-icons pause">pause</i> <!-- Pause icon -->
-        </label>
 
-        <!-- Speed Change Button -->
-        <button class="hud-button" id="fast_forward"><i class="material-icons">fast_forward</i></button>
-    </div>
-</div>
 
-<template id="resource">
-    <p class="resource_display"></p>
-</template>
-<template id="sector">
-    <div class="sector_display">
-        <p class="sector_name"></p>
-        <br>
-        <div class="sector_details">
+		<!-- Right Sidebar with centered text -->
+		<aside class="sidebar right vstack">
 
-        </div>
-    </div>
+			
+			<br>
+			<div id="build_sidebar">
 
-</template>
-<template id="building">
-    <div class="building_display">
-        <p class="building_name"></p>
-        <div class="building_production">
-    
-        </div>
-        <div class="building_consumption">
-    
-        </div>
-    </div>
-    
-</template>
-<template id="geoelement">
-    <div class="geoelement_display">
-        <br>
-        <p class="geoelement_name"></p>
-        <button class="hud-button geoelement_build">Build</button>
-        <p class="depletion"></p>
-        <div class="passive_production">
+			</div>
 
-        </div>
-        <div class="buildings">
+		</aside>
+	</div>
 
-        </div>
-        <br>
-        <hr>
-    </div>
-</template>
-<template id="build_menu">
-    <hr>
-    <div class="row build_tabs">
+	<!-- Bottom Bar with Upgrades and Build Buttons -->
+	<div class="bottom-bar">
+		<button class="nav-button left"
+			onclick="save();setTimeout(()=>window.location.assign('/main/techTree'), 100);">Upgrades</button>
+	</div>
 
-    </div>
-    <hr>
-    <br>
-    <div class="building_options_display">
+	<!-- Settings button in top-left -->
+	<div class="settings-button">
+		<i class="material-icons">settings</i>
+	</div>
 
-    </div>
-</template>
+	<!-- Dropdown Menu -->
+	<div class="dropdown-menu" id="settingsMenu">
+		<button class="dropdown-item" onclick="window.location.assign('/logout')">Log Out</button>
+		<button class="dropdown-item" onclick="save()">Save</button>
+		<button class="dropdown-item" onclick="loadTutorial()">Tutorial</button>
+	</div>
 
-<script>
-    const settingsBtn = document.querySelector('.settings-button');
-    const dropdownMenu = document.getElementById('settingsMenu');
+	<div class="pop-up" id="tutorial" style="display: none;">
+		<div class="tutorial-content">
+			<h2>Welcome to Our Tommorow</h2>
+			<div class="tutorial-text">
+				<p>Welcome to Our Tomorrow!</p>
+				<p>This is an incremental game where your goal is to build a civilization from the ground up!</p>
+				<p>Create buildings, power plants, housing, whatever you need! Expand across the different Sectors of
+					your planet and prosper!</p>
+				<p>Manage your planet's resources and Advance your technology through the Tech Tree.</p>
+				<p>The Upgrades you unlock will help you take better care of your planet as you manage its resources.
+				</p>
+				<p>As you build this civilization, your upgrades will lead to greener and more renewable practices to
+					build with!</p>
+			</div>
+			<button class="hud-button tutorial-close">Got it!</button>
+		</div>
+	</div>
 
-    settingsBtn.addEventListener('click', (e) => {
-        e.stopPropagation(); // Prevent click from reaching body
-        dropdownMenu.classList.toggle('show');
-    });
+	<!-- Top HUD with time display and buttons -->
+	<div class="top-hud">
+		<div class="hud-controls">
+			<!-- Play/Pause Button -->
+			<input type="checkbox" class="toggle-play" id="toggle-play" />
+			<label class="hud-button" for="toggle-play" id="play_state">
+				<i class="material-icons play">play_arrow</i> <!-- Play icon -->
+				<i class="material-icons pause">pause</i> <!-- Pause icon -->
+			</label>
 
-    // Hide dropdown when clicking outside
-    document.body.addEventListener('click', () => {
-        dropdownMenu.classList.remove('show');
-    });
+			<!-- Speed Change Button -->
+			<button class="hud-button" id="fast_forward"><i class="material-icons">fast_forward</i></button>
+		</div>
+	</div>
 
-    // Declare variables for mainGame.js
-    let unHTMLedResources = JSON.parse("\"<%=resources%>\"");
-    let stringifiedResources = unHTMLedResources.replace(/&#34;/g,'"');
-    var databaseResources = JSON.parse(stringifiedResources) || {};
-    let unHTMLedSectors = JSON.parse("\"<%=sectors%>\"");
-    let stringifiedSectors = unHTMLedSectors.replace(/&#34;/g,'"');
-    var databaseSectors = JSON.parse(stringifiedSectors);
-    console.log(databaseResources);
-    console.log(databaseSectors);
-</script>
-<script src="scripts/mainGame.js"></script>
-<!-- Puter SDK -->
-  <script src="https://js.puter.com/v2/"></script>
+	<template id="resource">
+		<p class="resource_display"></p>
+	</template>
+	<template id="sector">
+		<div class="sector_display">
+			<h3 class="sector_name"></h3>
+			<br>
+			<div class="sector_details">
 
-  <!-- Weather + Puter Logic -->
-  <script>
-    navigator.geolocation.getCurrentPosition(success, error);
+			</div>
+		</div>
 
-    function success(position) {
-      const latitude = position.coords.latitude;
-      const longitude = position.coords.longitude;
-      console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
-      getWeather(latitude, longitude);
-    }
+	</template>
+	<template id="building">
+		<div class="building_display">
+			<p class="building_name"></p>
+            <button class="hud-button delete_button">Delete</button>
+			<div class="building_production">
 
-    function error() {
-      console.error("Unable to retrieve your location");
-      document.getElementById("weather").textContent = "Location access denied.";
-      document.getElementById("puter-message").textContent = "Unable to get location. Cannot generate advice.";
-    }
+			</div>
+			<div class="building_consumption">
 
-    function getWeather(lat, lon) {
-      const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=<%= apiKey %>`;
+			</div>
+		</div>
 
-      fetch(url)
-        .then(response => response.json())
-        .then(data => {
-          console.log("Weather Data:", data);
-          const temp = data.main.temp;
-          const description = data.weather[0].description;
+	</template>
+	<template id="geoelement">
+		<div class="geoelement_display">
+			<br>
+			<div class="geoelement_header">
+				<p class="geoelement_name"></p>
+				<button class="hud-button geoelement_build">Build</button>
+			</div>
+			<p class="building_capacity"></p>
+			<br>
+			<br>
+			<p class="depletion"></p>
+			<div class="passive_production">
 
-          const weatherSummary = `The current temperature is ${temp}°C with ${description}.`;
-          generatePuterMessage(weatherSummary);
-        })
-        .catch(err => {
-          console.error("Weather API error:", err);
-          document.getElementById("weather").textContent = "Failed to load weather data.";
-          document.getElementById("puter-message").textContent = "Weather fetch error — cannot generate advice.";
-        });
-    }
+			</div>
+			<div class="buildings">
 
-    function generatePuterMessage(weatherInfo) {
-    const prompt = `Based on the weather report: "${weatherInfo}", give a friendly message or advice for someone deciding what to do today. Don't include any additional questions as the user won't be able to ask them. Not too long. Kinda like a weather headline. include the tem and discript always.`;
+			</div>
+			<br>
+		</div>
+	</template>
+	<template id="build_menu">
+		<hr>
+		<div class="row build_tabs">
 
-    const ticker = document.querySelector(".weather-ticker");
-    const headline = document.getElementById("puter-message");
+		</div>
+		<hr>
+		<br>
+		<div class="building_options_display">
 
-    headline.textContent = "Thinking...";
+		</div>
+	</template>
 
-    puter.ai.chat(prompt)
-        .then(response => {
-            headline.textContent = response;
-            console.log("Puter message:", response);
+	<script>
+		const settingsBtn = document.querySelector('.settings-button');
+		const dropdownMenu = document.getElementById('settingsMenu');
 
-            // Show ticker
-            ticker.classList.add("visible");
+		settingsBtn.addEventListener('click', (e) => {
+			e.stopPropagation(); // Prevent click from reaching body
+			dropdownMenu.classList.toggle('show');
+		});
 
-            // Trigger scroll
-            setTimeout(() => {
-                const duration = updateTickerScrollSpeed();
+		// Hide dropdown when clicking outside
+		document.body.addEventListener('click', () => {
+			dropdownMenu.classList.remove('show');
+		});
 
-                // Wait for scroll to finish before hiding
-                headline.addEventListener("animationend", () => {
-                    ticker.classList.remove("visible");
-                    headline.style.animation = "none";
-                }, { once: true });
-            }, 100);
-        })
-        .catch(err => {
-            console.error("Puter SDK error:", err);
-            headline.textContent = "Could not fetch AI message.";
-        });
-}
+		// Declare variables for mainGame.js
+		let unHTMLedResources
+		let stringifiedResources
+		var databaseResources
+		let unHTMLedSectors
+		let stringifiedSectors
+		var databaseSectors
+		let unHTMLedMods
+		let stringifiedMods
+		var databaseMods
 
-   function updateTickerScrollSpeed() {
-    const headline = document.getElementById("puter-message");
-    const speed = 50; // pixels per second
+		// Initialize variable for mainGame.js
+		async function initializeVariables() {
+			unHTMLedResources = await JSON.parse("\"<%=resources%>\"");
+			stringifiedResources = await unHTMLedResources.replace(/&#34;/g, '"');
+			databaseResources = await JSON.parse(stringifiedResources) || {};
+			unHTMLedSectors = await JSON.parse("\"<%=sectors%>\"");
+			stringifiedSectors = await unHTMLedSectors.replace(/&#34;/g, '"');
+			databaseSectors = await JSON.parse(stringifiedSectors) || [];
+			unHTMLedMods = await JSON.parse("\"<%=modifiers%>\"");
+			stringifiedMods = await unHTMLedMods.replace(/&#34;/g, '"');
+			databaseMods = await JSON.parse(stringifiedMods) || {};
+		}
 
-    headline.style.animation = "none"; // Reset
+		initializeVariables();
 
-    const width = headline.offsetWidth;
-    const duration = width / speed;
+	</script>
+	<script src="../scripts/gameTemplates.js"></script>
+	<script src="../scripts/gameplayObjects.js"></script>
+	<script src="../scripts/mainGame.js"></script>
+	<!-- Puter SDK -->
+	<script src="https://js.puter.com/v2/"></script>
 
-    requestAnimationFrame(() => {
-        headline.style.animation = `scroll-left ${duration}s linear forwards`;
-    });
+	<!-- Weather + Puter Logic -->
+	<script>
+		navigator.geolocation.getCurrentPosition(success, error);
 
-    return duration;
-}
-  </script>
-<%- include("templates/footer")%>
+		function success(position) {
+			const latitude = position.coords.latitude;
+			const longitude = position.coords.longitude;
+			console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
+			getWeather(latitude, longitude);
+		}
+
+		function error() {
+			console.error("Unable to retrieve your location");
+			document.getElementById("weather").textContent = "Location access denied.";
+			document.getElementById("puter-message").textContent = "Unable to get location. Cannot generate advice.";
+		}
+
+		function getWeather(lat, lon) {
+			const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=<%= apiKey %>`;
+
+			fetch(url)
+				.then(response => response.json())
+				.then(data => {
+					console.log("Weather Data:", data);
+					const temp = data.main.temp;
+					const description = data.weather[0].description;
+
+					const weatherSummary = `The current temperature is ${temp}°C with ${description}.`;
+					generatePuterMessage(weatherSummary);
+				})
+				.catch(err => {
+					console.error("Weather API error:", err);
+					document.getElementById("weather").textContent = "Failed to load weather data.";
+					document.getElementById("puter-message").textContent = "Weather fetch error — cannot generate advice.";
+				});
+		}
+
+		function generatePuterMessage(weatherInfo) {
+			const prompt = `Based on the weather report: "${weatherInfo}", give a friendly message or advice for someone deciding what to do today. Don't include any additional questions as the user won't be able to ask them. Not too long. Kinda like a weather headline. include the tem and discript always.`;
+
+			const ticker = document.querySelector(".weather-ticker");
+			const headline = document.getElementById("puter-message");
+
+			headline.textContent = "Thinking...";
+
+			puter.ai.chat(prompt)
+				.then(response => {
+					headline.textContent = response;
+					console.log("Puter message:", response);
+
+					// Show ticker
+					ticker.classList.add("visible");
+
+					// Trigger scroll
+					setTimeout(() => {
+						const duration = updateTickerScrollSpeed();
+
+						// Wait for scroll to finish before hiding
+						headline.addEventListener("animationend", () => {
+							ticker.classList.remove("visible");
+							headline.style.animation = "none";
+						}, { once: true });
+					}, 100);
+				})
+				.catch(err => {
+					console.error("Puter SDK error:", err);
+					headline.textContent = "Could not fetch AI message.";
+				});
+		}
+
+		function updateTickerScrollSpeed() {
+			const headline = document.getElementById("puter-message");
+			const speed = 50; // pixels per second
+
+			headline.style.animation = "none"; // Reset
+
+			const width = headline.offsetWidth;
+			const duration = width / speed;
+
+			requestAnimationFrame(() => {
+				headline.style.animation = `scroll-left ${duration}s linear forwards`;
+			});
+
+			return duration;
+		}
+	</script>
+
+	<script>
+		let newUser = '<%=newUser%>';
+		if (newUser) {
+			console.log("New User Passed");
+			loadTutorial();
+		}
+
+		function loadTutorial() {
+			const tutorial = document.getElementById('tutorial');
+			tutorial.style.display = 'flex';
+
+			// Close button functionality
+			document.querySelector('.tutorial-close').addEventListener('click', () => {
+				tutorial.style.display = 'none';
+			});
+
+			// Also close when clicking outside content
+			tutorial.addEventListener('click', (e) => {
+				if (e.target === tutorial) {
+					tutorial.style.display = 'none';
+				}
+			});
+		}
+	</script>
+
+	<%- include("templates/footer")%>
