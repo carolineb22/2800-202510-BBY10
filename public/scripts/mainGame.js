@@ -32,8 +32,6 @@ databaseSectors.forEach((sector) => {
 		tempGeographicalElements));
 });
 
-console.log(Sectors)
-
 let activeSector = 0;
 let activeElement = null;
 let lastTimestampSaved = Date.now();
@@ -98,8 +96,9 @@ if (Sectors.length == 0) {
 	)
 }
 
-let populationMax = 100;
-let population = 1;
+let populationMax = 50;
+let population = localStorage.getItem('population') || 1;
+if (isNaN(population)) population = 1;
 
 
 
@@ -149,6 +148,7 @@ function isThisBuildingInvalidFromMutexGroup(geoElementUUID, building_id) {
 	}
 
 	let mutexGroup = geoElem.getMutexGroups().filter((mutexGroup) => mutexGroup.map((typeValuePair) => typeValuePair.type).includes(building_id))[0]
+	console.log(mutexGroup);
 	if (!mutexGroup) {
 		return false; //there is no mutexgroup for this building, its chilling
 	}
@@ -345,7 +345,7 @@ function addGeoElemsToNode(elementArray, detailNode) {
 	elementArray.forEach(element => {
 		let geoElementNode = document.getElementById("geoelement").content.cloneNode(true);
 		geoElementNode.querySelector('.geoelement_name').innerHTML = `${element.name}`
-		geoElementNode.querySelector('.depletion').innerHTML = `Depletion: ${element.depletion}/${element.maxDepletion}`
+		geoElementNode.querySelector('.depletion').innerHTML = `Depletion: ${(Math.round(element.depletion * 100) / 100).toFixed(2)}/${element.maxDepletion}`
 		geoElementNode.querySelector('.depletion').id = `depletion-${element.uuid}`;
 		geoElementNode.querySelector('.building_capacity').innerHTML = `Capacity: ${element.buildings.length}/${element.buildingBaseCapacity}`
 
@@ -471,7 +471,7 @@ function doPopUpdate() {
 }
 
 function calculatePopMax() {
-	let maxPop = 100;
+	let maxPop = 50 + Modifiers.additive.populationCap;
 
 	Sectors.forEach(sector => {
 		sector.geographicalElements.forEach(geoElem => {
@@ -495,11 +495,18 @@ function popUpdate() {
 	} else if (ShortageTracker["Food"]) {
 		population *= 0.85
 	} else {
-		population += (populationMax - population) * (0.01 + Math.max(Math.min(Math.log(Resources["Food"]) || 0,0.1), 0) + Math.max(Math.min(Math.log(Resources["Water"]) || 0,0.1), 0) )
+		let foodSurplusMultiplier =  + Math.max(Math.min(Math.log(Resources["Food"])/10 || 0,0.1), 0) 
+		let waterSurplusMultiplier = Math.max(Math.min(Math.log(Resources["Water"])/10 || 0,0.1), 0)
+
+		if (isNaN(foodSurplusMultiplier)) foodSurplusMultiplier = 0;
+		if (isNaN(waterSurplusMultiplier)) waterSurplusMultiplier = 0;
+
+
+
+		population += (populationMax - population) * (0.01+foodSurplusMultiplier, waterSurplusMultiplier)
 	}
 
-	Resources["Food"] -= population * 0.25;
-	Resources["Water"] -= population * 0.25;
+	
 
 
 	if (population < 1) {
@@ -508,6 +515,11 @@ function popUpdate() {
 	if (population > populationMax) {
 		population = populationMax;
 	}
+
+	Resources["Food"] -= population * 0.25;
+	Resources["Water"] -= population * 0.25;
+
+	localStorage.setItem('population', population) 
 }
 
 function updatePopDisplay() {
@@ -569,13 +581,17 @@ function gameLoop() {
 	sectorsTick();
 	calculateShortages();
 	doPopUpdate();
+	
 }
+
+
+
 
 // CONSTANT LOOP -------------------------------------------------------------
 setInterval(() => {
 	updateResourceDisplays();
 	updatePopDisplay();
-}, 1000)
+}, 25)
 
 // HTML EVENTS ---------------------------------------------------------------
 document.getElementById('cycle_sector').addEventListener("click", e => {
@@ -618,6 +634,8 @@ function save() {
 // ON OPEN -------------------------------------------------------------------
 displayNewSector(Sectors[activeSector])
 createResourceDisplays();
+calculatePopMax();
+updatePopDisplay();
 
 window.addEventListener("beforeunload", e => {
 	console.log(Date.now() - lastTimestampSaved);

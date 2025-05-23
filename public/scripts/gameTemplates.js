@@ -63,12 +63,12 @@ const GeographicalElementTemplates = {
 			new GenericTypeValue("BuildingMaterials", 0.1)
 		],
 		[
-			new GenericTypeValue("building_logging_site", 1),
+			new GenericTypeValue("building_logging_site", 3),
 			new GenericTypeValue("building_wood_power_plant", 1),
 			new GenericTypeValue("building_library", 1),
-			new GenericTypeValue("building_forest_cabins", 1)
+			new GenericTypeValue("building_forest_cabins", 2)
 		],
-		2,
+		5,
 		0,
 		200,
 		"element_grassland"
@@ -86,7 +86,7 @@ const GeographicalElementTemplates = {
 			new GenericTypeValue("building_apartments", 1),
 			new GenericTypeValue("building_skyscraper", 1)
 		],
-		3,
+		6,
 		0,
 		500,
 		null
@@ -99,7 +99,7 @@ const GeographicalElementTemplates = {
 			new GenericTypeValue("BuildingMaterials", 0.1)
 		],
 		[
-			new GenericTypeValue("building_iron_mine", 2),
+			new GenericTypeValue("building_iron_mine", 3),
 			new GenericTypeValue("building_deep_mine", 1)
 		],
 		4,
@@ -182,7 +182,7 @@ const BuildingTemplates = {
 		[
 			new GenericTypeValue("BuildingMaterials", 100)
 		],
-		["element_forest"],
+		["element_forest","element_river"],
 		1
 	],
 	building_wood_power_plant: [
