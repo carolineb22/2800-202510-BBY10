@@ -11,6 +11,19 @@ Team Members:
 - Glenn Dossot Set 2C
 - Caroline (Cyrus) Bastiaanssen Set 2A
 
+## Technologies Used
+
+- NodeJS
+- JavaScript
+- EJS
+- Express
+- MongoDB
+
+## Installing the project
+
+Any capable Web Development capable IDE can be used in development, it's up to developer preference.
+To work with MongoDB, either host a database locally, or set up a cloud hosted database through [MongoDB Atlas.](https://www.mongodb.com/atlas)
+
 ## How to run locally with node
 
 Code blocks are run in console in the root of the project directory.
@@ -57,7 +70,52 @@ On the free plan for OpenWeatherMap you have a monthly limit of 1,000,000 calls 
 This is not a mainstream AI, your browser or network may be blocking this API for security reasons.
 Again, tweak your browser's settings.
 
-## About the Project
+## File Structure
+
+```txt
+.
+├── databaseConnection.js
+├── index.js
+├── package.json
+├── public
+│   ├── fonts
+│   │   └── Sterion-BLLld.ttf
+│   ├── images
+│   │   ├── Background-Image.jpg
+│   │   ├── favicon.ico
+│   │   └── map.png
+│   ├── scripts
+│   │   ├── 404.js
+│   │   ├── gameplayObjects.js
+│   │   ├── gameTemplates.js
+│   │   ├── mainGame.js
+│   │   ├── techTree.js
+│   │   └── treeEffects.js
+│   └── styles
+│       ├── 404.css
+│       ├── index.css
+│       ├── login.css
+│       ├── mainGame.css
+│       ├── signUp.css
+│       └── techTree.css
+├── README.md
+├── sample.env
+├── utils.js
+└── views
+    ├── 404.ejs
+    ├── about.ejs
+    ├── index.ejs
+    ├── login.ejs
+    ├── mainGame.ejs
+    ├── signUp.ejs
+    ├── techTree.ejs
+    ├── templates
+    │   ├── footer.ejs
+    │   └── header.ejs
+    └── weatherTest.ejs
+```
+
+## Project Description
 
 Our Tomorrow is an incremental game where your goal is to run a planet’s economy in a sustainable way. Your goal is to take advantage of your planet’s resources without leading the planet to its demise.
 
