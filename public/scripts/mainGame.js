@@ -98,6 +98,7 @@ if (Sectors.length == 0) {
 
 let populationMax = 50;
 let population = localStorage.getItem('population') || 1;
+if (isNaN(population)) population = 1;
 
 
 
@@ -147,6 +148,7 @@ function isThisBuildingInvalidFromMutexGroup(geoElementUUID, building_id) {
 	}
 
 	let mutexGroup = geoElem.getMutexGroups().filter((mutexGroup) => mutexGroup.map((typeValuePair) => typeValuePair.type).includes(building_id))[0]
+	console.log(mutexGroup);
 	if (!mutexGroup) {
 		return false; //there is no mutexgroup for this building, its chilling
 	}

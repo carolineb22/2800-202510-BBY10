@@ -77,7 +77,7 @@ function GeographicalElement(id, name, description, passiveProduction, situation
 	}
 
 	this.depleteBy = function (value) {
-		this.depletion += value;
+		this.depletion += value * (Modifiers.multiplicative.environmentalStrain || 1);
 
         if (this.depletion >= this.maxDepletion && this.depletesInto) {
 			convertGeoElementIntoNew(this.uuid, this.depletesInto)
@@ -149,10 +149,12 @@ function Building(id, type, name, description, consumptionArray, productionArray
                 let value = typeValueObject.value
                 switch(typeValueObject.type)
                 {
-                    case "Food": value *= Modifiers.multiplicative.foodYield || 1; break;
-                    case "Water": value *= Modifiers.multiplicative.waterOutput || 1; break;
-                    case "ResearchPoints": value *= Modifiers.multiplicative.researchSpeed || 1; break;
+                    case "Food": value *= Modifiers.multipliers.foodYield || 1; break;
+                    case "Water": value *= Modifiers.multipliers.waterOutput || 1; break;
+                    case "ResearchPoints": value *= Modifiers.multipliers.researchSpeed || 1; break;
                 }
+				
+
 				Resources[typeValueObject.type] += typeValueObject.value
 			})
 			this.consumptionArray.forEach(typeValueObject => {
@@ -166,7 +168,7 @@ function Building(id, type, name, description, consumptionArray, productionArray
 
 	this.checkIfCanDoWork = function () {
 		if (!this.doesWorkWhenOnIdArray || this.doesWorkWhenOnIdArray.length == 0) {
-			console.log("No specified elements that this works on.")
+			//No specified elements that this works on.
 			this.active = true;
 			return;
 		}
@@ -174,12 +176,12 @@ function Building(id, type, name, description, consumptionArray, productionArray
 		let parent = getGeographicalElementById(this.builtOnElement);
 
 		if (!parent || !this.doesWorkWhenOnIdArray.includes(parent.id)) {
-			console.log("Missing specified element.")
+			//"Missing specified element."
 			this.active = false;
 			return
 		}
 
-		console.log("Is on correct element.")
+		//"Is on correct element.
 		this.active = true;
 	}
 }
