@@ -345,7 +345,7 @@ function addGeoElemsToNode(elementArray, detailNode) {
 	elementArray.forEach(element => {
 		let geoElementNode = document.getElementById("geoelement").content.cloneNode(true);
 		geoElementNode.querySelector('.geoelement_name').innerHTML = `${element.name}`
-		geoElementNode.querySelector('.depletion').innerHTML = `Depletion: ${element.depletion}/${element.maxDepletion}`
+		geoElementNode.querySelector('.depletion').innerHTML = `Depletion: ${(Math.round(element.depletion * 100) / 100).toFixed(2)}/${element.maxDepletion}`
 		geoElementNode.querySelector('.depletion').id = `depletion-${element.uuid}`;
 		geoElementNode.querySelector('.building_capacity').innerHTML = `Capacity: ${element.buildings.length}/${element.buildingBaseCapacity}`
 
@@ -499,14 +499,14 @@ function popUpdate() {
 		let waterSurplusMultiplier = Math.max(Math.min(Math.log(Resources["Water"])/10 || 0,0.1), 0)
 
 		if (isNaN(foodSurplusMultiplier)) foodSurplusMultiplier = 0;
-		if (isNan(waterSurplusMultiplier)) waterSurplusMultiplier = 0;
+		if (isNaN(waterSurplusMultiplier)) waterSurplusMultiplier = 0;
 
 
 
-		population += (populationMax - population) * (0.01+foodSurplusMultiplier, waterSurplusMultiplier)}
+		population += (populationMax - population) * (0.01+foodSurplusMultiplier, waterSurplusMultiplier)
+	}
 
-	Resources["Food"] -= population * 0.25;
-	Resources["Water"] -= population * 0.25;
+	
 
 
 	if (population < 1) {
@@ -515,6 +515,9 @@ function popUpdate() {
 	if (population > populationMax) {
 		population = populationMax;
 	}
+
+	Resources["Food"] -= population * 0.25;
+	Resources["Water"] -= population * 0.25;
 
 	localStorage.setItem('population', population) 
 }

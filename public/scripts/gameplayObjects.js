@@ -71,13 +71,13 @@ function GeographicalElement(id, name, description, passiveProduction, situation
 
 		let display = document.getElementById(`depletion-${this.uuid}`);
 		if (display) {
-			display.innerHTML = `Depletion: ${this.depletion}/${this.maxDepletion}`;
+			display.innerHTML = `Depletion: ${(Math.round(this.depletion * 100) / 100).toFixed(2)}/${this.maxDepletion}`;
 		}
 
 	}
 
 	this.depleteBy = function (value) {
-		this.depletion += value * (Modifiers.multiplicative.environmentalStrain || 1);
+		this.depletion += value / (Modifiers.multipliers.environmentalStrain || 1);
 
         if (this.depletion >= this.maxDepletion && this.depletesInto) {
 			convertGeoElementIntoNew(this.uuid, this.depletesInto)
