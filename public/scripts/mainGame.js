@@ -32,8 +32,6 @@ databaseSectors.forEach((sector) => {
 		tempGeographicalElements));
 });
 
-console.log(Sectors)
-
 let activeSector = 0;
 let activeElement = null;
 let lastTimestampSaved = Date.now();
@@ -98,8 +96,8 @@ if (Sectors.length == 0) {
 	)
 }
 
-let populationMax = 100;
-let population = 1;
+let populationMax = 50;
+let population = localStorage.getItem('population') || 1;
 
 
 
@@ -471,7 +469,7 @@ function doPopUpdate() {
 }
 
 function calculatePopMax() {
-	let maxPop = 100;
+	let maxPop = 50 + Modifiers.additive.populationCap;
 
 	Sectors.forEach(sector => {
 		sector.geographicalElements.forEach(geoElem => {
@@ -508,6 +506,8 @@ function popUpdate() {
 	if (population > populationMax) {
 		population = populationMax;
 	}
+
+	localStorage.setItem('population', population) 
 }
 
 function updatePopDisplay() {
@@ -569,13 +569,17 @@ function gameLoop() {
 	sectorsTick();
 	calculateShortages();
 	doPopUpdate();
+	
 }
+
+
+
 
 // CONSTANT LOOP -------------------------------------------------------------
 setInterval(() => {
 	updateResourceDisplays();
 	updatePopDisplay();
-}, 1000)
+}, 25)
 
 // HTML EVENTS ---------------------------------------------------------------
 document.getElementById('cycle_sector').addEventListener("click", e => {
@@ -618,6 +622,8 @@ function save() {
 // ON OPEN -------------------------------------------------------------------
 displayNewSector(Sectors[activeSector])
 createResourceDisplays();
+calculatePopMax();
+updatePopDisplay();
 
 window.addEventListener("beforeunload", e => {
 	console.log(Date.now() - lastTimestampSaved);
