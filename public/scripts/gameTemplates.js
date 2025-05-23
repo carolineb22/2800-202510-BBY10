@@ -182,7 +182,7 @@ const BuildingTemplates = {
 		[
 			new GenericTypeValue("BuildingMaterials", 100)
 		],
-		["element_forest"],
+		["element_forest","element_river"],
 		1
 	],
 	building_wood_power_plant: [

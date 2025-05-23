@@ -495,8 +495,15 @@ function popUpdate() {
 	} else if (ShortageTracker["Food"]) {
 		population *= 0.85
 	} else {
-		population += (populationMax - population) * (0.01 + Math.max(Math.min(Math.log(Resources["Food"]) || 0,0.1), 0) + Math.max(Math.min(Math.log(Resources["Water"]) || 0,0.1), 0) )
-	}
+		let foodSurplusMultiplier =  + Math.max(Math.min(Math.log(Resources["Food"])/10 || 0,0.1), 0) 
+		let waterSurplusMultiplier = Math.max(Math.min(Math.log(Resources["Water"])/10 || 0,0.1), 0)
+
+		if (isNaN(foodSurplusMultiplier)) foodSurplusMultiplier = 0;
+		if (isNan(waterSurplusMultiplier)) waterSurplusMultiplier = 0;
+
+
+
+		population += (populationMax - population) * (0.01+foodSurplusMultiplier, waterSurplusMultiplier)}
 
 	Resources["Food"] -= population * 0.25;
 	Resources["Water"] -= population * 0.25;
